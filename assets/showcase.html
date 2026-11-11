@@ -463,6 +463,56 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
   .atc{margin-top:8px}
 }
 
+/* date picker */
+:root{--range:rgba(107,78,255,.15)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--range:rgba(132,112,255,.3)}}
+:root[data-theme="dark"]{--range:rgba(132,112,255,.3)}
+.dp-stage{display:block;place-items:normal;padding:28px}
+.dp-wrap{display:flex;flex-wrap:wrap;gap:28px 36px;justify-content:center;align-items:center}
+.dp{flex:0 1 372px;min-width:0;background:var(--surface);border-radius:28px;padding:16px 16px 14px}
+.dp-mode{display:flex;width:100%}
+.dp-mode button{flex:1}
+.dp-head{display:flex;align-items:center;gap:8px;margin:14px 2px 6px}
+.dp-title{flex:1;min-width:0;text-align:center;font-weight:700;font-size:18px;line-height:1.5}
+.dp-title.in-l{animation:dpInL .32s cubic-bezier(.3,1.4,.5,1)}
+.dp-title.in-r{animation:dpInR .32s cubic-bezier(.3,1.4,.5,1)}
+@keyframes dpInL{from{transform:translateX(-18px);opacity:0}}
+@keyframes dpInR{from{transform:translateX(18px);opacity:0}}
+.dp-nav{width:38px;height:38px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--bg);display:grid;place-items:center;cursor:pointer}
+.dp-week{display:grid;grid-template-columns:repeat(7,1fr);font-size:13px;color:var(--muted);text-align:center;line-height:2}
+.dp-vp{position:relative;height:276px;overflow:hidden}
+.dp-layer{position:absolute;inset:0;transform-origin:50% 50%}
+.dp-caps{position:absolute;inset:0;transition:opacity .25s;pointer-events:none}
+.dp-layer.picking .dp-caps{opacity:.65}
+.dp-cap{position:absolute;left:0;height:38px;width:0;border-radius:19px;background:var(--range);opacity:0}
+.dp-blob{position:absolute;left:0;top:0;width:40px;height:40px;border-radius:20px;background:var(--violet);transform:scale(0);pointer-events:none}
+.dp-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:46px;height:100%}
+.dp-day{position:relative;border:0;background:none;padding:0;cursor:pointer;font-size:15px;font-variant-numeric:tabular-nums;color:var(--ink);border-radius:14px;transition:color .1s}
+.dp-day::before{content:"";position:absolute;left:50%;top:50%;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;z-index:-1;transition:background .15s}
+.dp-day:hover:not(:disabled):not(.cap)::before{background:var(--range)}
+.dp-day:disabled{color:var(--muted);opacity:.4;cursor:default}
+.dp-day.cap{color:#fff;font-weight:700;transition:color .15s .1s}
+.dp-day.today::after{content:"";position:absolute;left:50%;bottom:6px;width:4px;height:4px;margin-left:-2px;border-radius:2px;background:var(--violet)}
+.dp-day.cap.today::after{background:#fff}
+.dp-day:focus-visible{outline-offset:-3px}
+.dp-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:0 2px}
+.dp-foot small{color:var(--muted);font-size:13px}
+.dp-today{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 14px;font-size:14px;cursor:pointer}
+.dp-ticket{flex:1 1 280px;max-width:400px;min-width:0}
+.dp-ticket>small{color:var(--muted);font-size:14px}
+.dp-rows{position:relative;height:64px;overflow:hidden;margin-top:10px;border-radius:20px;background:var(--surface)}
+.dp-hl{position:absolute;left:6px;right:6px;top:0;height:52px;border-radius:15px;background:var(--range);pointer-events:none}
+.dp-row{position:relative;z-index:1;height:64px;display:flex;flex-direction:column;justify-content:center;padding:0 18px;line-height:1.35;transition:opacity .2s}
+.dp-row span{font-size:13px;color:var(--muted)}
+.dp-row b{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dp-row b.ghost{color:var(--muted);font-weight:500}
+.dp-row-b{opacity:0}
+.dp-ticket.range .dp-row-b{opacity:1}
+.dp-big{font-stretch:70%;font-weight:800;font-size:clamp(40px,5.5vw,62px);line-height:1.2;margin:20px 0 0;transform-origin:0 70%;white-space:nowrap}
+.dp-big.ghost{color:var(--muted)}
+.dp-sub{margin:2px 0 0;color:var(--muted);font-size:15px;min-height:1.7em}
+.dp-clear{margin-top:16px}
+
 footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
 
 @media (max-width:860px){
@@ -513,7 +563,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
   <section class="hero">
     <div>
       <h1>ยืด หด<br>แล้วเด้งกลับ</h1>
-      <p class="lede">รวม UI 22 แบบที่เปลี่ยนรูปทรงด้วยแรงสปริง ทุกชิ้นยืดออกระหว่างทรานสิชันแล้วหดกลับเข้าที่ ลองกด ลาก และปัดดูได้ทุกชิ้น</p>
+      <p class="lede">รวม UI 23 แบบที่เปลี่ยนรูปทรงด้วยแรงสปริง ทุกชิ้นยืดออกระหว่างทรานสิชันแล้วหดกลับเข้าที่ ลองกด ลาก และปัดดูได้ทุกชิ้น</p>
       <nav class="index" aria-label="หมวด UI">
         <a href="#navigation">นำทาง</a>
         <a href="#controls">ปุ่มและฟอร์ม</a>
@@ -658,7 +708,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
 
   <!-- ===================== CONTROLS ===================== -->
   <section class="group" id="controls">
-    <div class="group-head"><h2>ปุ่มและฟอร์ม</h2><p>11 แบบ</p></div>
+    <div class="group-head"><h2>ปุ่มและฟอร์ม</h2><p>12 แบบ</p></div>
     <div class="grid">
       <article class="spec">
         <div class="stage send-stage" style="background:var(--stage-p)">
@@ -886,6 +936,50 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ปุ่มเพิ่มลงตะกร้าที่โยนของเข้าไป</h3>
         <p>กดแล้วรูปสินค้าลอยขึ้น หดเป็นเม็ดกลมระหว่างโค้งลงตะกร้า และยืดตามทิศที่พุ่ง ปุ่มหดเป็นวงพร้อมเครื่องหมายถูกก่อนยืดออกเป็นตัวนับจำนวน ตะกร้าบีบตัวรับ มีวงคลื่นกระจายออก และแคปซูลยืดตามยอดรวม</p>
       </article>
+      <article class="spec wide">
+        <div class="stage dp-stage" style="background:var(--stage-p)">
+          <div class="dp-wrap">
+            <div class="dp" id="dp">
+              <div class="seg dp-mode" id="dpMode" role="group" aria-label="แบบการเลือก">
+                <span class="seg-ind"></span>
+                <button data-seg>วันเดียว</button>
+                <button data-seg>ช่วงวันที่</button>
+              </div>
+              <div class="dp-head">
+                <button class="dp-nav" id="dpPrev" aria-label="เดือนก่อนหน้า"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+                <div class="dp-title" id="dpTitle" aria-live="polite"></div>
+                <button class="dp-nav" id="dpNext" aria-label="เดือนถัดไป"><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+              </div>
+              <div class="dp-week" aria-hidden="true"><span>อา</span><span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span></div>
+              <div class="dp-vp" id="dpVp">
+                <div class="dp-layer" id="dpLayer">
+                  <div class="dp-caps"><span class="dp-cap"></span><span class="dp-cap"></span><span class="dp-cap"></span><span class="dp-cap"></span><span class="dp-cap"></span><span class="dp-cap"></span></div>
+                  <span class="dp-blob" id="dpBlobA"></span>
+                  <span class="dp-blob" id="dpBlobB"></span>
+                  <div class="dp-grid" id="dpGrid" role="group"></div>
+                </div>
+              </div>
+              <div class="dp-foot"><small>ใช้ปุ่มลูกศรเลื่อนวันได้</small><button class="dp-today" id="dpToday">วันนี้</button></div>
+            </div>
+
+            <div class="dp-ticket" id="dpTicket">
+              <small>สรุปการเลือก</small>
+              <div class="dp-rows" id="dpRows">
+                <span class="dp-hl" id="dpHl"></span>
+                <div class="dp-row"><span id="dpLabelA">วันที่</span><b id="dpValA">ยังไม่ได้เลือก</b></div>
+                <div class="dp-row dp-row-b"><span>ถึง</span><b id="dpValB">เลือกวันสิ้นสุด</b></div>
+              </div>
+              <p class="dp-big" id="dpBig">เลือกวัน</p>
+              <p class="dp-sub" id="dpSub"></p>
+              <button class="btn-ghost dp-clear" id="dpClear">ล้างที่เลือก</button>
+              <p class="sr" id="dpLive" aria-live="polite"></p>
+            </div>
+          </div>
+        </div>
+        <h3>ปฏิทินที่วงกลมไหลไปหาวัน</h3>
+        <p>เลือกได้ทั้งวันเดียวและช่วงวันที่ วงกลมยืดได้ทั้งแนวนอนและแนวตั้งระหว่างย้ายวัน ในโหมดช่วง แถบสีไหลเติมทีละแถวตามเมาส์หรือปุ่มลูกศร เปลี่ยนเดือนแล้วตารางเอียงตามแรงเลื่อน ส่วนกรอบสรุปยืดตามโหมดและตามขั้นที่กำลังเลือก</p>
+      </article>
+
     </div>
   </section>
 
@@ -1510,6 +1604,169 @@ $$('.prod',shop).forEach(el=>{
   });
   onResync(()=>{if(!atc.classList.contains('busy'))w.set(W())});
 });
+
+/* ---------- date picker ---------- */
+const dpEl=$('#dp'),dpVp=$('#dpVp'),dpLayer=$('#dpLayer'),dpGrid=$('#dpGrid'),dpTitle=$('#dpTitle'),dpCapsEl=$$('.dp-cap',dpLayer);
+const dpTicket=$('#dpTicket'),dpRows=$('#dpRows'),dpHl=$('#dpHl'),dpLabelA=$('#dpLabelA'),dpValA=$('#dpValA'),dpValB=$('#dpValB'),dpBig=$('#dpBig'),dpSub=$('#dpSub'),dpLive=$('#dpLive');
+const DAY=864e5,CH=46,dn=(y,m,d)=>Date.UTC(y,m,d)/DAY,toD=n=>new Date(n*DAY);
+const todayDn=(()=>{const t=new Date();return dn(t.getFullYear(),t.getMonth(),t.getDate())})();
+const fFull=new Intl.DateTimeFormat('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+const fMonth=new Intl.DateTimeFormat('th-TH',{month:'long',year:'numeric',timeZone:'UTC'});
+const fShort=new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+let dpMode='single',dpSel=null,dpAnchor=null,dpOther=null,dpPicking=false,dpHover=null;
+let vy=toD(todayDn).getUTCFullYear(),vm=toD(todayDn).getUTCMonth(),dpFirst=0,dpFocus=todayDn,dpCw=46;
+const dpDays=[];
+for(let i=0;i<42;i++){const b=document.createElement('button');b.className='dp-day';b.type='button';dpGrid.appendChild(b);dpDays.push(b)}
+
+/* a blob moves in 2-D: one edge pair per axis, so it stretches both ways on diagonal jumps */
+function makeDpBlob(el){
+  const st={L:0,R:40,T:0,B:40,s:0,shown:false};
+  const draw=()=>{const w=Math.max(4,st.R-st.L),h=Math.max(4,st.B-st.T);
+    el.style.width=w+'px';el.style.height=h+'px';el.style.borderRadius=Math.min(w,h)/2+'px';
+    el.style.transform=`translate(${st.L}px,${st.T}px) scale(${Math.max(0,st.s)})`};
+  const ex=edgePair((L,R)=>{st.L=L;st.R=R;draw()},{fast:{k:480,c:32},slow:{k:190,c:21}});
+  const ey=edgePair((T,B)=>{st.T=T;st.B=B;draw()},{fast:{k:480,c:32},slow:{k:230,c:24}});
+  const sc=new Spring(0,{k:380,c:19,eps:.002,onUpdate:x=>{st.s=x;draw()}});
+  return{to(r,anim){
+    if(!r){if(st.shown){st.shown=false;anim?sc.to(0):sc.set(0)}return}
+    if(!st.shown||!anim){ex.set(r.x,r.x+r.w);ey.set(r.y,r.y+r.h)}else{ex.to(r.x,r.x+r.w);ey.to(r.y,r.y+r.h)}
+    if(!st.shown){st.shown=true;if(anim){sc.set(0);sc.to(1)}else sc.set(1)}else if(!anim)sc.set(1);
+  }};
+}
+/* each week row has its own range capsule (edge pair); new rows pour in from the side the range comes from */
+function makeDpCap(el,row){
+  let on=false,tm=0;el.style.top=(row*CH+4)+'px';
+  const ep=edgePair((L,R)=>{const w=Math.max(0,R-L);el.style.transform=`translateX(${L}px)`;el.style.width=w+'px';el.style.opacity=clamp(w/24,0,1)},{fast:{k:420,c:30},slow:{k:170,c:19}});
+  return{
+    show(L,R,entry,anim,delay){clearTimeout(tm);if(!anim){ep.set(L,R);on=true;return}
+      if(!on){ep.set(entry,entry);on=true;tm=setTimeout(()=>ep.to(L,R),delay)}else ep.to(L,R)},
+    hide(x,anim){clearTimeout(tm);if(!on)return;on=false;anim?ep.to(x,x):ep.set(x,x)}
+  };
+}
+const blobA=makeDpBlob($('#dpBlobA')),blobB=makeDpBlob($('#dpBlobB')),dpCaps=dpCapsEl.map((el,r)=>makeDpCap(el,r));
+
+function dpRect(n){const i=n-dpFirst;if(i<0||i>41)return null;const s=Math.min(40,dpCw-4,CH-6);return{x:(i%7)*dpCw+(dpCw-s)/2,y:Math.floor(i/7)*CH+(CH-s)/2,w:s,h:s}}
+const dpInMonth=n=>{const d=toD(n);return d.getUTCFullYear()===vy&&d.getUTCMonth()===vm};
+
+function renderMonth(){
+  dpCw=dpGrid.clientWidth/7;
+  const f=dn(vy,vm,1);dpFirst=f-toD(f).getUTCDay();
+  if(!dpInMonth(dpFocus))dpFocus=[dpSel,dpAnchor,todayDn].find(n=>n!=null&&dpInMonth(n))??f;
+  dpDays.forEach((b,i)=>{const n=dpFirst+i,d=toD(n);b.dataset.dn=n;b.textContent=d.getUTCDate();b.disabled=!dpInMonth(n);
+    b.classList.toggle('today',n===todayDn);b.setAttribute('aria-label',fFull.format(d)+(n===todayDn?' วันนี้':''));b.tabIndex=n===dpFocus?0:-1});
+  dpTitle.textContent=fMonth.format(toD(f));dpGrid.setAttribute('aria-label',fMonth.format(toD(f)));
+}
+function dpState(){return dpMode==='single'?'single':dpAnchor==null?'start':dpPicking?'end':'done'}
+function paintDp(anim=true){
+  let A=null,B=null,lo=null,hi=null;
+  if(dpMode==='single')A=dpSel;
+  else if(dpAnchor!=null){A=dpAnchor;const e=dpPicking?dpHover:dpOther;if(e!=null&&e!==A)B=e;const z=B??A;lo=Math.min(A,z);hi=Math.max(A,z)}
+  blobA.to(A!=null?dpRect(A):null,anim);blobB.to(B!=null?dpRect(B):null,anim);
+  const W=7*dpCw,ai=A!=null?A-dpFirst:-99,aRow=Math.floor(ai/7),aX=(((ai%7)+7)%7+.5)*dpCw;
+  dpCaps.forEach((c,r)=>{
+    const rs=dpFirst+r*7,re=rs+6;
+    if(lo==null||lo===hi||hi<rs||lo>re){c.hide(r>aRow?2:r<aRow?W-2:aX,anim);return}
+    const L=lo>=rs?(lo-rs+.5)*dpCw:2,R=hi<=re?(hi-rs+.5)*dpCw:W-2;
+    c.show(L,R,r===aRow?aX:r>aRow?2:W-2,anim,Math.abs(r-aRow)*40);
+  });
+  dpDays.forEach(b=>{const n=+b.dataset.dn,cap=n===A||n===B;b.classList.toggle('cap',cap);
+    b.setAttribute('aria-pressed',String(dpMode==='single'?n===dpSel:(n===dpAnchor||(!dpPicking&&n===dpOther))))});
+  dpLayer.classList.toggle('picking',dpState()==='end');
+  paintTicket();
+}
+
+/* ticket: rows container grows for range mode; highlight worms to the field being picked, or covers both when done */
+const dpRowsH=new Spring(64,{k:200,c:17,onUpdate:h=>dpRows.style.height=Math.max(40,h)+'px'});
+const dpHlEp=edgePair((T,B)=>{dpHl.style.transform=`translateY(${T}px)`;dpHl.style.height=Math.max(8,B-T)+'px'});
+const dpBigS=new Spring(0,{k:400,c:14,eps:.001,onUpdate:s=>dpBig.style.transform=`scale(${1+s*.06},${1-s*.04})`});
+dpHlEp.set(6,58);
+function rel(n){const d=n-todayDn;return d===0?'วันนี้':d===1?'พรุ่งนี้':d===-1?'เมื่อวาน':d>0?`อีก ${d} วัน`:`${-d} วันที่แล้ว`}
+function dpText(el,text,ghost){el.textContent=text;el.classList.toggle('ghost',!!ghost)}
+function paintTicket(){
+  const s=dpState();
+  dpTicket.classList.toggle('range',s!=='single');
+  dpRowsH.to(s==='single'?64:128);
+  const[a,b]=s==='end'?[70,122]:s==='done'?[6,122]:[6,58];dpHlEp.to(a,b);
+  if(s==='single'){
+    dpLabelA.textContent='วันที่';
+    dpText(dpValA,dpSel!=null?fFull.format(toD(dpSel)):'ยังไม่ได้เลือก',dpSel==null);
+    dpText(dpBig,dpSel!=null?rel(dpSel):'เลือกวัน',dpSel==null);
+    dpSub.textContent=dpSel!=null?`นับจากวันนี้ ${fShort.format(toD(todayDn))}`:'แตะวันในปฏิทิน';
+    return;
+  }
+  dpLabelA.textContent='ตั้งแต่';
+  if(s==='start'){dpText(dpValA,'ยังไม่ได้เลือก',true);dpText(dpValB,'เลือกวันสิ้นสุด',true);dpText(dpBig,'เลือกวันเริ่มต้น',true);dpSub.textContent='แตะวันในปฏิทิน';return}
+  const e=s==='end'?(dpHover??dpAnchor):dpOther,lo=Math.min(dpAnchor,e),hi=Math.max(dpAnchor,e),n=hi-lo+1,preview=s==='end';
+  dpText(dpValA,fFull.format(toD(lo)),preview&&lo!==dpAnchor);
+  dpText(dpValB,preview&&dpHover==null?'เลือกวันสิ้นสุด':fFull.format(toD(hi)),preview&&hi!==dpAnchor||preview&&dpHover==null);
+  dpText(dpBig,`${n} วัน`,preview);
+  dpSub.textContent=preview?'ชี้หรือใช้ปุ่มลูกศรไปที่วันสิ้นสุด แล้วแตะเลือก':(n>1?`${n-1} คืน`:'วันเดียว');
+}
+
+/* month slide: the old grid is cloned and slides out while the new one slides in, both skewed by velocity */
+let dpClone=null,dpDir=1;
+const dpSlide=new Spring(0,{k:230,c:25,eps:.001,
+  onUpdate:(p,v)=>{const D=dpVp.clientWidth+24,sk=clamp(-(dpDir*v*D)/2500*6,-8,8);
+    dpLayer.style.transform=`translateX(${dpDir*p*D}px) skewX(${sk}deg)`;dpLayer.style.opacity=1-p*.5;
+    if(dpClone){dpClone.style.transform=`translateX(${dpDir*(p-1)*D}px) skewX(${sk}deg)`;dpClone.style.opacity=p}},
+  onRest:()=>{if(dpClone){dpClone.remove();dpClone=null}}});
+function changeMonth(dir,focusAfter){
+  if(dpClone){dpClone.remove();dpClone=null}
+  dpClone=dpLayer.cloneNode(true);dpClone.removeAttribute('id');dpClone.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+  dpClone.inert=true;dpClone.setAttribute('aria-hidden','true');dpVp.appendChild(dpClone);
+  vm+=dir;if(vm<0){vm=11;vy--}else if(vm>11){vm=0;vy++}
+  dpDir=dir;renderMonth();paintDp(false);
+  dpTitle.classList.remove('in-l','in-r');void dpTitle.offsetWidth;dpTitle.classList.add(dir>0?'in-r':'in-l');
+  dpSlide.set(1);dpSlide.to(0);
+  if(focusAfter)focusDay(dpFocus);
+}
+function focusDay(n){const b=dpDays[n-dpFirst];if(b&&!b.disabled){dpDays.forEach(x=>x.tabIndex=-1);b.tabIndex=0;b.focus({preventScroll:true})}}
+function moveFocus(n){
+  dpFocus=n;
+  if(!dpInMonth(n)){const d=toD(n);changeMonth((d.getUTCFullYear()*12+d.getUTCMonth())>(vy*12+vm)?1:-1,true)}
+  else focusDay(n);
+  if(dpState()==='end'){dpHover=n;paintDp()}
+}
+function announceDp(){
+  const s=dpState();
+  dpLive.textContent=s==='single'?`เลือก${fFull.format(toD(dpSel))}`:s==='end'?`เริ่ม${fFull.format(toD(dpAnchor))} เลือกวันสิ้นสุดต่อ`:
+    s==='done'?(()=>{const lo=Math.min(dpAnchor,dpOther),hi=Math.max(dpAnchor,dpOther);return `เลือก ${fShort.format(toD(lo))} ถึง ${fShort.format(toD(hi))} รวม ${hi-lo+1} วัน`})():'';
+}
+dpGrid.addEventListener('click',e=>{
+  const b=e.target.closest('.dp-day');if(!b||b.disabled)return;const n=+b.dataset.dn;dpFocus=n;
+  dpDays.forEach(x=>x.tabIndex=x===b?0:-1);
+  if(dpMode==='single')dpSel=n;
+  else if(dpState()==='end'){dpOther=n;dpPicking=false;dpHover=null}
+  else{dpAnchor=n;dpOther=null;dpPicking=true;dpHover=n}
+  paintDp();announceDp();if(dpState()!=='end')dpBigS.kick(9);
+});
+dpGrid.addEventListener('pointerover',e=>{
+  const b=e.target.closest('.dp-day');if(!b||b.disabled||dpState()!=='end')return;
+  const n=+b.dataset.dn;if(n!==dpHover){dpHover=n;paintDp()}
+});
+dpGrid.addEventListener('pointerleave',()=>{if(dpState()==='end'&&dpHover!==dpAnchor){dpHover=dpAnchor;paintDp()}});
+dpGrid.addEventListener('keydown',e=>{
+  const b=e.target.closest('.dp-day');if(!b)return;const n=+b.dataset.dn,d=toD(n),wd=d.getUTCDay();
+  const step={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];let t=null;
+  if(step)t=n+step;else if(e.key==='Home')t=n-wd;else if(e.key==='End')t=n+6-wd;
+  else if(e.key==='PageUp'||e.key==='PageDown'){const k=e.key==='PageUp'?-1:1,y=d.getUTCFullYear(),m=d.getUTCMonth()+k;
+    const last=new Date(Date.UTC(y,m+1,0)).getUTCDate();t=dn(y,m,Math.min(d.getUTCDate(),last))}
+  if(t==null)return;e.preventDefault();moveFocus(t);
+});
+$('#dpPrev').addEventListener('click',()=>changeMonth(-1));
+$('#dpNext').addEventListener('click',()=>changeMonth(1));
+$('#dpToday').addEventListener('click',()=>{
+  const d=toD(todayDn),diff=(d.getUTCFullYear()*12+d.getUTCMonth())-(vy*12+vm);dpFocus=todayDn;
+  if(diff)changeMonth(diff>0?1:-1,true);else focusDay(todayDn);
+});
+$('#dpClear').addEventListener('click',()=>{dpSel=null;dpAnchor=null;dpOther=null;dpPicking=false;dpHover=null;paintDp();dpLive.textContent='ล้างที่เลือกแล้ว'});
+makeSegmented($('#dpMode'),{onChange:i=>{
+  if(i===1){dpMode='range';dpAnchor=dpSel;dpOther=null;dpPicking=dpSel!=null;dpHover=dpSel}
+  else{dpMode='single';dpSel=dpAnchor??dpSel;dpPicking=false;dpHover=null}
+  paintDp();
+}});
+renderMonth();paintDp(false);
+onResync(()=>{renderMonth();paintDp(false)});
 
 /* ---------- goo menu ---------- */
 const gooMain=$('.goo-main'),gooItems=$$('.goo-item'),gooStatus=$('#gooStatus');

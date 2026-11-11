@@ -1,6 +1,6 @@
 # Designing a stretchy version of any component
 
-The catalog covers 22 components, but the method generalises. This file gives the method, 14 worked designs for components that are *not* in the showcase, and a React port pattern.
+The catalog covers 23 components, but the method generalises. This file gives the method, 14 worked designs for components that are *not* in the showcase, and a React port pattern.
 
 ## The method
 
@@ -100,7 +100,7 @@ The catalog covers 22 components, but the method generalises. This file gives th
 - Origin at the pointer; split axes from 0×0 (width k 320, height k 160); items stagger 30 ms; hover highlight is a vertical edge pair.
 - Access: `role=menu`, arrow keys, Esc, return focus to the invoking element.
 
-### Date picker
+### Date picker (now built: catalog #23)
 - Sentence: the selected-day highlight worms between days, and changing months slides the grid with a jelly skew.
 - Day highlight: 2-D, so use two edge pairs (x and y) or, across rows, collapse to a dot, move, and expand. Month change: track spring with velocity skew as in the carousel. Range selection: per-row capsules, each an edge pair.
 - Access: grid with `role=grid`, arrow keys move the focused day, Page Up/Down change months.

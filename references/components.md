@@ -1,6 +1,6 @@
 # Component catalog
 
-The 22 components in `assets/showcase.html`. For each: the morph sentence, the techniques, the numbers, and the gotchas found while building it. To reuse one, read its JS section (banner in brackets) and the matching CSS block (CSS comments use the same names).
+The 23 components in `assets/showcase.html`. For each: the morph sentence, the techniques, the numbers, and the gotchas found while building it. To reuse one, read its JS section (banner in brackets) and the matching CSS block (CSS comments use the same names).
 
 | # | Component | Banner |
 |---|---|---|
@@ -26,6 +26,7 @@ The 22 components in `assets/showcase.html`. For each: the morph sentence, the t
 | 20 | Jelly bottom sheet | `bottom sheet` |
 | 21 | FAB that spreads into a form | `fab` |
 | 22 | Elastic accordion | `accordion` |
+| 23 | Date picker, single day or range | `date picker` |
 
 Also global: a segmented "ความเด้ง" control sets `bounce` to 1.8 / 1 / 0.5.
 
@@ -74,3 +75,5 @@ Also global: a segmented "ความเด้ง" control sets `bounce` to 1.8
 **21. FAB to form.** Width (k 320) leads height (k 150) opening; height leads width closing. The form inside is laid out at its final size anchored bottom-right and fades in after 160 ms. Saving prepends a note that pops in. Esc closes; focus moves to the textarea, then back to the FAB.
 
 **22. Elastic accordion.** Panel height spring (k 210, c 14) visibly overshoots; inner text offsets by `−v·0.012` (±10). Only one open. Panels are `inert` while closed. Give the stage enough fixed height for the tallest open state so the page doesn't jump.
+
+**23. Date picker (single day or range).** A worm segmented control switches mode. *Single:* the selection blob is two edge pairs, one per axis (x fast k 480 / slow 190, y fast 480 / slow 230), so a diagonal jump stretches it into a liquid blob before it settles into a circle; the blob appears with a scale spring (k 380, c 19). *Range:* first tap sets an anchor blob, then a second blob follows hover and arrow-key focus while one capsule per week row (each an edge pair) fills the range: rows after the anchor row pour in from the left, rows before it from the right, the anchor row grows out of the anchor cell, each delayed 40 ms per row of distance; capsules fade with width (`opacity = w/24`) and are dimmed while previewing; the second tap commits, and taps before the anchor simply make it the start. Blobs keep their identity (anchor stays blob A) so they never swap places on commit. *Month change:* the old grid is cloned (ids stripped, `inert`) and both grids slide by one spring with `skewX` from velocity; blobs and capsules are `set()` for the new month so they ride in with it. *Summary card:* rows container springs 64 → 128 px between modes; a vertical edge-pair highlight sits on the field being picked and stretches over both rows when the range is complete. Day numbers on a blob turn white after a 100 ms delay so they don't vanish against the light background before the blob arrives. Thai dates use `Intl.DateTimeFormat('th-TH', {…, timeZone:'UTC'})` on UTC day numbers (Buddhist year, no time-zone drift). Keys: arrows ±1/±7 days, Home/End week, PageUp/PageDown month; moving past the month edge changes month and refocuses. Adjacent-month days are shown muted and disabled.

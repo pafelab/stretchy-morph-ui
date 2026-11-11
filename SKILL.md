@@ -1,29 +1,46 @@
 ---
 name: stretchy-morph-ui
-description: Build web UI whose transitions morph with physical, rubbery stretch, where elements squash, stretch, overshoot and settle on springs instead of easing curves. Covers worm tab indicators, stretchy toggles, buttons that shrink into loaders, dynamic-island pills, jelly carousels, gooey menus, sheets and sidebars with jelly edges, add-to-cart throws and 20+ more, plus a method for inventing new stretchy components that are not in the catalog. Use this skill whenever the user wants animated or alive-feeling UI components, micro-interactions, spring, elastic, bouncy, gooey, liquid or morph transitions, a motion showcase or playground, or asks to make an existing interface feel more fluid, tactile or playful, even if they never say spring. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, แอนิเมชันปุ่ม, ทำให้ UI ดูมีชีวิต.
+description: Turn web UI into stretchy morph UI, where transitions squash, stretch, overshoot and settle on springs instead of easing curves. When invoked, first audit the user's existing code for components that could become stretchy (tabs, toggles, buttons, modals, dropdowns, accordions, carousels, toasts, sidebars, date pickers, add to cart and more), then list what can change and ask the user to confirm or add their own requests before editing anything. Includes a spring engine, 23 working reference components, a scanner, a browser checker, and a method for inventing new stretchy components. Use whenever the user wants animated or alive-feeling UI, micro-interactions, spring, elastic, bouncy, gooey, liquid or morph transitions, or wants an existing interface to feel more fluid, tactile or playful, even if they never say spring. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, แอนิเมชันปุ่ม, ทำให้ UI ดูมีชีวิต, ตรวจโค้ดว่าทำให้ยืดได้ตรงไหน.
 ---
 
 # Stretchy morph UI
 
-This skill produces interfaces where every state change *morphs*: a tab indicator stretches like a worm on its way to the next tab, a button squeezes into a loading circle and swells back, a product picture lifts off its card, shrinks into a chip and drops into the cart. It was distilled from building a 22-component showcase (in `assets/showcase.html`) and the bugs and design corrections found along the way.
+This skill produces interfaces where every state change *morphs*: a tab indicator stretches like a worm on its way to the next tab, a button squeezes into a loading circle and swells back, a product picture lifts off its card, shrinks into a chip and drops into the cart. It was distilled from building a 23-component showcase (in `assets/showcase.html`) and the bugs and design corrections found along the way.
 
 The look comes from one idea: **stretch is caused by something.** An element deforms because its parts disagree (one edge arrives before the other), because it is moving fast (it lengthens along its path), because it is being squeezed (it bulges the other way to keep its volume), or because it was just hit (it wobbles). Random wobble on a loop looks cheap; stretch with a cause looks like material.
 
+## Step 0, every time: audit the user's code and confirm
+
+Before building or editing anything, find out what in the user's own interface can become stretchy, and let them choose. Details, judgement criteria and message templates are in `references/audit.md`; the short version:
+
+1. **Find the code**: pasted code, attached files (on claude.ai, list `/mnt/user-data/uploads`), the working directory or repo, an artifact link (read it with the artifact tool), or a source the user points to. If there is none, say what you looked for and offer two paths: share the code, or build something new from scratch.
+2. **Scan it**: `python scripts/audit_ui.py <paths>` reports the stack, existing motion, missing reduced-motion handling, and candidates per UI category with `file:line`, each mapped to a showcase component and technique.
+3. **Read every hit in context** and keep only real candidates. For each, note where it is, what happens now, the morph sentence it would become, effort (small, medium, large) and any risk (component library markup, an existing animation library, a native control whose mobile picker would be lost, very long lists).
+4. **Prioritise** by visibility × frequency × fit, group duplicates (all buttons using one shared `Button` are one item), cap the list at about ten, and list anything you advise against with the reason.
+5. **Ask for confirmation** in the user's language: the numbered proposals, then a question inviting them to pick numbers, take all recommended, or type extra parts they want stretchy that are not on the list. Use a tappable-choice tool if the environment has one, otherwise plain text. **End the turn there; make no edits before the reply.**
+6. **Build what they chose** plus anything they added, then follow the Workflow below and report per item.
+
+If the user already named the parts they want, still audit: put their parts first, offer the rest as optional, and keep the question short.
+
 ## Files
+
+All paths are relative to this skill's folder (the folder containing this `SKILL.md`), not to the user's project. Resolve them against the skill folder when you read or run them.
 
 | Path | What it is | When to open it |
 |---|---|---|
-| `assets/stretchy-core.js` | The spring engine plus helpers (edge pairs, segmented indicator, volume scale, bulging SVG edges, FLIP reorder, thrown objects) | Paste into every page you build. Read it once so you know the helpers. |
-| `assets/starter.html` | Page skeleton: light/dark tokens, Thai-capable variable font, reduced-motion handling, the core inlined, one example component | Start a new page from it |
-| `assets/showcase.html` | All 22 working components from the original build. Each JS section starts with a banner like `/* ---------- tabs ---------- */` | When a request matches a catalog component, `grep -n "/\* ---------- " assets/showcase.html` and read just that section plus its CSS |
-| `references/techniques.md` | The 11 stretch techniques in depth, with code and tuning numbers | Before building anything you have not built before |
-| `references/components.md` | Catalog: each component's recipe, spring values and gotchas | When the request names or resembles a catalog component |
-| `references/new-components.md` | How to design a stretchy version of *any* component, plus 14 worked designs not in the showcase | Whenever the request is outside the catalog |
-| `scripts/check_page.py` | Headless browser check: JS errors, sideways overflow on phone and desktop, invisible elements stealing clicks, and contact sheets of animation frames | After every build, before you hand anything over |
+| [`assets/stretchy-core.js`](assets/stretchy-core.js) | The spring engine plus helpers (edge pairs, segmented indicator, volume scale, bulging SVG edges, FLIP reorder, thrown objects) | Paste into every page you build. Read it once so you know the helpers. |
+| [`assets/starter.html`](assets/starter.html) | Page skeleton: light/dark tokens, Thai-capable variable font, reduced-motion handling, the core inlined, one example component | Start a new page from it |
+| [`assets/showcase.html`](assets/showcase.html) | All 23 working components from the original build. Each JS section starts with a banner like `/* ---------- tabs ---------- */` | When a request matches a catalog component, `grep -n "/\* ---------- " assets/showcase.html` and read just that section plus its CSS |
+| [`references/audit.md`](references/audit.md) | How to find, scan, judge and prioritise the user's code, and the confirmation message templates (Thai and English) | At Step 0, every time |
+| [`references/techniques.md`](references/techniques.md) | The 11 stretch techniques in depth, with code and tuning numbers | Before building anything you have not built before |
+| [`references/components.md`](references/components.md) | Catalog: each component's recipe, spring values and gotchas | When the request names or resembles a catalog component |
+| [`references/new-components.md`](references/new-components.md) | How to design a stretchy version of *any* component, plus 14 worked designs not in the showcase | Whenever the request is outside the catalog |
+| [`scripts/audit_ui.py`](scripts/audit_ui.py) | Scanner for the user's code: stack, existing motion, and stretchy candidates with `file:line` | At Step 0, every time |
+| [`scripts/check_page.py`](scripts/check_page.py) | Headless browser check: JS errors, sideways overflow on phone and desktop, invisible elements stealing clicks, and contact sheets of animation frames | After every build, before you hand anything over |
 
-If a `frontend-design` skill is available, read it too. That skill decides how the page looks (palette, type, layout); this one decides how it moves. Motion polish cannot rescue a generic-looking page.
+If a visual design skill is available (for example `frontend-design` or `ui-ux-pro-max`), read it too. That skill decides how the page looks (palette, type, layout); this one decides how it moves. Motion polish cannot rescue a generic-looking page.
 
-## Workflow
+## Workflow (after the user confirms)
 
 1. **Write the morph sentence for each component.** "When *trigger*, *shape A* becomes *shape B*, and it stretches because *cause*." Example: "When a tab is clicked, the indicator moves to it, and it stretches because its leading edge is stiffer than its trailing edge." If you cannot fill in the cause, pick one from the table below. This sentence is the design; everything else is implementation.
 2. **Pick the technique(s)** from the table. Most components use one primary stretch plus one small feedback wobble.
@@ -109,9 +126,14 @@ The first add-to-cart version flew a plain coloured ball along two independent s
 | Dot misaligned inside a `fieldset` | `legend` shifts the fieldset box in odd ways | Use a `div role="radiogroup"`, measure with `getBoundingClientRect` differences |
 | Dialog lingered ~1 s after visibly closing | Rest threshold `eps` of 0.05 px is far stricter than the eye | Use `eps≈0.5` for pixel springs whose `onRest` triggers logic |
 | Stepper "Next" button lost focus | Disabled while focused | Change its label/action instead of disabling, or move focus first |
+| Slider broke after adding the date picker | Both declared `function setVal`; in one script the later declaration silently replaces the earlier | Prefix helpers per component (`dpText`), or wrap each component in its own block or module; check with `grep -oE "function [A-Za-z_]+" \| sort \| uniq -d` |
+| A helper worked in the skill's starter but threw in a bigger page | The page never included it (`replayClass`) | Paste the whole core, or inline the two lines you need |
 
 ## Delivering
 
-- On claude.ai with artifact publishing, build one self-contained HTML file (CSS and JS inline, the core pasted in) and publish it. Load fonts from Google Fonts with a real fallback stack. Respect the host's dark/light handling.
+- For a standalone demo, build one self-contained HTML file (CSS and JS inline, the core pasted in). Load fonts from Google Fonts with a real fallback stack. Respect the host's dark/light handling. Then hand it over the way your host supports:
+  - Claude (claude.ai or Claude Code with artifact publishing): publish the file as an artifact.
+  - Antigravity: save the file in the workspace and open it in the built-in browser to watch the interactions. A browser recording is a good complement to the `check_page.py` contact sheets.
+  - Anywhere else: save the file and tell the user its path.
 - For a React, Vue or Svelte codebase, keep the core as a plain module. Create springs once (`useRef`/`onMounted`), write styles to element refs inside `onUpdate`, cancel on unmount, and keep component state (selected tab, count) in the framework while the spring only animates presentation. `references/new-components.md` ends with a React port of the worm tabs.
 - Write UI copy in the user's language. If they write in Thai, the demo content is Thai, and a variable Thai-capable font such as Noto Sans Thai (with its width axis for condensed headlines) is a good default.
