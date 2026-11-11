@@ -1,6 +1,6 @@
 # Designing a stretchy version of any component
 
-The catalog covers 23 components, but the method generalises. This file gives the method, 14 worked designs for components that are *not* in the showcase, and a React port pattern.
+The catalog covers 24 components, but the method generalises. This file gives the method, 14 worked designs for components that are *not* in the showcase, and a React port pattern.
 
 ## The method
 

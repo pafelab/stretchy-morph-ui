@@ -11,7 +11,7 @@
 ## สิ่งที่อยู่ในสกิล
 
 - **Spring engine** ไม่มี dependency (`assets/stretchy-core.js`) พร้อมฟังก์ชันช่วย เช่น edge pair, volume preservation, bulging SVG edge, FLIP reorder, thrown object
-- **Showcase 23 คอมโพเนนต์** ที่ใช้งานได้จริง ได้แก่ tabs, stepper, sidebar, carousel, send button, toggles, radio/checkbox, chips, search, dropdown, slider, quantity, rating, add to cart, goo menu, modal, toast, tooltip, bottom sheet, FAB, accordion, dynamic island และ date picker (เลือกวันเดียวหรือช่วง)
+- **Showcase 24 คอมโพเนนต์** ที่ใช้งานได้จริง ได้แก่ tabs, stepper, sidebar, carousel, send button, toggles, radio/checkbox, chips, search, dropdown, slider, quantity, rating, add to cart, goo menu, modal, toast, tooltip, bottom sheet, FAB, accordion, dynamic island date picker (เลือกวันเดียวหรือช่วง) และ choice chips (ชิปเลือกได้ทีละอัน)
 - **เทคนิคการยืด 11+ แบบ** พร้อมโค้ดและค่า spring ที่ปรับไว้แล้ว
 - **วิธีออกแบบคอมโพเนนต์ใหม่** ที่ไม่อยู่ในแคตตาล็อก พร้อมตัวอย่าง 14 แบบ (pull to refresh, swipe to delete, OTP input, date picker ฯลฯ) และแนวทาง port ไป React
 - **ขั้นตอน audit โค้ดของผู้ใช้ก่อนลงมือ** (Step 0) สแกนโค้ดที่มีอยู่ด้วย `scripts/audit_ui.py` หาส่วนที่ทำให้ยืดได้ (tabs, toggle, modal, dropdown, accordion ฯลฯ) สรุปเป็นรายการพร้อม `file:line` แล้วถามผู้ใช้ให้ยืนยันหรือเพิ่มเอง **ก่อนแก้ไฟล์ใด ๆ**
@@ -30,7 +30,7 @@ stretchy-morph-ui/
 ├── assets/
 │   ├── stretchy-core.js        spring engine + helpers
 │   ├── starter.html            โครงหน้าเปล่า (light/dark, ฟอนต์ไทย, reduced motion)
-│   └── showcase.html           คอมโพเนนต์ทั้ง 23 ตัว
+│   └── showcase.html           คอมโพเนนต์ทั้ง 24 ตัว
 └── scripts/
     ├── audit_ui.py             สแกนโค้ดของผู้ใช้: stack, แอนิเมชันที่มีอยู่, ส่วนที่ทำให้ยืดได้
     └── check_page.py           smoke test + ถ่ายเฟรมแอนิเมชัน

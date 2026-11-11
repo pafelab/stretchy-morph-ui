@@ -1,11 +1,11 @@
 ---
 name: stretchy-morph-ui
-description: Turn web UI into stretchy morph UI, where transitions squash, stretch, overshoot and settle on springs instead of easing curves. When invoked, first audit the user's existing code for components that could become stretchy (tabs, toggles, buttons, modals, dropdowns, accordions, carousels, toasts, sidebars, date pickers, add to cart and more), then list what can change and ask the user to confirm or add their own requests before editing anything. Includes a spring engine, 23 working reference components, a scanner, a browser checker, and a method for inventing new stretchy components. Use whenever the user wants animated or alive-feeling UI, micro-interactions, spring, elastic, bouncy, gooey, liquid or morph transitions, or wants an existing interface to feel more fluid, tactile or playful, even if they never say spring. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, แอนิเมชันปุ่ม, ทำให้ UI ดูมีชีวิต, ตรวจโค้ดว่าทำให้ยืดได้ตรงไหน.
+description: Turn web UI into stretchy morph UI, where transitions squash, stretch, overshoot and settle on springs instead of easing curves. When invoked, first audit the user's existing code for components that could become stretchy (tabs, toggles, buttons, modals, dropdowns, accordions, carousels, toasts, sidebars, date pickers, add to cart and more), then list what can change and ask the user to confirm or add their own requests before editing anything. Includes a spring engine, 24 working reference components, a scanner, a browser checker, and a method for inventing new stretchy components. Use whenever the user wants animated or alive-feeling UI, micro-interactions, spring, elastic, bouncy, gooey, liquid or morph transitions, or wants an existing interface to feel more fluid, tactile or playful, even if they never say spring. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, แอนิเมชันปุ่ม, ทำให้ UI ดูมีชีวิต, ตรวจโค้ดว่าทำให้ยืดได้ตรงไหน.
 ---
 
 # Stretchy morph UI
 
-This skill produces interfaces where every state change *morphs*: a tab indicator stretches like a worm on its way to the next tab, a button squeezes into a loading circle and swells back, a product picture lifts off its card, shrinks into a chip and drops into the cart. It was distilled from building a 23-component showcase (in `assets/showcase.html`) and the bugs and design corrections found along the way.
+This skill produces interfaces where every state change *morphs*: a tab indicator stretches like a worm on its way to the next tab, a button squeezes into a loading circle and swells back, a product picture lifts off its card, shrinks into a chip and drops into the cart. It was distilled from building a 24-component showcase (in `assets/showcase.html`) and the bugs and design corrections found along the way.
 
 The look comes from one idea: **stretch is caused by something.** An element deforms because its parts disagree (one edge arrives before the other), because it is moving fast (it lengthens along its path), because it is being squeezed (it bulges the other way to keep its volume), or because it was just hit (it wobbles). Random wobble on a loop looks cheap; stretch with a cause looks like material.
 
@@ -30,7 +30,7 @@ All paths are relative to this skill's folder (the folder containing this `SKILL
 |---|---|---|
 | [`assets/stretchy-core.js`](assets/stretchy-core.js) | The spring engine plus helpers (edge pairs, segmented indicator, volume scale, bulging SVG edges, FLIP reorder, thrown objects) | Paste into every page you build. Read it once so you know the helpers. |
 | [`assets/starter.html`](assets/starter.html) | Page skeleton: light/dark tokens, Thai-capable variable font, reduced-motion handling, the core inlined, one example component | Start a new page from it |
-| [`assets/showcase.html`](assets/showcase.html) | All 23 working components from the original build. Each JS section starts with a banner like `/* ---------- tabs ---------- */` | When a request matches a catalog component, `grep -n "/\* ---------- " assets/showcase.html` and read just that section plus its CSS |
+| [`assets/showcase.html`](assets/showcase.html) | All 24 working components from the original build. Each JS section starts with a banner like `/* ---------- tabs ---------- */` | When a request matches a catalog component, `grep -n "/\* ---------- " assets/showcase.html` and read just that section plus its CSS |
 | [`references/audit.md`](references/audit.md) | How to find, scan, judge and prioritise the user's code, and the confirmation message templates (Thai and English) | At Step 0, every time |
 | [`references/techniques.md`](references/techniques.md) | The 11 stretch techniques in depth, with code and tuning numbers | Before building anything you have not built before |
 | [`references/components.md`](references/components.md) | Catalog: each component's recipe, spring values and gotchas | When the request names or resembles a catalog component |
@@ -54,7 +54,7 @@ If a visual design skill is available (for example `frontend-design` or `ui-ux-p
 
 | Situation | Technique (details in `references/techniques.md`) | Seen in |
 |---|---|---|
-| Something moves between slots | **Edge pair**: two springs for leading and trailing edges, leading one stiff, swapped by direction | Tabs, carousel dots, toggles, radio dot, stepper, dropdown highlight, rating capsule, sidebar nav |
+| Something moves between slots | **Edge pair**: two springs for leading and trailing edges, leading one stiff, swapped by direction | Tabs, carousel dots, toggles, choice chips, radio dot, stepper, dropdown highlight, rating capsule, sidebar nav |
 | A container changes size or shape | **Split axes**: separate springs for width, height, radius with different stiffness, so one axis leads | Dynamic island, FAB to form, modal from button, dropdown, add-to-cart button |
 | Something gets narrower or wider fast | **Volume preservation**: scale the other axis by velocity, `scaleY = clamp(1 − v/k)` | Send button, search field, dropdown width |
 | Something travels fast | **Velocity stretch**: lengthen along the direction of motion, thin across it | Slider thumb, thrown cart item, carousel cards (skew), tooltip |
@@ -126,6 +126,7 @@ The first add-to-cart version flew a plain coloured ball along two independent s
 | Dot misaligned inside a `fieldset` | `legend` shifts the fieldset box in odd ways | Use a `div role="radiogroup"`, measure with `getBoundingClientRect` differences |
 | Dialog lingered ~1 s after visibly closing | Rest threshold `eps` of 0.05 px is far stricter than the eye | Use `eps≈0.5` for pixel springs whose `onRest` triggers logic |
 | Stepper "Next" button lost focus | Disabled while focused | Change its label/action instead of disabling, or move focus first |
+| Under reduced motion, the choice-chip blob settled on the chip's old, narrower size | The usual reduced-motion rule `*{transition-duration:.01s!important}` keeps `transition-property:all`, so every width a spring writes becomes a 10 ms CSS transition and a measurement taken right after the write reads the old layout | Give elements whose size a spring writes and another part measures `transition:none!important` (beats the `*` rule on specificity) |
 | Slider broke after adding the date picker | Both declared `function setVal`; in one script the later declaration silently replaces the earlier | Prefix helpers per component (`dpText`), or wrap each component in its own block or module; check with `grep -oE "function [A-Za-z_]+" \| sort \| uniq -d` |
 | A helper worked in the skill's starter but threw in a bigger page | The page never included it (`replayClass`) | Paste the whole core, or inline the two lines you need |
 

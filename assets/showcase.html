@@ -185,6 +185,20 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .chip-ic svg{width:18px;height:18px;transform:scale(0);stroke-width:2.6}
 .chips-msg{margin:20px 0 0;text-align:center;color:var(--muted);font-size:15px}
 
+/* choice chips: chip surface (z -2) < travelling blob (z -1) < chip label and border */
+.cc-title{font-weight:700;margin:0 0 14px;text-align:center}
+.cchips{position:relative;isolation:isolate;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:340px}
+.cc-blob{position:absolute;left:0;top:0;width:0;height:0;background:var(--violet);z-index:-1;pointer-events:none}
+.cchip{position:relative;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:none;font-size:15px;white-space:nowrap;cursor:pointer;transition:color .15s,border-color .2s}
+.cchip::before{content:"";position:absolute;inset:-1px;border-radius:inherit;background:var(--surface);z-index:-2}
+.cchip:hover{border-color:var(--muted)}
+.cchip[aria-checked="true"]{color:#fff;border-color:transparent;transition:color .2s .1s,border-color .2s .1s}
+/* a spring writes this width and the blob measures it right after; the reduced-motion rule below
+   would otherwise turn the write into a 10 ms CSS transition and the measurement would read the old size */
+.cchip-ic{display:inline-grid;place-items:center;width:0;height:20px;transition:none!important}
+.cchip-ic svg{width:18px;height:18px;transform:scale(0);stroke-width:2.6}
+.cc-msg{margin:20px 0 0;text-align:center;color:var(--muted);font-size:15px}
+
 /* search */
 .search-area{width:100%;display:flex;flex-direction:column;align-items:center;gap:20px}
 .search{position:relative;width:52px;height:52px;border-radius:26px;background:var(--surface);overflow:hidden;box-shadow:0 0 0 1px var(--line)}
@@ -563,7 +577,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
   <section class="hero">
     <div>
       <h1>ยืด หด<br>แล้วเด้งกลับ</h1>
-      <p class="lede">รวม UI 23 แบบที่เปลี่ยนรูปทรงด้วยแรงสปริง ทุกชิ้นยืดออกระหว่างทรานสิชันแล้วหดกลับเข้าที่ ลองกด ลาก และปัดดูได้ทุกชิ้น</p>
+      <p class="lede">รวม UI 24 แบบที่เปลี่ยนรูปทรงด้วยแรงสปริง ทุกชิ้นยืดออกระหว่างทรานสิชันแล้วหดกลับเข้าที่ ลองกด ลาก และปัดดูได้ทุกชิ้น</p>
       <nav class="index" aria-label="หมวด UI">
         <a href="#navigation">นำทาง</a>
         <a href="#controls">ปุ่มและฟอร์ม</a>
@@ -708,7 +722,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
 
   <!-- ===================== CONTROLS ===================== -->
   <section class="group" id="controls">
-    <div class="group-head"><h2>ปุ่มและฟอร์ม</h2><p>12 แบบ</p></div>
+    <div class="group-head"><h2>ปุ่มและฟอร์ม</h2><p>13 แบบ</p></div>
     <div class="grid">
       <article class="spec">
         <div class="stage send-stage" style="background:var(--stage-p)">
@@ -772,6 +786,25 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         </div>
         <h3>ชิปตัวกรองที่พองตัว</h3>
         <p>ตอนเลือก ไอคอนติ๊กดันตัวเองเข้ามาด้วยสปริง ชิปเลยพองออกแล้วหดเข้าที่ ชิปข้างๆ ขยับหลบตามจริง</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-t)">
+          <div class="col">
+            <div class="cc-title" id="ccTitle">ระดับความหวาน</div>
+            <div class="cchips" id="cchips" role="radiogroup" aria-labelledby="ccTitle">
+              <span class="cc-blob" id="ccBlob" aria-hidden="true"></span>
+              <button type="button" class="cchip" role="radio" aria-checked="false" tabindex="-1"><span class="cchip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ไม่หวาน</button>
+              <button type="button" class="cchip" role="radio" aria-checked="false" tabindex="-1"><span class="cchip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>หวานน้อย</button>
+              <button type="button" class="cchip" role="radio" aria-checked="false" tabindex="-1"><span class="cchip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>หวานพอดี</button>
+              <button type="button" class="cchip" role="radio" aria-checked="false" tabindex="-1"><span class="cchip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>หวานปกติ</button>
+              <button type="button" class="cchip" role="radio" aria-checked="false" tabindex="-1"><span class="cchip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>หวานมาก</button>
+            </div>
+            <p class="cc-msg" id="ccMsg" aria-live="polite">ชาไทยเย็น หวานพอดี ประมาณ 160 กิโลแคลอรี</p>
+          </div>
+        </div>
+        <h3>ชิปตัวเลือกที่ไหลข้ามแถว</h3>
+        <p>เลือกได้ทีละอันเหมือนปุ่มตัวเลือก แคปซูลสีม่วงยืดตัวไปหาชิปใหม่ ถ้าอยู่คนละแถวก็ยืดทั้งแนวนอนและแนวตั้งเหมือนหยดน้ำ ใช้ปุ่มลูกศรได้</p>
       </article>
 
       <article class="spec">
@@ -1395,6 +1428,54 @@ chipEls.forEach(c=>{
     chipMsg.textContent=`พบ ${Math.max(3,48-n*9)} ร้าน`;
   });
 });
+
+/* ---------- choice chips ---------- */
+/* Single-select chips. One filled blob travels between them on an edge pair per axis, so a jump to
+   another row stretches it diagonally. The picked chip grows a check slot, which moves chip edges
+   while the blob is in flight, so the blob is re-aimed once per frame with aim(): unlike edgePair's
+   to(), aim() keeps each edge's stiffness, so the leading edge stays the fast one. */
+function ccPair(draw,fast,slow){
+  let A=0,B=0;
+  const a=new Spring(0,{onUpdate:x=>{A=x;draw(A,B)}}),b=new Spring(0,{onUpdate:x=>{B=x;draw(A,B)}});
+  return{
+    set(x,y){a.set(x);b.set(y)},
+    to(x,y){if(x>=a.t){b.to(y,fast);a.to(x,slow)}else{a.to(x,fast);b.to(y,slow)}},
+    aim(x,y){a.to(x);b.to(y)}
+  };
+}
+const ccG=$('#cchips'),ccBlob=$('#ccBlob'),ccEls=$$('.cchip',ccG),ccMsg=$('#ccMsg');
+const CC_KCAL=[90,125,160,230,270],ccBox={L:0,R:0,T:0,B:0};
+function ccDraw(){
+  const w=Math.max(10,ccBox.R-ccBox.L),h=Math.max(10,ccBox.B-ccBox.T);
+  ccBlob.style.width=w+'px';ccBlob.style.height=h+'px';ccBlob.style.borderRadius=Math.min(w,h)/2+'px';
+  ccBlob.style.transform=`translate(${ccBox.L}px,${ccBox.T}px)`;
+}
+const ccX=ccPair((L,R)=>{ccBox.L=L;ccBox.R=R;ccDraw()},{k:460,c:31},{k:170,c:19});
+const ccY=ccPair((T,B)=>{ccBox.T=T;ccBox.B=B;ccDraw()},{k:460,c:31},{k:210,c:22});
+let ccCur=-1,ccRaf=0;
+const ccRect=()=>{const c=ccEls[ccCur];return[c.offsetLeft,c.offsetLeft+c.offsetWidth,c.offsetTop,c.offsetTop+c.offsetHeight]};
+function ccPlace(mode){const[l,r,t,b]=ccRect();ccX[mode](l,r);ccY[mode](t,b)}
+const ccFollow=()=>{if(!ccRaf)ccRaf=requestAnimationFrame(()=>{ccRaf=0;ccPlace('aim')})};
+const ccIcs=ccEls.map(c=>{
+  const ic=$('.cchip-ic',c),svg=$('svg',ic);
+  return new Spring(0,{k:320,c:15,onUpdate:x=>{const v=Math.max(0,x);ic.style.width=v+'px';ic.style.marginRight=(v/20*6)+'px';svg.style.transform=`scale(${clamp(v/20,0,1.3)})`;ccFollow()}});
+});
+function ccSelect(i,anim=true){
+  if(i===ccCur)return;
+  const prev=ccCur;ccCur=i;
+  ccEls.forEach((c,j)=>{c.setAttribute('aria-checked',String(j===i));c.tabIndex=j===i?0:-1});
+  const m=anim?'to':'set';if(prev>=0)ccIcs[prev][m](0);ccIcs[i][m](20);
+  ccPlace(anim?'to':'set');
+  if(anim)ccMsg.textContent=`ชาไทยเย็น ${ccEls[i].textContent.trim()} ประมาณ ${CC_KCAL[i]} กิโลแคลอรี`;
+}
+ccEls.forEach((c,i)=>c.addEventListener('click',()=>ccSelect(i)));
+ccG.addEventListener('keydown',e=>{
+  const n=ccEls.length,k=e.key;
+  const j=k==='ArrowRight'||k==='ArrowDown'?(ccCur+1)%n:k==='ArrowLeft'||k==='ArrowUp'?(ccCur-1+n)%n:k==='Home'?0:k==='End'?n-1:-1;
+  if(j<0)return;e.preventDefault();ccSelect(j);ccEls[j].focus();
+});
+ccSelect(2,false);
+onResync(()=>ccPlace('set'));
 
 /* ---------- search ---------- */
 const search=$('#search'),sBtn=$('.search-btn',search),sIn=$('.search-input',search),sX=$('.search-close',search),sugg=$('#sugg'),suggBtns=$$('button',sugg);
