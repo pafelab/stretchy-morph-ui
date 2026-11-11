@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ยืดหยุ่น: UI ที่ยืดได้</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wdth,wght@62.5..100,100..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EFEDFB; --surface:#FFFFFF; --ink:#1C1840; --muted:#5E5A7E; --line:#D9D5F0;
+  --violet:#6B4EFF; --pink:#FF4F7B; --teal:#0FA597; --sun:#FFC23C;
+  --stage-v:#E2DCFF; --stage-p:#FFDFE7; --stage-t:#D3F3EE; --island:#17132E;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#14112B; --surface:#1E1A3D; --ink:#EFECFF; --muted:#A8A3CF; --line:#332E5E;
+    --violet:#8470FF; --pink:#FF6B91; --teal:#22BFAE; --sun:#FFCF5C;
+    --stage-v:#262052; --stage-p:#3B1B32; --stage-t:#123532; --island:#000;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14112B; --surface:#1E1A3D; --ink:#EFECFF; --muted:#A8A3CF; --line:#332E5E;
+  --violet:#8470FF; --pink:#FF6B91; --teal:#22BFAE; --sun:#FFCF5C;
+  --stage-v:#262052; --stage-p:#3B1B32; --stage-t:#123532; --island:#000;
+  color-scheme:dark;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans Thai","Leelawadee UI","Thonburi",system-ui,sans-serif;
+  font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;
+  transition:background .4s,color .4s;
+}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--violet);outline-offset:3px}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.btn-solid,.btn-ghost,.btn-danger{border-radius:999px;padding:8px 22px;font-weight:600;cursor:pointer;font-size:15px;border:1px solid transparent;white-space:nowrap}
+.btn-solid{background:var(--violet);color:#fff}
+.btn-danger{background:var(--pink);color:#fff}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+button:disabled{opacity:.4;cursor:default}
+
+/* header */
+header{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:22px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px}
+.bounce{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:15px}
+
+/* segmented with stretchy indicator */
+.seg{position:relative;display:inline-flex;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px}
+.seg-ind{position:absolute;left:0;top:4px;bottom:4px;border-radius:999px;background:var(--ink);will-change:transform,width;pointer-events:none}
+.seg button{position:relative;z-index:1;border:0;background:none;color:var(--muted);padding:5px 16px;border-radius:999px;cursor:pointer;transition:color .25s;white-space:nowrap;font-size:15px}
+.seg button.on{color:var(--bg)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center;padding:36px 0 96px}
+h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-height:1.14;margin:0}
+.lede{color:var(--muted);max-width:40ch;margin:24px 0 0;font-size:18px}
+.index{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.index a{color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 16px;font-size:15px;transition:background .2s,color .2s}
+.index a:hover{background:var(--ink);color:var(--bg)}
+
+.phone{position:relative;height:340px;border-radius:44px;background:var(--stage-v);overflow:hidden}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:18px 30px 0;font-weight:600;font-size:15px}
+.island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:126px;height:37px;border-radius:19px;background:var(--island);color:#fff;overflow:hidden;z-index:2}
+.pane{position:absolute;top:0;left:50%;width:126px;height:37px;display:flex;align-items:center;opacity:0;filter:blur(6px);transform:translateX(-50%) scale(.9);transition:opacity .16s,filter .16s,transform .25s;pointer-events:none}
+.pane.on{opacity:1;filter:none;transform:translateX(-50%);transition:opacity .28s .12s,filter .28s .12s,transform .45s .08s cubic-bezier(.3,1.5,.5,1);pointer-events:auto}
+.pane-music{gap:12px;padding:0 18px 0 16px}
+.art{width:46px;height:46px;border-radius:13px;background:var(--sun);display:grid;place-items:center;flex:none}
+.art span{width:18px;height:18px;border-radius:50%;background:#241E4E}
+.meta{min-width:0;line-height:1.35}
+.meta b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta small{font-size:13px;color:rgba(255,255,255,.62)}
+.bars{display:flex;gap:3px;align-items:center;height:24px;margin-left:auto;flex:none}
+.bars i{width:3px;height:100%;border-radius:2px;background:var(--pink);animation:eq 1s ease-in-out infinite}
+.bars i:nth-child(2){animation-delay:-.35s}.bars i:nth-child(3){animation-delay:-.6s}.bars i:nth-child(4){animation-delay:-.15s}
+@keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+.pane-timer{justify-content:space-between;padding:0 16px;color:var(--teal);font-weight:700;font-variant-numeric:tabular-nums}
+.pane-call{flex-direction:column;align-items:stretch;justify-content:space-between;padding:20px 22px}
+.caller{display:flex;align-items:center;gap:14px;line-height:1.35}
+.avatar{width:50px;height:50px;border-radius:50%;background:var(--teal);display:grid;place-items:center;font-weight:700;flex:none}
+.caller b{display:block;font-size:19px}
+.caller small{color:rgba(255,255,255,.62);font-size:13px}
+.call-actions{display:flex;justify-content:space-between}
+.call-actions button{width:52px;height:52px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;color:#fff}
+.decline{background:var(--pink)}.decline svg{transform:rotate(135deg)}
+.accept{background:var(--teal)}
+.phone .seg{position:absolute;bottom:20px;left:50%;transform:translateX(-50%)}
+
+/* groups and specimens */
+.group+.group{margin-top:120px}
+.group-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:36px}
+.group-head h2{margin:0;font-stretch:70%;font-weight:800;font-size:clamp(38px,5vw,58px);line-height:1.2}
+.group-head p{margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:64px 32px}
+.spec{display:flex;flex-direction:column}
+.spec.wide{grid-column:1/-1}
+.stage{position:relative;flex:1;min-height:340px;border-radius:32px;padding:28px;display:grid;place-items:center;overflow:hidden}
+.spec>h3{font-size:22px;font-weight:700;line-height:1.4;margin:22px 0 4px}
+.spec>p{margin:0;color:var(--muted);max-width:52ch}
+.col{display:flex;flex-direction:column;align-items:center;width:100%}
+
+/* tabs */
+.tab-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px}
+.tab-out{font-stretch:75%;font-weight:700;font-size:28px;line-height:1.3;text-align:center;transition:opacity .14s,transform .14s;min-height:1.3em}
+.tab-out.swap{opacity:0;transform:translateY(6px)}
+.tabs{padding:6px}
+.tabs .seg-ind{top:6px;bottom:6px;background:var(--violet)}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 13px;font-size:13px;line-height:1.3}
+.tabs button.on{color:#fff}
+
+/* stepper */
+.stepper{width:100%;max-width:440px}
+.steps{position:relative;display:grid;grid-template-columns:repeat(4,1fr);padding-top:6px}
+.steps-rail{position:absolute;top:22px;left:0;width:0;height:4px;border-radius:2px;background:var(--line)}
+.steps-fill{height:100%;width:0;border-radius:2px;background:var(--violet)}
+.steps-blob{position:absolute;left:0;top:2px;width:44px;height:44px;border-radius:22px;background:var(--violet)}
+.step{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;color:var(--muted);text-align:center}
+.step-dot{position:relative;z-index:1;width:36px;height:36px;border-radius:50%;background:var(--surface);border:2px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:15px;transition:background .25s,border-color .25s,color .25s}
+.step-dot svg{display:none;width:18px;height:18px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.step.done .step-dot{background:var(--violet);border-color:var(--violet);color:#fff;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+.step.done .step-dot span{display:none}
+.step.done .step-dot svg{display:block}
+.step.cur .step-dot{background:transparent;border-color:transparent;color:#fff}
+.step.cur{color:var(--ink);font-weight:600}
+.steps-msg{text-align:center;margin:26px 0 0;font-weight:600}
+.steps-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
+
+/* toggles */
+.setlist{width:100%;max-width:340px;background:var(--surface);border-radius:24px;padding:4px 20px}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+.setrow+.setrow{border-top:1px solid var(--line)}
+.switch{position:relative;width:60px;height:34px;border-radius:999px;border:0;background:var(--line);cursor:pointer;transition:background .3s;flex:none;padding:0}
+.switch[aria-checked="true"]{background:var(--teal)}
+.knob{position:absolute;left:0;top:50%;width:26px;height:26px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(20,10,60,.3);transform:translate(4px,-50%)}
+
+/* send button */
+.send-stage{grid-template-rows:auto auto;gap:14px;align-content:center}
+.send{position:relative;height:56px;width:200px;border-radius:999px;border:0;background:var(--violet);color:#fff;font-weight:600;cursor:pointer;transition:background .3s;overflow:hidden;padding:0;display:grid;place-items:center}
+.send.done{background:var(--teal)}
+.send-label{transition:opacity .15s;white-space:nowrap}
+.send.busy .send-label{opacity:0}
+.send svg{position:absolute;inset:0;margin:auto;width:26px;height:26px;opacity:0;transition:opacity .2s}
+.send.loading .spin{opacity:1;animation:rot .8s linear infinite}
+.send.done .check{opacity:1}
+.check path{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .4s .1s}
+.send.done .check path{stroke-dashoffset:0}
+@keyframes rot{to{transform:rotate(360deg)}}
+.send-status{min-height:1.7em;color:var(--muted);font-size:15px;text-align:center}
+
+/* checkbox and radio */
+.form-card{width:100%;max-width:340px;background:var(--surface);border-radius:24px;padding:18px 22px}
+.radios{position:relative}
+.form-title{font-weight:700;margin-bottom:4px}
+.radio,.cb{position:relative;display:flex;align-items:center;gap:14px;padding:7px 0;cursor:pointer;line-height:1.35}
+.radio input,.cb input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.radio-ring{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);flex:none;transition:border-color .25s}
+.radio input:checked+.radio-ring{border-color:var(--violet)}
+.radio input:focus-visible+.radio-ring,.cb input:focus-visible+.cb-box{outline:3px solid var(--violet);outline-offset:3px}
+.radio small{display:block;color:var(--muted);font-size:13px}
+.radio-dot{position:absolute;left:0;top:0;width:12px;height:12px;border-radius:6px;background:var(--violet);pointer-events:none}
+.checks{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.cb-box{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;transition:background .2s,border-color .2s}
+.cb-box svg{width:16px;height:16px}
+.cb-box path{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .3s}
+.cb input:checked+.cb-box{background:var(--violet);border-color:var(--violet)}
+.cb input:checked+.cb-box path{stroke-dashoffset:0}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:390px}
+.chip{display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:15px;white-space:nowrap;transition:background .25s,color .25s,border-color .25s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip-ic{display:inline-grid;place-items:center;width:0;height:20px}
+.chip-ic svg{width:18px;height:18px;transform:scale(0);stroke-width:2.6}
+.chips-msg{margin:20px 0 0;text-align:center;color:var(--muted);font-size:15px}
+
+/* search */
+.search-area{width:100%;display:flex;flex-direction:column;align-items:center;gap:20px}
+.search{position:relative;width:52px;height:52px;border-radius:26px;background:var(--surface);overflow:hidden;box-shadow:0 0 0 1px var(--line)}
+.search:focus-within{box-shadow:0 0 0 2px var(--violet)}
+.search-btn{position:absolute;left:0;top:0;width:52px;height:52px;border:0;background:none;display:grid;place-items:center;cursor:pointer;border-radius:26px}
+.search-input{position:absolute;left:48px;right:50px;top:0;height:52px;border:0;background:none;font:inherit;font-size:16px;color:var(--ink);outline:none;opacity:0;min-width:0;padding:0;transition:opacity .15s}
+.search-input::-webkit-search-cancel-button{display:none}
+.search.open .search-input{opacity:1;transition:opacity .25s .12s}
+.search-close{position:absolute;right:6px;top:6px;width:40px;height:40px;border:0;border-radius:50%;background:var(--bg);display:grid;place-items:center;cursor:pointer;opacity:0;transform:scale(.5);transition:opacity .15s,transform .3s;pointer-events:none}
+.search.open .search-close{opacity:1;transform:none;pointer-events:auto;transition:opacity .2s .15s,transform .45s .15s cubic-bezier(.3,1.6,.5,1)}
+.sugg{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:340px;min-height:36px}
+.sugg button{border:0;border-radius:999px;background:var(--surface);padding:5px 14px;font-size:14px;cursor:pointer;opacity:0;transform:translateY(10px) scale(.8);transition:opacity .15s,transform .2s;pointer-events:none}
+.sugg.open button{opacity:1;transform:none;pointer-events:auto;transition:opacity .25s,transform .5s cubic-bezier(.3,1.6,.5,1);transition-delay:calc(var(--i)*50ms + 150ms)}
+
+/* dropdown */
+.dd-stage{display:block;place-items:normal;padding:24px;min-height:410px}
+.dd{position:absolute;left:50%;top:24px;transform:translateX(-50%);width:260px;height:52px;background:var(--surface);border-radius:18px;overflow:hidden;z-index:3;box-shadow:0 0 0 1px var(--line);transition:box-shadow .3s}
+.dd.open{box-shadow:0 0 0 1px var(--line),0 24px 40px -18px rgba(20,10,60,.5)}
+.dd-btn{width:100%;height:52px;border:0;background:none;display:flex;align-items:center;gap:8px;padding:0 16px;cursor:pointer;text-align:left;white-space:nowrap;border-radius:18px}
+.dd-btn span{color:var(--muted);font-size:14px}
+.dd-btn b{font-weight:600}
+.dd-btn svg{margin-left:auto;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.dd.open .dd-btn svg{transform:rotate(180deg)}
+.dd-ind{position:absolute;left:6px;right:6px;top:0;height:42px;border-radius:12px;background:var(--stage-v);pointer-events:none}
+.dd-list{list-style:none;margin:0;padding:4px 6px 8px;outline:none;border-top:1px solid var(--line)}
+.dd-list li{position:relative;z-index:1;height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-radius:12px;cursor:pointer;font-size:15px;white-space:nowrap}
+.dd-list li[aria-selected="true"]{font-weight:700;color:var(--violet)}
+.dd-list li svg{width:18px;height:18px;opacity:0}
+.dd-list li[aria-selected="true"] svg{opacity:1}
+.prods{list-style:none;margin:76px auto 0;padding:0;max-width:360px;display:flex;flex-direction:column;gap:8px}
+.prods li{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--surface);border-radius:16px;padding:9px 16px;line-height:1.4}
+.prods b{font-weight:600;font-size:15px}
+.prods small{display:block;color:var(--muted);font-size:13px}
+.prods .price{font-weight:700;white-space:nowrap}
+
+/* slider */
+.vol{width:100%;max-width:360px;background:var(--surface);border-radius:24px;padding:22px 22px 18px}
+.vol-head{display:flex;align-items:center;gap:10px;font-weight:600}
+.vol-head output{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted)}
+.slider{position:relative;height:56px;margin:22px 14px 0;touch-action:none;cursor:pointer}
+.rail{position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;border-radius:4px;background:var(--line)}
+.fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:4px;background:var(--violet)}
+.thumb{position:absolute;left:0;top:50%;width:28px;height:28px;border-radius:999px;background:var(--violet);box-shadow:0 0 0 5px var(--surface)}
+.bubble{position:absolute;left:0;bottom:44px;min-width:44px;padding:3px 10px;border-radius:12px;background:var(--ink);color:var(--bg);font-weight:700;font-size:15px;text-align:center;transform-origin:50% 100%;transform:scale(0);pointer-events:none;font-variant-numeric:tabular-nums}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;margin-left:-5px;background:inherit;border-radius:2px;transform:rotate(45deg)}
+
+/* quantity */
+.qty-card{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.qty-item b{display:block;font-size:19px;line-height:1.4}
+.qty-item small{color:var(--muted);font-size:15px}
+.qty{display:flex;align-items:center;height:60px;border-radius:30px;background:var(--surface);padding:0 8px;box-shadow:0 0 0 1px var(--line)}
+.qty-b{width:44px;height:44px;border-radius:50%;border:0;background:var(--bg);cursor:pointer;display:grid;place-items:center}
+.qty-n{position:relative;width:60px;height:60px;overflow:hidden;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.qty-n span{position:absolute;inset:0;display:grid;place-items:center}
+.qty-total{font-weight:600}
+
+/* rating */
+.rate{position:relative;display:flex;gap:2px;padding:8px}
+.rate-cap{position:absolute;left:0;top:4px;bottom:4px;width:0;border-radius:999px;background:var(--surface);pointer-events:none}
+.star{position:relative;z-index:1;width:50px;height:50px;border:0;background:none;padding:0;cursor:pointer;display:grid;place-items:center;border-radius:50%}
+.star svg{width:34px;height:34px;fill:var(--line);transition:fill .2s}
+.star.lit svg{fill:var(--sun)}
+.rate-word{margin:16px 0 0;font-weight:700;font-size:18px;min-height:1.7em;text-align:center}
+
+/* carousel */
+.car-stage{display:block;place-items:normal;background:var(--surface);border:1px solid var(--line);padding:24px}
+.cvp{overflow:hidden;border-radius:26px;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
+.cvp:active{cursor:grabbing}
+.ctrack{display:flex;gap:24px;will-change:transform}
+.slide{flex:0 0 100%;height:280px;border-radius:26px;padding:30px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;will-change:transform}
+.slide h4{margin:0;font-stretch:68%;font-weight:800;font-size:clamp(46px,7vw,84px);line-height:1.15}
+.slide p{margin:4px 0 0;opacity:.85}
+.s1{background:#6B4EFF}.s2{background:#0E9C8F}.s3{background:#FFC23C;color:#241E4E}.s4{background:#F0436F}
+.car-ctrl{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px}
+.round{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--bg);display:grid;place-items:center;cursor:pointer}
+.dots{position:relative;display:flex}
+.dot{width:24px;height:24px;border:0;background:none;padding:0;cursor:pointer;position:relative;border-radius:50%}
+.dot::before{content:"";position:absolute;left:8px;top:8px;width:8px;height:8px;border-radius:4px;background:var(--muted);opacity:.35}
+.worm{position:absolute;left:0;top:8px;height:8px;width:8px;border-radius:4px;background:var(--ink);pointer-events:none}
+
+/* sidebar */
+.sb-stage{display:block;place-items:normal;background:var(--stage-t);padding:24px}
+.app{position:relative;height:420px;border-radius:24px;background:var(--surface);overflow:hidden}
+.sb{position:absolute;left:0;top:0;bottom:0;width:248px;z-index:2;color:#fff;display:flex;flex-direction:column;gap:14px;padding:14px 12px}
+.sb-bg{position:absolute;left:0;top:0;height:100%;overflow:visible;z-index:-1;pointer-events:none}
+.sb-bg path{fill:var(--violet)}
+.sb-top{display:flex;align-items:center;gap:6px;height:44px;white-space:nowrap;overflow:hidden;font-weight:700}
+.sb-toggle{width:52px;height:44px;flex:none;border:0;border-radius:14px;background:none;color:#fff;display:grid;place-items:center;cursor:pointer}
+.sb-toggle:hover{background:rgba(255,255,255,.12)}
+.sb-nav{position:relative;display:flex;flex-direction:column;gap:4px}
+.sb-ind{position:absolute;left:0;right:0;top:0;height:44px;border-radius:14px;background:rgba(255,255,255,.2);pointer-events:none}
+.sb-item{position:relative;display:flex;align-items:center;gap:14px;height:44px;padding:0 15px;border:0;background:none;color:rgba(255,255,255,.78);border-radius:14px;cursor:pointer;white-space:nowrap;overflow:hidden;text-align:left;font-size:15px}
+.sb-item.on{color:#fff;font-weight:600}
+.sb-label{transition:opacity .22s,transform .35s cubic-bezier(.3,1.5,.5,1);transition-delay:calc(var(--i,0)*40ms + 60ms)}
+.sb.collapsed .sb-label{opacity:0;transform:translateX(-12px);transition-delay:0s}
+.badge{position:absolute;left:calc(100% - 36px);top:11px;width:22px;height:22px;border-radius:11px;background:var(--pink);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;overflow:hidden;transition:left .45s cubic-bezier(.3,1.5,.5,1),top .45s cubic-bezier(.3,1.5,.5,1),width .3s,height .3s,font-size .2s,transform .4s cubic-bezier(.3,1.8,.5,1)}
+.sb.collapsed .badge{left:31px;top:8px;width:10px;height:10px;font-size:0}
+.badge.gone{transform:scale(0)}
+.sb-user{margin-top:auto;display:flex;align-items:center;gap:12px;padding:0 10px;white-space:nowrap;overflow:hidden;line-height:1.35}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:var(--sun);color:#241E4E;font-weight:700;display:grid;place-items:center;flex:none;font-size:14px}
+.sb-user small{display:block;color:rgba(255,255,255,.7);font-size:12px}
+.sb-user b{font-size:14px}
+.app-main{height:100%;padding:28px 28px 28px 276px;overflow:hidden}
+.app-title{font-stretch:75%;font-weight:700;font-size:28px;line-height:1.3;margin:0;transition:opacity .14s,transform .14s}
+.app-desc{margin:4px 0 0;color:var(--muted);font-size:15px;transition:opacity .14s}
+.app-main.swap .app-title,.app-main.swap .app-desc{opacity:0;transform:translateY(6px)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+.tiles span{height:92px;border-radius:16px;background:var(--bg)}
+.tiles span:first-child{background:var(--stage-v)}
+.lines{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.lines span{height:10px;border-radius:5px;background:var(--line)}
+
+/* goo */
+.goo{position:absolute;inset:0;filter:url(#goo)}
+.goo-main,.goo-item{position:absolute;left:50%;top:60%;border:0;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;transform:translate(-50%,-50%)}
+.goo-main{width:68px;height:68px;z-index:2}
+.goo-item{width:52px;height:52px;transform:translate(-50%,-50%) scale(.5)}
+.goo-main svg{width:28px;height:28px;transition:transform .5s cubic-bezier(.3,1.8,.5,1)}
+.goo-main[aria-expanded="true"] svg{transform:rotate(135deg)}
+.goo-status{position:absolute;left:0;right:0;bottom:16px;text-align:center;margin:0;color:var(--muted);font-size:15px}
+
+/* modal */
+.proj{width:100%;max-width:340px;background:var(--surface);border-radius:24px;padding:20px 22px}
+.proj-thumb{height:96px;border-radius:16px;background:var(--stage-v);display:flex;align-items:flex-end;gap:8px;padding:14px}
+.proj-thumb i{display:block;width:22px;border-radius:6px;background:var(--violet)}
+.proj b{display:block;font-size:18px;margin-top:14px;line-height:1.4}
+.proj small{color:var(--muted);font-size:14px}
+.proj-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.m-status{margin:16px 0 0;color:var(--muted);font-size:15px;min-height:1.7em;text-align:center}
+.scrim{position:fixed;inset:0;background:rgba(18,14,48,.45);opacity:0;pointer-events:none;transition:opacity .3s;z-index:50}
+.scrim.on{opacity:1;pointer-events:auto}
+.modal{position:fixed;left:0;top:0;z-index:51;overflow:hidden;background:var(--pink);color:var(--ink);transition:background .3s;box-shadow:0 30px 60px -20px rgba(20,10,60,.55)}
+.modal.open{background:var(--surface)}
+.modal-label{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:600;font-size:15px;white-space:nowrap;transition:opacity .15s}
+.modal.open .modal-label{opacity:0}
+.modal-in{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:26px 26px 22px;opacity:0;transition:opacity .12s}
+.modal.open .modal-in{opacity:1;transition:opacity .25s .15s}
+.modal-in h3{margin:0 0 6px;font-size:22px;line-height:1.4}
+.modal-in p{margin:0;color:var(--muted);font-size:15px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+
+/* toast */
+.toast-stage{place-items:start center}
+.toasts{position:absolute;left:0;right:0;bottom:28px;height:0}
+.toast{position:absolute;left:50%;bottom:0;height:48px;width:48px;border-radius:24px;background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:10px;padding:0 9px;overflow:hidden;white-space:nowrap;cursor:pointer;font-size:15px;transition:opacity .3s,filter .3s;transform:translate(-50%,60px)}
+.toast-ic{width:30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;flex:none}
+.toast-ic svg{width:16px;height:16px;stroke-width:3}
+.toast-tx{opacity:0;transition:opacity .12s}
+.toast.wide .toast-tx{opacity:1;transition:opacity .25s .12s}
+.toast.out{opacity:0;filter:blur(4px)}
+
+/* tooltip */
+.tb-anchor{position:relative}
+.toolbar{display:flex;gap:4px;padding:6px;background:var(--surface);border-radius:18px;box-shadow:0 0 0 1px var(--line)}
+.toolbar button{width:44px;height:44px;border:0;border-radius:12px;background:none;cursor:pointer;display:grid;place-items:center;font-size:19px;transition:background .2s,color .2s}
+.toolbar button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tip{position:absolute;left:0;bottom:calc(100% + 12px);height:34px;width:60px;border-radius:10px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:600;display:grid;place-items:center;transform-origin:50% 100%;transform:scale(0);pointer-events:none}
+.tip span{overflow:hidden;white-space:nowrap;max-width:100%;padding:0 4px}
+.tip::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;margin-left:-5px;background:inherit;border-radius:2px;transform:rotate(45deg)}
+.tip-measure{position:absolute;left:0;top:0;visibility:hidden;white-space:nowrap;font-size:14px;font-weight:600;pointer-events:none}
+.sample{margin:30px 0 0;max-width:28ch;text-align:center;font-size:18px;line-height:1.7}
+.sample-img{display:none;width:120px;height:64px;margin:0 auto 12px;border-radius:14px;background:var(--sun);position:relative;overflow:hidden}
+.sample-img::before{content:"";position:absolute;left:-10px;bottom:-30px;width:90px;height:60px;border-radius:50%;background:var(--teal)}
+.sample-img::after{content:"";position:absolute;right:16px;top:12px;width:16px;height:16px;border-radius:50%;background:#fff}
+.sample.fx-b .sample-tx{font-weight:700}
+.sample.fx-i .sample-tx{font-style:italic}
+.sample.fx-u .sample-tx{text-decoration:underline;text-underline-offset:6px}
+.sample.fx-link .sample-tx{color:var(--violet)}
+.sample.fx-img .sample-img{display:block;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+
+/* bottom sheet */
+.sheet-stage{padding:24px}
+.sheet-frame{position:relative;width:100%;max-width:340px;height:400px;border-radius:32px;background:var(--surface);overflow:hidden;padding:18px}
+.photo{position:relative;height:150px;border-radius:20px;background:var(--sun);overflow:hidden}
+.photo .sunc{position:absolute;right:30px;top:22px;width:30px;height:30px;border-radius:50%;background:#fff}
+.photo .hill{position:absolute;border-radius:50%}
+.photo .h1{left:-30px;bottom:-60px;width:220px;height:130px;background:#6B4EFF}
+.photo .h2{right:-40px;bottom:-70px;width:220px;height:130px;background:#0E9C8F}
+.photo-meta{margin-top:14px;line-height:1.4}
+.photo-meta b{display:block;font-size:18px}
+.photo-meta small{color:var(--muted);font-size:14px}
+.sheet-open{margin-top:16px}
+.sheet-status{margin:12px 0 0;color:var(--muted);font-size:14px;min-height:1.7em}
+.sheet-scrim{position:absolute;inset:0;background:rgba(18,14,48,.4);opacity:0;pointer-events:none}
+.sheet{position:absolute;left:0;right:0;bottom:0;padding:0 18px 20px;transform:translateY(110%)}
+.sheet-bg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;z-index:-1;pointer-events:none}
+.sheet-bg path{fill:var(--bg)}
+.sheet{z-index:1}
+.sheet-grab{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0 12px;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.sheet-grab:active{cursor:grabbing}
+.handle{width:40px;height:5px;border-radius:3px;background:var(--muted);opacity:.5}
+.share-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.share-t{border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;padding:4px 0;border-radius:14px}
+.share-t span{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.sheet-cancel{width:100%;margin-top:14px}
+
+/* fab */
+.fab-stage{place-items:start;min-height:340px}
+.notes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px}
+.notes li{background:var(--surface);border-radius:16px;padding:10px 16px;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.notes li.pop{animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.6,1.2);opacity:0}}
+.fab{position:absolute;right:20px;bottom:20px;width:60px;height:60px;border-radius:30px;background:var(--violet);color:#fff;overflow:hidden;box-shadow:0 12px 26px -12px rgba(60,30,180,.7)}
+.fab-open{position:absolute;right:0;bottom:0;width:60px;height:60px;border:0;background:none;cursor:pointer;display:grid;place-items:center;transition:opacity .15s,transform .35s}
+.fab.open .fab-open{opacity:0;transform:rotate(90deg)}
+.fab-panel{position:absolute;right:0;bottom:0;width:300px;height:236px;padding:16px 18px 18px;display:flex;flex-direction:column;gap:12px;opacity:0;transition:opacity .1s}
+.fab.open .fab-panel{opacity:1;transition:opacity .25s .16s}
+.fab-head{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.fab-close{width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.16);display:grid;place-items:center;cursor:pointer}
+.fab textarea{flex:1;resize:none;border:0;border-radius:14px;padding:10px 12px;font:inherit;font-size:15px;background:rgba(255,255,255,.16);color:#fff}
+.fab textarea::placeholder{color:rgba(255,255,255,.75)}
+.fab textarea:focus-visible{outline:2px solid #fff;outline-offset:0}
+.fab-save{align-self:flex-end;border:0;border-radius:999px;background:#fff;color:#4A32D6;font-weight:700;padding:6px 22px;cursor:pointer}
+
+/* accordion */
+.acc-stage{place-items:start center;min-height:420px}
+.acc{width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px}
+.acc-item{background:var(--surface);border-radius:20px}
+.acc-item h4{margin:0;font-size:inherit}
+.acc-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 20px;border:0;background:none;cursor:pointer;font-weight:600;text-align:left;border-radius:20px;line-height:1.4}
+.acc-btn svg{transition:transform .5s cubic-bezier(.3,1.7,.5,1)}
+.acc-item.open .acc-btn svg{transform:rotate(180deg)}
+.acc-panel{height:0;overflow:hidden}
+.acc-in{padding:0 20px 18px;color:var(--muted);font-size:15px}
+
+/* add to cart */
+.shop-stage{display:block;place-items:normal;padding:24px}
+.shop{position:relative;background:var(--surface);border-radius:24px;padding:20px 22px 24px}
+.shop-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;line-height:1.4}
+.shop-head b{display:block;font-size:19px}
+.shop-head small{color:var(--muted);font-size:14px;transition:color .3s}
+.shop-head small.free{color:var(--teal);font-weight:600}
+.cart-wrap{position:relative;flex:none}
+.cart{position:relative;height:48px;width:48px;border-radius:24px;background:var(--ink);color:var(--bg);overflow:hidden;white-space:nowrap}
+.cart-ic{position:absolute;right:12px;top:12px;width:24px;height:24px}
+.cart-ic svg{width:24px;height:24px}
+.cart-tx{position:absolute;right:46px;top:0;line-height:48px;font-size:15px;font-weight:700;opacity:0;transition:opacity .15s;font-variant-numeric:tabular-nums}
+.cart.has .cart-tx{opacity:1;transition:opacity .25s .1s}
+.cart-badge{position:absolute;right:-6px;top:-7px;z-index:2;min-width:22px;height:22px;border-radius:11px;background:var(--pink);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;padding:0 5px;transform:scale(0);box-shadow:0 0 0 3px var(--surface)}
+.cart-ring{position:absolute;right:0;top:0;width:48px;height:48px;border-radius:50%;border:2px solid var(--violet);opacity:0;pointer-events:none}
+.cart-ring.go{animation:ring .65s cubic-bezier(.2,.7,.3,1)}
+@keyframes ring{from{transform:scale(.8);opacity:.8}to{transform:scale(1.9);opacity:0}}
+.cart-measure{position:absolute;left:0;top:0;visibility:hidden;white-space:nowrap;font-size:15px;font-weight:700;pointer-events:none;font-variant-numeric:tabular-nums}
+.shop-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.prod{display:flex;flex-direction:column;line-height:1.4}
+.prod-img{position:relative;height:136px;border-radius:20px;margin-bottom:12px;display:grid;place-items:center}
+.prod-img svg{width:132px;height:99px;overflow:visible;transform-origin:50% 80%}
+.prod b{font-size:16px}
+.prod small{color:var(--muted);font-size:14px}
+.atc{position:relative;height:46px;margin-top:12px}
+.atc-body{position:absolute;left:50%;top:0;bottom:0;width:100%;border-radius:23px;background:var(--violet);transform:translateX(-50%);transition:background .3s;overflow:hidden}
+.atc.adding .atc-body{background:var(--teal)}
+.atc.on .atc-body{background:var(--bg)}
+.atc-body button:focus-visible{outline-offset:-3px}
+.atc-add{position:absolute;inset:0;border:0;background:none;color:#fff;font-weight:600;font-size:15px;cursor:pointer;white-space:nowrap;border-radius:23px;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .15s}
+.atc-add svg{width:18px;height:18px;stroke-width:2.6}
+.atc.busy .atc-add,.atc.on .atc-add{opacity:0;pointer-events:none}
+.atc-check{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.atc-check path{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .15s}
+.atc.adding .atc-check path{stroke-dashoffset:0;transition:stroke-dashoffset .3s .15s}
+.atc-ctl{position:absolute;top:5px;width:36px;height:36px;border-radius:50%;border:0;background:var(--surface);color:var(--violet);display:grid;place-items:center;cursor:pointer;opacity:0;padding:0;pointer-events:none;transition:opacity .15s;box-shadow:0 1px 2px rgba(20,10,60,.14)}
+.atc-ctl svg{width:18px;height:18px;stroke-width:2.6}
+.atc-minus{left:5px}.atc-plus{right:5px}
+.atc-n{position:absolute;left:50%;top:0;line-height:46px;transform:translateX(-50%);font-weight:700;font-size:17px;opacity:0;transition:opacity .15s;font-variant-numeric:tabular-nums;pointer-events:none}
+.atc.on:not(.busy) .atc-ctl,.atc.on:not(.busy) .atc-n{opacity:1;transition:opacity .2s .08s}
+.atc.on:not(.busy) .atc-ctl{pointer-events:auto}
+.fly{position:absolute;left:0;top:0;z-index:5;display:grid;place-items:center;overflow:hidden;pointer-events:none;border-radius:20px;box-shadow:0 16px 30px -12px rgba(20,10,60,.5);transition:opacity .16s}
+.fly svg{width:84%;height:84%}
+.fly.gone{opacity:0}
+@media (max-width:640px){
+  .shop{padding:18px}
+  .shop-grid{grid-template-columns:minmax(0,1fr);gap:16px}
+  .prod{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:14px;align-content:start}
+  .prod-img{grid-row:1/4;height:96px;margin:0}
+  .prod-img svg{width:86px;height:65px}
+  .atc{margin-top:8px}
+}
+
+footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;gap:36px;padding-bottom:72px}
+  .grid{grid-template-columns:minmax(0,1fr);gap:52px}
+}
+@media (max-width:480px){
+  .wrap{padding:0 16px}
+  .stage{padding:18px;border-radius:26px}
+  .slide{height:240px;padding:22px}
+  .tabs button{padding:8px 10px}
+  .phone{border-radius:34px}
+  .step{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01s!important;transition-delay:0s!important}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="goo">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="b"/>
+      <feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10" result="g"/>
+      <feComposite in="SourceGraphic" in2="g" operator="atop"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M6 15c0-6.5 4.2-10 9.5-10S24 8 24 12.5c0 3-2.6 4.4-2.6 7.6S18.6 25 14 25 6 21.5 6 15z" fill="var(--violet)"/><circle cx="24.5" cy="22.5" r="3" fill="var(--pink)"/></svg>
+      ยืดหยุ่น
+    </div>
+    <div class="bounce">
+      <span id="bounceLabel">ความเด้ง</span>
+      <div class="seg" id="bounceSeg" role="group" aria-labelledby="bounceLabel">
+        <span class="seg-ind"></span>
+        <button data-seg>นุ่ม</button>
+        <button data-seg>เด้ง</button>
+        <button data-seg>ยืดสุด</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>ยืด หด<br>แล้วเด้งกลับ</h1>
+      <p class="lede">รวม UI 22 แบบที่เปลี่ยนรูปทรงด้วยแรงสปริง ทุกชิ้นยืดออกระหว่างทรานสิชันแล้วหดกลับเข้าที่ ลองกด ลาก และปัดดูได้ทุกชิ้น</p>
+      <nav class="index" aria-label="หมวด UI">
+        <a href="#navigation">นำทาง</a>
+        <a href="#controls">ปุ่มและฟอร์ม</a>
+        <a href="#overlays">ป๊อปอัปและเนื้อหา</a>
+      </nav>
+    </div>
+
+    <div class="phone" id="phone">
+      <div class="statusbar" aria-hidden="true">
+        <span>9:41</span>
+        <svg width="26" height="13" viewBox="0 0 26 13"><rect x=".5" y=".5" width="22" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".5"/><rect x="2.5" y="2.5" width="15" height="8" rx="2" fill="currentColor"/><rect x="24" y="4.5" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg>
+      </div>
+      <div class="island" id="island">
+        <div class="pane on" data-pane="idle"></div>
+        <div class="pane pane-music" data-pane="music" inert>
+          <div class="art" aria-hidden="true"><span></span></div>
+          <div class="meta"><b>ลมหนาวที่เชียงดาว</b><small>นภาวาด</small></div>
+          <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="pane pane-timer" data-pane="timer" inert>
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>
+          <span id="timerText">05:00</span>
+        </div>
+        <div class="pane pane-call" data-pane="call" inert>
+          <div class="caller">
+            <div class="avatar" aria-hidden="true">แม่</div>
+            <div><b>แม่</b><small>สายเรียกเข้า มือถือ</small></div>
+          </div>
+          <div class="call-actions">
+            <button class="decline" aria-label="ปฏิเสธสาย"><svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></button>
+            <button class="accept" aria-label="รับสาย"><svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="seg" id="islandSeg" role="group" aria-label="สถานะของแคปซูลด้านบน">
+        <span class="seg-ind"></span>
+        <button data-seg>พัก</button>
+        <button data-seg>เพลง</button>
+        <button data-seg>จับเวลา</button>
+        <button data-seg>สายเข้า</button>
+      </div>
+    </div>
+  </section>
+
+  <main>
+  <!-- ===================== NAVIGATION ===================== -->
+  <section class="group" id="navigation">
+    <div class="group-head"><h2>นำทาง</h2><p>4 แบบ</p></div>
+    <div class="grid">
+      <article class="spec">
+        <div class="stage tab-stage" style="background:var(--stage-v)">
+          <div class="tab-out" id="tabOut" aria-live="polite">มีอะไรใหม่วันนี้</div>
+          <div class="seg tabs" id="tabs" role="tablist" aria-label="เมนูหลัก">
+            <span class="seg-ind"></span>
+            <button data-seg role="tab"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>หน้าแรก</button>
+            <button data-seg role="tab"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>ค้นหา</button>
+            <button data-seg role="tab"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16M10 4v16M15 5l4 15"/></svg>คลัง</button>
+            <button data-seg role="tab"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>โปรไฟล์</button>
+          </div>
+        </div>
+        <h3>แถบนำทางแบบหนอน</h3>
+        <p>ขอบด้านหน้าของตัวชี้วิ่งนำ ขอบด้านหลังตามไปทีหลัง ตัวชี้เลยยืดออกระหว่างทางแล้วหดเข้าที่ปลายทาง</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-p)">
+          <div class="stepper">
+            <div class="steps" id="steps">
+              <div class="steps-rail"><div class="steps-fill" id="stepsFill"></div></div>
+              <span class="steps-blob" id="stepsBlob"></span>
+              <div class="step"><span class="step-dot"><span>1</span><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ตะกร้า</div>
+              <div class="step"><span class="step-dot"><span>2</span><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ที่อยู่</div>
+              <div class="step"><span class="step-dot"><span>3</span><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ชำระเงิน</div>
+              <div class="step"><span class="step-dot"><span>4</span><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>เสร็จ</div>
+            </div>
+            <p class="steps-msg" id="stepsMsg" aria-live="polite">ตรวจสินค้าในตะกร้า 3 ชิ้น</p>
+            <div class="steps-btns"><button class="btn-ghost" id="stepBack">ย้อนกลับ</button><button class="btn-solid" id="stepNext">ถัดไป</button></div>
+          </div>
+        </div>
+        <h3>ขั้นตอนที่ตัวชี้ไหลไปข้างหน้า</h3>
+        <p>วงกลมสีม่วงยืดเป็นแคปซูลระหว่างย้ายขั้น เส้นความคืบหน้าพุ่งเลยไปนิดแล้วดีดกลับ ขั้นที่ผ่านแล้วเด้งเป็นเครื่องหมายถูก</p>
+      </article>
+
+      <article class="spec wide">
+        <div class="stage sb-stage">
+          <div class="app" id="app">
+            <aside class="sb" id="sb">
+              <svg class="sb-bg" id="sbSvg" aria-hidden="true"><path id="sbPath"/></svg>
+              <div class="sb-top">
+                <button class="sb-toggle" id="sbToggle" aria-expanded="true" aria-controls="sbNav" aria-label="ย่อแถบข้าง"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button>
+                <span class="sb-label" style="--i:0">งานของฉัน</span>
+              </div>
+              <nav class="sb-nav" id="sbNav" aria-label="เมนูแอป">
+                <span class="sb-ind" id="sbInd"></span>
+                <button class="sb-item"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><span class="sb-label" style="--i:1">ภาพรวม</span></button>
+                <button class="sb-item"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l2.5-8h11L20 13v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/></svg><span class="sb-label" style="--i:2">กล่องข้อความ</span><span class="badge" id="sbBadge" aria-label="ข้อความใหม่ 3 ฉบับ">3</span></button>
+                <button class="sb-item"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span class="sb-label" style="--i:3">ปฏิทิน</span></button>
+                <button class="sb-item"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="sb-label" style="--i:4">โปรเจกต์</span></button>
+                <button class="sb-item"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg><span class="sb-label" style="--i:5">ตั้งค่า</span></button>
+              </nav>
+              <div class="sb-user"><span class="sb-avatar" aria-hidden="true">ม</span><span class="sb-label" style="--i:6"><b>มายด์ ใจดี</b><small>ทีมออกแบบ</small></span></div>
+            </aside>
+            <section class="app-main" id="appMain">
+              <h4 class="app-title" id="appTitle">ภาพรวม</h4>
+              <p class="app-desc" id="appDesc" aria-live="polite">งานที่ต้องทำวันนี้ 4 อย่าง ประชุมถัดไปบ่ายสองโมง</p>
+              <div class="tiles" aria-hidden="true"><span></span><span></span><span></span></div>
+              <div class="lines" aria-hidden="true"><span style="width:92%"></span><span style="width:78%"></span><span style="width:85%"></span><span style="width:60%"></span></div>
+            </section>
+          </div>
+        </div>
+        <h3>แถบข้างที่ขอบเป็นเยลลี่</h3>
+        <p>กดปุ่มมุมซ้ายบนเพื่อย่อหรือขยาย ขอบขวาโค้งตามความเร็วแล้วสั่นกลับเป็นเส้นตรง ตัวชี้เมนูเป็นหนอนแนวตั้ง ป้ายแจ้งเตือนหดเป็นจุดตอนย่อ บนจอแคบแถบข้างจะลอยทับเนื้อหาแทน</p>
+      </article>
+
+      <article class="spec wide">
+        <div class="stage car-stage">
+          <div class="cvp" id="cvp" aria-roledescription="ภาพเลื่อน" aria-label="ที่เที่ยวในไทย">
+            <div class="ctrack" id="ctrack">
+              <div class="slide s1" aria-label="1 จาก 4"><h4>เชียงใหม่</h4><p>ทะเลหมอกบนดอยตอนเช้า</p></div>
+              <div class="slide s2" aria-label="2 จาก 4"><h4>กระบี่</h4><p>น้ำใสกับเขาหินปูนกลางทะเล</p></div>
+              <div class="slide s3" aria-label="3 จาก 4"><h4>น่าน</h4><p>เมืองเก่าที่ปั่นจักรยานได้ทั้งวัน</p></div>
+              <div class="slide s4" aria-label="4 จาก 4"><h4>กรุงเทพฯ</h4><p>ของกินริมทางหลังเที่ยงคืน</p></div>
+            </div>
+          </div>
+          <div class="car-ctrl">
+            <button class="round" id="prev" aria-label="ภาพก่อนหน้า"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+            <div class="dots" id="dots">
+              <span class="worm" id="worm"></span>
+              <button class="dot" aria-label="ไปภาพที่ 1"></button>
+              <button class="dot" aria-label="ไปภาพที่ 2"></button>
+              <button class="dot" aria-label="ไปภาพที่ 3"></button>
+              <button class="dot" aria-label="ไปภาพที่ 4"></button>
+            </div>
+            <button class="round" id="next" aria-label="ภาพถัดไป"><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+        <h3>การ์ดเลื่อนแบบเยลลี่</h3>
+        <p>ปัดหรือกดลูกศร การ์ดเอียงและยุบตามความเร็วของการเลื่อน ลากเกินขอบแล้วจะมีแรงต้านเหมือนยางยืด จุดบอกหน้าใช้หนอนตัวเดียวกับแถบนำทาง</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== CONTROLS ===================== -->
+  <section class="group" id="controls">
+    <div class="group-head"><h2>ปุ่มและฟอร์ม</h2><p>11 แบบ</p></div>
+    <div class="grid">
+      <article class="spec">
+        <div class="stage send-stage" style="background:var(--stage-p)">
+          <button class="send" id="send">
+            <span class="send-label">ส่งข้อความ</span>
+            <svg class="spin" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray="40 100"/></svg>
+            <svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          </button>
+          <div class="send-status" id="sendStatus" aria-live="polite"></div>
+        </div>
+        <h3>ปุ่มที่หดเป็นวงโหลด</h3>
+        <p>ความกว้างหดด้วยสปริง ส่วนความสูงพองชดเชยเพื่อรักษาปริมาตร ก่อนกลายเป็นเครื่องหมายถูกแล้วยืดกลับเป็นปุ่มเดิม</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-t)">
+          <div class="setlist">
+            <div class="setrow"><span id="lb1">โหมดมืด</span><button class="switch" role="switch" aria-labelledby="lb1"><span class="knob"></span></button></div>
+            <div class="setrow"><span id="lb2">การแจ้งเตือน</span><button class="switch" role="switch" aria-labelledby="lb2"><span class="knob"></span></button></div>
+            <div class="setrow"><span id="lb3">เล่นวิดีโออัตโนมัติ</span><button class="switch" role="switch" aria-labelledby="lb3"><span class="knob"></span></button></div>
+          </div>
+        </div>
+        <h3>สวิตช์ที่ยืดตอนเลื่อน</h3>
+        <p>ปุ่มกลมยืดเป็นแคปซูลและบางลงนิดหนึ่งเหมือนยาง สวิตช์โหมดมืดเปลี่ยนธีมของหน้านี้จริง</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-v)">
+          <div class="form-card">
+            <div class="radios" id="radios" role="radiogroup" aria-labelledby="shipTitle">
+              <div class="form-title" id="shipTitle">วิธีจัดส่ง</div>
+              <span class="radio-dot" id="radioDot"></span>
+              <label class="radio"><input type="radio" name="ship" checked><span class="radio-ring"></span><span>ส่งธรรมดา<small>3–5 วัน ส่งฟรี</small></span></label>
+              <label class="radio"><input type="radio" name="ship"><span class="radio-ring"></span><span>ส่งด่วน<small>ภายในวันพรุ่งนี้ 40 บาท</small></span></label>
+              <label class="radio"><input type="radio" name="ship"><span class="radio-ring"></span><span>รับที่ร้าน<small>พร้อมรับใน 2 ชั่วโมง</small></span></label>
+            </div>
+            <div class="checks">
+              <div class="form-title">ตัวเลือกเพิ่ม</div>
+              <label class="cb"><input type="checkbox"><span class="cb-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ห่อของขวัญ</label>
+              <label class="cb"><input type="checkbox" checked><span class="cb-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ขอใบกำกับภาษี</label>
+            </div>
+          </div>
+        </div>
+        <h3>ตัวเลือกที่จุดไหลได้</h3>
+        <p>จุดของปุ่มตัวเลือกไหลจากวงหนึ่งไปอีกวงเหมือนหยดน้ำ ใช้ปุ่มลูกศรก็ได้ ส่วนช่องติ๊กจะบีบตัวแล้วเด้งตอนกด</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-p)">
+          <div class="col">
+            <div class="chips" id="chips" role="group" aria-label="ตัวกรองร้านอาหาร">
+              <button class="chip" aria-pressed="false"><span class="chip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>เปิดอยู่</button>
+              <button class="chip" aria-pressed="false"><span class="chip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ส่งฟรี</button>
+              <button class="chip" aria-pressed="false"><span class="chip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ลดราคา</button>
+              <button class="chip" aria-pressed="false"><span class="chip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>มังสวิรัติ</button>
+              <button class="chip" aria-pressed="false"><span class="chip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>ใกล้ฉัน</button>
+              <button class="chip" aria-pressed="false"><span class="chip-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>คะแนน 4.5 ขึ้นไป</button>
+            </div>
+            <p class="chips-msg" id="chipsMsg" aria-live="polite">พบ 48 ร้าน</p>
+          </div>
+        </div>
+        <h3>ชิปตัวกรองที่พองตัว</h3>
+        <p>ตอนเลือก ไอคอนติ๊กดันตัวเองเข้ามาด้วยสปริง ชิปเลยพองออกแล้วหดเข้าที่ ชิปข้างๆ ขยับหลบตามจริง</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-t)">
+          <div class="search-area">
+            <div class="search" id="search">
+              <button class="search-btn" aria-label="ค้นหา" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
+              <input class="search-input" type="search" placeholder="ค้นหาเมนูหรือร้าน" aria-label="ค้นหาเมนูหรือร้าน" tabindex="-1">
+              <button class="search-close" aria-label="ปิดการค้นหา" tabindex="-1"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="sugg" id="sugg" aria-label="คำค้นแนะนำ">
+              <button tabindex="-1" style="--i:0">ส้มตำ</button>
+              <button tabindex="-1" style="--i:1">ข้าวมันไก่</button>
+              <button tabindex="-1" style="--i:2">กาแฟเย็น</button>
+              <button tabindex="-1" style="--i:3">ชาบู</button>
+            </div>
+          </div>
+        </div>
+        <h3>ช่องค้นหาที่แตกออกจากไอคอน</h3>
+        <p>ไอคอนแว่นขยายยืดเป็นช่องพิมพ์ ความสูงบีบตัวชดเชยระหว่างยืด คำแนะนำด้านล่างเด้งขึ้นมาทีละอัน</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage dd-stage" style="background:var(--stage-v)">
+          <div class="dd" id="dd">
+            <button class="dd-btn" id="ddBtn" aria-haspopup="listbox" aria-expanded="false"><span>เรียงตาม</span><b id="ddVal">ใหม่ล่าสุด</b><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <span class="dd-ind" id="ddInd"></span>
+            <ul class="dd-list" id="ddList" role="listbox" aria-label="เรียงตาม" tabindex="-1" inert>
+              <li role="option" id="dd-o0" aria-selected="true">ใหม่ล่าสุด<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></li>
+              <li role="option" id="dd-o1" aria-selected="false">ราคาต่ำไปสูง<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></li>
+              <li role="option" id="dd-o2" aria-selected="false">ราคาสูงไปต่ำ<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></li>
+              <li role="option" id="dd-o3" aria-selected="false">ขายดีที่สุด<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></li>
+              <li role="option" id="dd-o4" aria-selected="false">คะแนนรีวิว<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></li>
+            </ul>
+          </div>
+          <ul class="prods" id="prods" aria-label="รายการเมนู"></ul>
+        </div>
+        <h3>เมนูเลือกที่ไหลลงจากปุ่ม</h3>
+        <p>ปุ่มยืดลงมาเป็นรายการและบีบด้านข้างเล็กน้อยระหว่างยืด ตัวไฮไลต์วิ่งตามเมาส์หรือปุ่มลูกศร เลือกแล้วรายการด้านล่างสลับตำแหน่งแบบยืดหยุ่น</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-v)">
+          <div class="vol">
+            <div class="vol-head">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+              <span id="volLabel">ระดับเสียง</span>
+              <output id="volOut">40</output>
+            </div>
+            <div class="slider" id="slider" role="slider" tabindex="0" aria-labelledby="volLabel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40">
+              <div class="rail"><div class="fill"></div></div>
+              <div class="thumb"></div>
+              <div class="bubble" aria-hidden="true">40</div>
+            </div>
+          </div>
+        </div>
+        <h3>แถบเลื่อนที่ยืดตามความเร็ว</h3>
+        <p>ยิ่งลากเร็ว หัวจับยิ่งยืดยาว ป้ายตัวเลขด้านบนเอนตามแรงเหวี่ยงเหมือนลูกตุ้มกลับหัว ใช้ปุ่มลูกศรบนคีย์บอร์ดได้ด้วย</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-p)">
+          <div class="qty-card">
+            <div class="qty-item"><b>ข้าวมันไก่ไข่ต้ม</b><small>จานละ 60 บาท</small></div>
+            <div class="qty" id="qty" role="group" aria-label="จำนวน">
+              <button class="qty-b" data-d="-1" aria-label="ลดจำนวน"><svg class="i" viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+              <div class="qty-n"><span class="qty-old" aria-hidden="true"></span><span class="qty-cur" id="qtyCur">1</span></div>
+              <button class="qty-b" data-d="1" aria-label="เพิ่มจำนวน"><svg class="i" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></button>
+            </div>
+            <div class="qty-total" id="qtyTotal" aria-live="polite">1 จาน รวม 60 บาท</div>
+          </div>
+        </div>
+        <h3>ตัวนับจำนวนที่ถูกดัน</h3>
+        <p>กดบวกแล้วแคปซูลยืดไปทางขวา กดลบยืดไปทางซ้าย ตัวเลขม้วนขึ้นลงตามทิศ ถึงขีดจำกัด 1 หรือ 9 แล้วจะส่ายหัวแทน</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-t)">
+          <div class="col">
+            <div class="rate" id="rate" role="radiogroup" aria-label="ให้คะแนนร้านนี้">
+              <span class="rate-cap" id="rateCap"></span>
+              <button class="star" role="radio" aria-checked="false" aria-label="1 ดาว"><svg viewBox="0 0 24 24"><path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1L3.2 9.2l6.1-.8z"/></svg></button>
+              <button class="star" role="radio" aria-checked="false" aria-label="2 ดาว"><svg viewBox="0 0 24 24"><path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1L3.2 9.2l6.1-.8z"/></svg></button>
+              <button class="star" role="radio" aria-checked="false" aria-label="3 ดาว"><svg viewBox="0 0 24 24"><path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1L3.2 9.2l6.1-.8z"/></svg></button>
+              <button class="star" role="radio" aria-checked="false" aria-label="4 ดาว"><svg viewBox="0 0 24 24"><path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1L3.2 9.2l6.1-.8z"/></svg></button>
+              <button class="star" role="radio" aria-checked="false" aria-label="5 ดาว"><svg viewBox="0 0 24 24"><path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1L3.2 9.2l6.1-.8z"/></svg></button>
+            </div>
+            <p class="rate-word" id="rateWord" aria-live="polite">แตะดาวเพื่อให้คะแนน</p>
+          </div>
+        </div>
+        <h3>ดาวที่มีแคปซูลยืดตาม</h3>
+        <p>ชี้เมาส์ไปบนดาว แคปซูลด้านหลังยืดตามไปทันที คลิกแล้วดาวเด้งทีละดวงไล่จากซ้ายไปขวา</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-v)">
+          <div class="goo" id="goo">
+            <button class="goo-item" aria-label="ถ่ายรูป" tabindex="-1" inert><svg class="i" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+            <button class="goo-item" aria-label="แชร์" tabindex="-1" inert><svg class="i" viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/></svg></button>
+            <button class="goo-item" aria-label="ถูกใจ" tabindex="-1" inert><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button>
+            <button class="goo-main" aria-label="เปิดเมนู" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <p class="goo-status" id="gooStatus" aria-live="polite">แตะปุ่มชมพูเพื่อกางเมนู</p>
+        </div>
+        <h3>เมนูหยดน้ำ</h3>
+        <p>ฟิลเตอร์เบลอทุกปุ่มแล้วเร่งความคมของขอบกลับ ปุ่มที่อยู่ใกล้กันจึงหลอมติดกันและขาดออกเหมือนของเหลว</p>
+      </article>
+
+      <article class="spec wide">
+        <div class="stage shop-stage" style="background:var(--stage-t)">
+          <div class="shop" id="shop">
+            <div class="shop-head">
+              <div><b>ร้านขนมป้าแดง</b><small id="shipNote">ส่งฟรีเมื่อซื้อครบ 200 บาท</small></div>
+              <div class="cart-wrap">
+                <span class="cart-ring" id="cartRing"></span>
+                <div class="cart" id="cart">
+                  <span class="cart-tx" id="cartTx"></span>
+                  <span class="cart-ic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></span>
+                </div>
+                <span class="cart-badge" id="cartBadge" aria-hidden="true">0</span>
+              </div>
+              <span class="cart-measure" id="cartMeasure" aria-hidden="true"></span>
+            </div>
+            <div class="shop-grid">
+              <div class="prod" data-name="ข้าวเหนียวมะม่วง" data-price="80" data-tile="#FFE9A8">
+                <div class="prod-img" style="background:#FFE9A8"><svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="75" rx="50" ry="10" fill="#000" opacity=".07"/><ellipse cx="60" cy="70" rx="52" ry="13" fill="#fff"/><ellipse cx="60" cy="68" rx="40" ry="8" fill="#F5EFE3"/><path d="M18 68c0-15 10-24 22-24s22 9 22 24z" fill="#FFFBF1"/><path d="M24 55c5 4 13 5 21 1" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="31" cy="50" r="1.4" fill="#C9A15A"/><circle cx="38" cy="47.5" r="1.4" fill="#C9A15A"/><circle cx="45" cy="51" r="1.4" fill="#C9A15A"/><path d="M52 66c3-17 18-29 38-28 7 0 8 6 3 10-11 10-25 16-41 18z" fill="#FFB020"/><path d="M60 59c6-10 16-16 29-17" fill="none" stroke="#FFD66B" stroke-width="3" stroke-linecap="round"/><path d="M62 71c6-12 18-20 34-20 6 0 7 5 2 8-10 7-22 11-36 12z" fill="#FFC23C"/></svg></div>
+                <b>ข้าวเหนียวมะม่วง</b><small>80 บาท</small>
+                <div class="atc"><div class="atc-body">
+                  <button class="atc-add"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg>เพิ่มลงตะกร้า</button>
+                  <svg class="atc-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                  <button class="atc-ctl atc-minus" aria-label="ลดจำนวนข้าวเหนียวมะม่วง" inert><svg class="i" viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+                  <span class="atc-n">0</span>
+                  <button class="atc-ctl atc-plus" aria-label="เพิ่มจำนวนข้าวเหนียวมะม่วง" inert><svg class="i" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></button>
+                </div></div>
+              </div>
+              <div class="prod" data-name="ชาไทยปั่น" data-price="35" data-tile="#FDE1CD">
+                <div class="prod-img" style="background:#FDE1CD"><svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="85" rx="20" ry="3.5" fill="#000" opacity=".08"/><rect x="61" y="1" width="5" height="34" rx="2.5" fill="#6B4EFF" transform="rotate(14 63 18)"/><path d="M41 29h38l-5 49a5 5 0 0 1-5 4.5H51a5 5 0 0 1-5-4.5z" fill="#F0823F"/><path d="M41 29h38l-1.6 15H42.6z" fill="#FBE6D2"/><rect x="50" y="50" width="9" height="9" rx="2" fill="#fff" opacity=".35" transform="rotate(-12 54 54)"/><rect x="62" y="60" width="8" height="8" rx="2" fill="#fff" opacity=".3" transform="rotate(10 66 64)"/><path d="M38 29c0-11 10-18 22-18s22 7 22 18z" fill="#fff" opacity=".88"/><rect x="36" y="26" width="48" height="6" rx="3" fill="#fff"/></svg></div>
+                <b>ชาไทยปั่น</b><small>35 บาท</small>
+                <div class="atc"><div class="atc-body">
+                  <button class="atc-add"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg>เพิ่มลงตะกร้า</button>
+                  <svg class="atc-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                  <button class="atc-ctl atc-minus" aria-label="ลดจำนวนชาไทยปั่น" inert><svg class="i" viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+                  <span class="atc-n">0</span>
+                  <button class="atc-ctl atc-plus" aria-label="เพิ่มจำนวนชาไทยปั่น" inert><svg class="i" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></button>
+                </div></div>
+              </div>
+              <div class="prod" data-name="ขนมครก" data-price="40" data-tile="#D4F1EC">
+                <div class="prod-img" style="background:#D4F1EC"><svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="72" rx="54" ry="13" fill="#3FAF7A"/><path d="M12 72h96" stroke="#2E9466" stroke-width="2" opacity=".6"/><circle cx="47" cy="46" r="14" fill="#E9B65A"/><circle cx="47" cy="43.5" r="12.5" fill="#FFF6DF"/><circle cx="50" cy="40" r="2.2" fill="#5CC08A"/><circle cx="73" cy="44" r="14" fill="#E9B65A"/><circle cx="73" cy="41.5" r="12.5" fill="#FFF6DF"/><circle cx="76" cy="38" r="2.2" fill="#5CC08A"/><circle cx="34" cy="62" r="14" fill="#E9B65A"/><circle cx="34" cy="59.5" r="12.5" fill="#FFF6DF"/><circle cx="37" cy="56" r="2.2" fill="#5CC08A"/><circle cx="60" cy="66" r="14" fill="#E9B65A"/><circle cx="60" cy="63.5" r="12.5" fill="#FFF6DF"/><circle cx="63" cy="60" r="2.2" fill="#5CC08A"/><circle cx="86" cy="60" r="14" fill="#E9B65A"/><circle cx="86" cy="57.5" r="12.5" fill="#FFF6DF"/><circle cx="89" cy="54" r="2.2" fill="#5CC08A"/></svg></div>
+                <b>ขนมครก</b><small>40 บาท</small>
+                <div class="atc"><div class="atc-body">
+                  <button class="atc-add"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg>เพิ่มลงตะกร้า</button>
+                  <svg class="atc-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                  <button class="atc-ctl atc-minus" aria-label="ลดจำนวนขนมครก" inert><svg class="i" viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+                  <span class="atc-n">0</span>
+                  <button class="atc-ctl atc-plus" aria-label="เพิ่มจำนวนขนมครก" inert><svg class="i" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></button>
+                </div></div>
+              </div>
+            </div>
+            <p class="sr" id="cartLive" aria-live="polite"></p>
+          </div>
+        </div>
+        <h3>ปุ่มเพิ่มลงตะกร้าที่โยนของเข้าไป</h3>
+        <p>กดแล้วรูปสินค้าลอยขึ้น หดเป็นเม็ดกลมระหว่างโค้งลงตะกร้า และยืดตามทิศที่พุ่ง ปุ่มหดเป็นวงพร้อมเครื่องหมายถูกก่อนยืดออกเป็นตัวนับจำนวน ตะกร้าบีบตัวรับ มีวงคลื่นกระจายออก และแคปซูลยืดตามยอดรวม</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== OVERLAYS & CONTENT ===================== -->
+  <section class="group" id="overlays">
+    <div class="group-head"><h2>ป๊อปอัปและเนื้อหา</h2><p>6 แบบ</p></div>
+    <div class="grid">
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-p)">
+          <div class="col">
+            <div class="proj">
+              <div class="proj-thumb" aria-hidden="true"><i style="height:30%"></i><i style="height:60%"></i><i style="height:45%"></i><i style="height:80%"></i></div>
+              <b>โปรเจกต์ปลายภาค</b>
+              <small>24 ไฟล์ แก้ไขล่าสุดเมื่อวาน</small>
+              <div class="proj-actions"><button class="btn-danger" id="mTrig" aria-haspopup="dialog">ลบโปรเจกต์</button></div>
+            </div>
+            <p class="m-status" id="mStatus" aria-live="polite"></p>
+          </div>
+        </div>
+        <h3>ปุ่มที่ขยายเป็นหน้าต่าง</h3>
+        <p>ปุ่มลบลอยออกจากการ์ดแล้วยืดเป็นหน้าต่างยืนยันกลางจอ กว้างกับสูงยืดคนละจังหวะ ตอนปิดหดกลับไปเป็นปุ่มที่ตำแหน่งเดิม</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage toast-stage" id="toastStage" style="background:var(--stage-t)">
+          <button class="btn-solid" id="toastBtn">แสดงการแจ้งเตือน</button>
+          <div class="toasts" id="toasts"></div>
+        </div>
+        <h3>การแจ้งเตือนที่งอกจากจุด</h3>
+        <p>แต่ละอันเริ่มเป็นวงกลมแล้วยืดเป็นแถบ อันเก่าถูกดันขึ้นด้วยสปริง ครบเวลาแล้วหดกลับเป็นวงก่อนหายไป แตะเพื่อปิดก่อนก็ได้</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage" style="background:var(--stage-v)">
+          <div class="col">
+            <div class="tb-anchor" id="tbAnchor">
+              <div class="tip" id="tip" aria-hidden="true"><span id="tipTx"></span></div>
+              <span class="tip-measure" id="tipMeasure" aria-hidden="true"></span>
+              <div class="toolbar" id="toolbar" role="toolbar" aria-label="จัดรูปแบบข้อความ">
+                <button data-tip="ตัวหนา" data-fx="fx-b" aria-label="ตัวหนา" aria-pressed="false"><b>B</b></button>
+                <button data-tip="ตัวเอียง" data-fx="fx-i" aria-label="ตัวเอียง" aria-pressed="false"><i style="font-family:Georgia,serif">I</i></button>
+                <button data-tip="ขีดเส้นใต้" data-fx="fx-u" aria-label="ขีดเส้นใต้" aria-pressed="false"><u>U</u></button>
+                <button data-tip="ทำเป็นลิงก์" data-fx="fx-link" aria-label="ทำเป็นลิงก์" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+                <button data-tip="แทรกรูปภาพ" data-fx="fx-img" aria-label="แทรกรูปภาพ" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg></button>
+              </div>
+            </div>
+            <div class="sample" id="sample"><div class="sample-img" aria-hidden="true"></div><span class="sample-tx">ทะเลหมอกที่ดอยเช้านี้สวยจนลืมหนาว</span></div>
+          </div>
+        </div>
+        <h3>คำอธิบายที่ไหลตามเมาส์</h3>
+        <p>มีป้ายคำอธิบายแค่อันเดียวที่วิ่งไปหาปุ่มที่ชี้อยู่ ป้ายยืดตามความเร็วและปรับความกว้างตามข้อความ กดปุ่มเพื่อจัดรูปแบบข้อความด้านล่างได้จริง</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage sheet-stage" style="background:var(--stage-p)">
+          <div class="sheet-frame" id="sheetFrame">
+            <div class="photo" aria-hidden="true"><span class="sunc"></span><span class="hill h1"></span><span class="hill h2"></span></div>
+            <div class="photo-meta"><b>ทริปน่านกับเพื่อนๆ</b><small>28 รูป อัปโหลดเมื่อวาน</small></div>
+            <button class="btn-solid sheet-open" id="sheetOpen" aria-haspopup="dialog" aria-expanded="false">แชร์อัลบั้ม</button>
+            <p class="sheet-status" id="sheetStatus" aria-live="polite"></p>
+            <div class="sheet-scrim" id="sheetScrim"></div>
+            <div class="sheet" id="sheet" role="dialog" aria-label="แชร์อัลบั้ม" inert>
+              <svg class="sheet-bg" aria-hidden="true"><path id="sheetPath"/></svg>
+              <div class="sheet-grab" id="sheetGrab"><span class="handle"></span><b>แชร์อัลบั้มไปที่</b></div>
+              <div class="share-row">
+                <button class="share-t" data-done="ส่งทางข้อความแล้ว"><span style="background:#0E9C8F"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></span>ข้อความ</button>
+                <button class="share-t" data-done="ส่งทางอีเมลแล้ว"><span style="background:#6B4EFF"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>อีเมล</button>
+                <button class="share-t" data-done="คัดลอกลิงก์แล้ว"><span style="background:#F0436F"><svg class="i" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>คัดลอกลิงก์</button>
+                <button class="share-t" data-done="บันทึกรูปแล้ว"><span style="background:#241E4E"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></span>บันทึกรูป</button>
+              </div>
+              <button class="btn-ghost sheet-cancel" id="sheetCancel">ยกเลิก</button>
+            </div>
+          </div>
+        </div>
+        <h3>แผ่นด้านล่างที่ขอบเป็นเยลลี่</h3>
+        <p>ลากที่ขีดด้านบนขึ้นลงได้ ขอบบนโค้งตามความเร็วแล้วสั่นกลับ ปล่อยเร็วๆ หรือลากลงต่ำพอ แผ่นจะปิดเอง</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage fab-stage" id="fabStage" style="background:var(--stage-t)">
+          <ul class="notes" id="notes" aria-label="โน้ตของคุณ">
+            <li>ซื้อนมกับไข่ก่อนกลับบ้าน</li>
+            <li>ส่งสไลด์ให้ทีมก่อนบ่ายสาม</li>
+            <li>จองโต๊ะร้านส้มตำวันเสาร์</li>
+          </ul>
+          <div class="fab" id="fab">
+            <button class="fab-open" aria-label="เขียนโน้ตใหม่" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+            <div class="fab-panel" inert>
+              <div class="fab-head"><span>โน้ตใหม่</span><button class="fab-close" aria-label="ปิด"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+              <textarea aria-label="ข้อความโน้ต" placeholder="จดอะไรไว้หน่อย"></textarea>
+              <button class="fab-save">บันทึก</button>
+            </div>
+          </div>
+        </div>
+        <h3>ปุ่มลอยที่แผ่เป็นฟอร์ม</h3>
+        <p>ความกว้างกับความสูงใช้สปริงคนละจังหวะ ตอนเปิดปุ่มกลมจึงยืดออกด้านข้างก่อนแล้วค่อยพองขึ้น ตอนปิดสลับกัน</p>
+      </article>
+
+      <article class="spec">
+        <div class="stage acc-stage" style="background:var(--stage-v)">
+          <div class="acc" id="acc">
+            <div class="acc-item">
+              <h4><button class="acc-btn" id="acc-b0" aria-expanded="false" aria-controls="acc-p0">ส่งของภายในกี่วัน<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></h4>
+              <div class="acc-panel" id="acc-p0" role="region" aria-labelledby="acc-b0"><div class="acc-in">กรุงเทพฯ และปริมณฑลได้รับภายใน 1–2 วันทำการ ต่างจังหวัด 2–4 วันทำการ สั่งก่อนบ่ายสองโมงส่งออกวันเดียวกัน</div></div>
+            </div>
+            <div class="acc-item">
+              <h4><button class="acc-btn" id="acc-b1" aria-expanded="false" aria-controls="acc-p1">เปลี่ยนไซซ์ได้ไหม<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></h4>
+              <div class="acc-panel" id="acc-p1" role="region" aria-labelledby="acc-b1"><div class="acc-in">เปลี่ยนได้ภายใน 7 วันหลังได้รับสินค้า ป้ายต้องยังติดอยู่และสินค้ายังไม่ผ่านการใช้งาน</div></div>
+            </div>
+            <div class="acc-item">
+              <h4><button class="acc-btn" id="acc-b2" aria-expanded="false" aria-controls="acc-p2">ชำระเงินทางไหนได้บ้าง<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></h4>
+              <div class="acc-panel" id="acc-p2" role="region" aria-labelledby="acc-b2"><div class="acc-in">พร้อมเพย์ บัตรเครดิต และเก็บเงินปลายทาง ยอดสั่งซื้อตั้งแต่ 3,000 บาทผ่อน 0% ได้ 3 เดือน</div></div>
+            </div>
+          </div>
+        </div>
+        <h3>คำถามที่พับเก็บแบบยืดหยุ่น</h3>
+        <p>ความสูงพุ่งเลยเป้าไปนิดแล้วดีดกลับ ข้อความด้านในหน่วงตามเล็กน้อยเหมือนของที่ถูกเขย่าในกล่อง เปิดได้ทีละข้อ</p>
+      </article>
+    </div>
+  </section>
+  </main>
+
+  <footer>ทุกชิ้นบนหน้านี้ใช้สปริงตัวเดียวกัน ปรับความเด้งได้ที่มุมขวาบน ถ้าเครื่องของคุณเปิดตั้งค่าลดการเคลื่อนไหวไว้ ทุกอย่างจะเปลี่ยนสถานะทันทีโดยไม่เด้ง</footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" hidden>
+  <span class="modal-label" aria-hidden="true">ลบโปรเจกต์</span>
+  <div class="modal-in">
+    <h3 id="mTitle">ลบโปรเจกต์นี้?</h3>
+    <p>โปรเจกต์ปลายภาคและไฟล์ทั้งหมด 24 ไฟล์จะถูกลบถาวร กู้คืนไม่ได้</p>
+    <div class="modal-actions"><button class="btn-ghost" id="mCancel">ยกเลิก</button><button class="btn-danger" id="mOk">ลบโปรเจกต์</button></div>
+  </div>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)');
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+let bounce=1; // damping multiplier, set by the header control
+
+/* ---------- one spring to rule them all ---------- */
+class Spring{
+  constructor(x,o={}){
+    this.x=x;this.v=0;this.t=x;this.k=o.k??220;this.c=o.c??18;this.eps=o.eps??0.05;
+    this.cb=o.onUpdate||(()=>{});this.rest=o.onRest||null;this.raf=0;this.tick=this.tick.bind(this);
+  }
+  to(t,o){
+    if(o){if(o.k)this.k=o.k;if(o.c)this.c=o.c;}
+    this.t=t;
+    if(RM.matches){cancelAnimationFrame(this.raf);this.raf=0;this.x=t;this.v=0;this.cb(t,0);this.rest&&this.rest();return this;}
+    if(!this.raf){this.last=performance.now();this.raf=requestAnimationFrame(this.tick);}
+    return this;
+  }
+  set(x){cancelAnimationFrame(this.raf);this.raf=0;this.x=this.t=x;this.v=0;this.cb(x,0);}
+  drag(x,v){cancelAnimationFrame(this.raf);this.raf=0;this.x=this.t=x;this.v=v;this.cb(x,v);}
+  kick(v){if(RM.matches)return;this.v+=v;this.to(this.t);}
+  tick(now){
+    const dt=Math.max(0,Math.min((now-this.last)/1000,1/30));this.last=now;
+    const n=8,h=dt/n,c=this.c*bounce;
+    for(let i=0;i<n;i++){const a=-this.k*(this.x-this.t)-c*this.v;this.v+=a*h;this.x+=this.v*h;}
+    if(Math.abs(this.v)<this.eps&&Math.abs(this.x-this.t)<this.eps){this.x=this.t;this.v=0;this.raf=0;this.cb(this.x,0);this.rest&&this.rest();return;}
+    this.cb(this.x,this.v);
+    this.raf=requestAnimationFrame(this.tick);
+  }
+}
+
+/* two edges, leading one stiff, trailing one soft = stretch */
+function edgePair(draw,o={}){
+  const fast=o.fast||{k:420,c:30},slow=o.slow||{k:150,c:18};
+  let L=0,R=0;
+  const l=new Spring(0,{onUpdate:x=>{L=x;draw(L,R)}});
+  const r=new Spring(0,{onUpdate:x=>{R=x;draw(L,R)}});
+  return{
+    set(a,b){l.set(a);r.set(b)},
+    to(a,b){if(a>=l.t){r.to(b,fast);l.to(a,slow)}else{l.to(a,fast);r.to(b,slow)}}
+  };
+}
+
+const resyncs=[];const onResync=f=>resyncs.push(f);
+const resyncAll=()=>resyncs.forEach(f=>f());
+addEventListener('resize',resyncAll);
+if(document.fonts)document.fonts.ready.then(resyncAll);
+
+function makeSegmented(root,{attr='aria-pressed',initial=0,onChange}={}){
+  const btns=$$('[data-seg]',root),ind=$('.seg-ind',root);let cur=-1;
+  const ep=edgePair((L,R)=>{ind.style.transform=`translateX(${L}px)`;ind.style.width=Math.max(0,R-L)+'px'});
+  const pos=i=>[btns[i].offsetLeft,btns[i].offsetLeft+btns[i].offsetWidth];
+  function select(i,anim=true,notify=true){
+    if(i===cur)return;cur=i;
+    btns.forEach((b,j)=>{b.setAttribute(attr,String(j===i));b.classList.toggle('on',j===i);if(attr==='aria-selected')b.tabIndex=j===i?0:-1});
+    const[a,b]=pos(i);anim?ep.to(a,b):ep.set(a,b);
+    if(notify&&onChange)onChange(i,btns[i]);
+  }
+  btns.forEach((b,i)=>b.addEventListener('click',()=>select(i)));
+  root.addEventListener('keydown',e=>{
+    const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;
+    e.preventDefault();const n=(cur+d+btns.length)%btns.length;select(n);btns[n].focus();
+  });
+  select(initial,false,false);
+  onResync(()=>{const[a,b]=pos(cur);ep.set(a,b)});
+  return{select,get index(){return cur}};
+}
+
+/* ---------- header: bounciness ---------- */
+makeSegmented($('#bounceSeg'),{initial:1,onChange:i=>{bounce=[1.8,1,0.5][i]}});
+
+/* ---------- hero island ---------- */
+const island=$('#island'),phone=$('#phone'),panes=$$('.pane',island);
+const SIZES={idle:[126,37,19],music:[340,76,30],timer:[204,40,20],call:[360,168,42]};
+const STATES=['idle','music','timer','call'];let iState='idle';
+const iw=new Spring(126,{k:240,c:20,onUpdate:x=>island.style.width=Math.max(20,x)+'px'});
+const ih=new Spring(37,{k:165,c:16,onUpdate:x=>island.style.height=Math.max(12,x)+'px'});
+const ir=new Spring(19,{k:220,c:20,onUpdate:x=>island.style.borderRadius=Math.max(6,x)+'px'});
+const islandW=s=>Math.min(SIZES[s][0],phone.clientWidth-24);
+function setIsland(s){
+  iState=s;const[,h,r]=SIZES[s],w=islandW(s);
+  panes.forEach(p=>{const on=p.dataset.pane===s;p.classList.toggle('on',on);p.inert=!on;if(on){p.style.width=w+'px';p.style.height=h+'px'}});
+  iw.to(w);ih.to(h);ir.to(r);
+  s==='timer'?startTimer():stopTimer();
+}
+const islandSeg=makeSegmented($('#islandSeg'),{onChange:i=>setIsland(STATES[i])});
+$$('.call-actions button').forEach(b=>b.addEventListener('click',()=>islandSeg.select(0)));
+onResync(()=>{const w=islandW(iState);iw.set(w);const p=$('.pane.on',island);if(p)p.style.width=w+'px'});
+let tLeft=300,tId=0;const tEl=$('#timerText');
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+function startTimer(){stopTimer();tLeft=300;tEl.textContent=fmt(tLeft);tId=setInterval(()=>{tLeft=tLeft>0?tLeft-1:300;tEl.textContent=fmt(tLeft)},1000)}
+function stopTimer(){clearInterval(tId)}
+setTimeout(()=>{if(islandSeg.index===0)islandSeg.select(1)},900);
+
+/* ---------- tabs ---------- */
+const tabTexts=['มีอะไรใหม่วันนี้','ค้นหาร้านใกล้คุณ','เพลย์ลิสต์ที่บันทึกไว้ 12 รายการ','สวัสดี คุณมายด์'];
+const tabOut=$('#tabOut');let tabTok=0;
+makeSegmented($('#tabs'),{attr:'aria-selected',onChange:i=>{
+  const tok=++tabTok;tabOut.classList.add('swap');
+  setTimeout(()=>{if(tok!==tabTok)return;tabOut.textContent=tabTexts[i];tabOut.classList.remove('swap')},140);
+}});
+
+/* ---------- stepper ---------- */
+const stepsEl=$('#steps'),stepEls=$$('.step',stepsEl),stepRail=$('.steps-rail',stepsEl),stepFillEl=$('#stepsFill'),stepBlobEl=$('#stepsBlob');
+const stepMsg=$('#stepsMsg'),stepBack=$('#stepBack'),stepNext=$('#stepNext');
+const SMSG=['ตรวจสินค้าในตะกร้า 3 ชิ้น','กรอกที่อยู่สำหรับจัดส่ง','เลือกวิธีชำระเงิน','สั่งซื้อเรียบร้อย ขอบคุณที่อุดหนุน'];
+let stepI=0;
+const stepFill=new Spring(0,{k:190,c:14,eps:.001,onUpdate:p=>stepFillEl.style.width=clamp(p,0,1)*100+'%'});
+const stepBlob=edgePair((L,R)=>{stepBlobEl.style.transform=`translateX(${L}px)`;stepBlobEl.style.width=Math.max(10,R-L)+'px'});
+const dotC=i=>{const d=$('.step-dot',stepEls[i]);return d.offsetLeft+d.offsetWidth/2};
+function layoutRail(){const a=dotC(0),b=dotC(stepEls.length-1);stepRail.style.left=a+'px';stepRail.style.width=(b-a)+'px'}
+function setStep(i,anim=true){
+  stepI=clamp(i,0,stepEls.length-1);
+  stepEls.forEach((s,j)=>{s.classList.toggle('done',j<stepI);s.classList.toggle('cur',j===stepI);j===stepI?s.setAttribute('aria-current','step'):s.removeAttribute('aria-current')});
+  const c=dotC(stepI),p=stepI/(stepEls.length-1);
+  if(anim){stepBlob.to(c-22,c+22);stepFill.to(p)}else{stepBlob.set(c-22,c+22);stepFill.set(p)}
+  stepMsg.textContent=SMSG[stepI];
+  stepBack.disabled=stepI===0;
+  stepNext.textContent=stepI===stepEls.length-1?'เริ่มใหม่':'ถัดไป';
+  if(stepBack.disabled&&document.activeElement===stepBack)stepNext.focus();
+}
+stepBack.addEventListener('click',()=>setStep(stepI-1));
+stepNext.addEventListener('click',()=>setStep(stepI===stepEls.length-1?0:stepI+1));
+layoutRail();setStep(0,false);
+onResync(()=>{layoutRail();const c=dotC(stepI);stepBlob.set(c-22,c+22)});
+
+/* ---------- sidebar ---------- */
+const sb=$('#sb'),app=$('#app'),sbSvg=$('#sbSvg'),sbPath=$('#sbPath'),appMain=$('#appMain'),sbToggle=$('#sbToggle'),sbInd=$('#sbInd'),sbBadge=$('#sbBadge');
+const sbItems=$$('.sb-item',sb),SB_OPEN=248,SB_RAIL=76;
+const isNarrow=()=>app.clientWidth<600;
+let sbOpen=!isNarrow(),sbCur=-1;
+function drawSb(w,v){
+  sb.style.width=Math.max(56,w)+'px';
+  const H=sb.clientHeight,b=clamp(-v*.05,-56,56);
+  sbSvg.setAttribute('width',w+70);
+  sbPath.setAttribute('d',`M0 0H${w}Q${w+b} ${H/2} ${w} ${H}H0Z`);
+  appMain.style.paddingLeft=((isNarrow()?SB_RAIL:Math.max(SB_RAIL,w))+28)+'px';
+}
+const sbW=new Spring(sbOpen?SB_OPEN:SB_RAIL,{k:200,c:17,onUpdate:drawSb});
+function setSb(o,anim=true){
+  sbOpen=o;sb.classList.toggle('collapsed',!o);
+  sbToggle.setAttribute('aria-expanded',String(o));
+  sbToggle.setAttribute('aria-label',o?'ย่อแถบข้าง':'ขยายแถบข้าง');
+  anim?sbW.to(o?SB_OPEN:SB_RAIL):sbW.set(o?SB_OPEN:SB_RAIL);
+}
+sbToggle.addEventListener('click',()=>setSb(!sbOpen));
+appMain.addEventListener('click',()=>{if(isNarrow()&&sbOpen)setSb(false)});
+sb.addEventListener('keydown',e=>{if(e.key==='Escape'&&isNarrow()&&sbOpen){setSb(false);sbToggle.focus()}});
+const sbWorm=edgePair((T,B)=>{sbInd.style.transform=`translateY(${T}px)`;sbInd.style.height=Math.max(10,B-T)+'px'});
+const sbPos=i=>[sbItems[i].offsetTop,sbItems[i].offsetTop+sbItems[i].offsetHeight];
+const sbPages=[
+  ['ภาพรวม','งานที่ต้องทำวันนี้ 4 อย่าง ประชุมถัดไปบ่ายสองโมง'],
+  ['กล่องข้อความ','มีข้อความใหม่ 3 ฉบับจากทีมออกแบบ'],
+  ['ปฏิทิน','สัปดาห์นี้มีนัด 6 รายการ วันศุกร์ว่างทั้งวัน'],
+  ['โปรเจกต์','กำลังทำอยู่ 2 โปรเจกต์ ใกล้ถึงกำหนดส่ง 1 โปรเจกต์'],
+  ['ตั้งค่า','ปรับการแจ้งเตือน ภาษา และบัญชีของคุณ']
+];
+let sbTok=0;
+function sbSelect(i,anim=true){
+  if(i===sbCur)return;sbCur=i;
+  sbItems.forEach((b,j)=>{b.classList.toggle('on',j===i);j===i?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current')});
+  const[a,b]=sbPos(i);anim?sbWorm.to(a,b):sbWorm.set(a,b);
+  if(i===1&&!sbBadge.classList.contains('gone')){sbBadge.classList.add('gone');sbBadge.removeAttribute('aria-label')}
+  if(!anim)return;
+  const tok=++sbTok;appMain.classList.add('swap');
+  setTimeout(()=>{if(tok!==sbTok)return;$('#appTitle').textContent=sbPages[i][0];$('#appDesc').textContent=sbPages[i][1];appMain.classList.remove('swap')},140);
+  if(isNarrow()&&sbOpen)setTimeout(()=>setSb(false),220);
+}
+sbItems.forEach((b,i)=>b.addEventListener('click',()=>sbSelect(i)));
+setSb(sbOpen,false);sbSelect(0,false);
+onResync(()=>{drawSb(sbW.x,0);const[a,b]=sbPos(sbCur);sbWorm.set(a,b)});
+
+/* ---------- carousel ---------- */
+const vp=$('#cvp'),track=$('#ctrack'),slides=$$('.slide',track),dots=$$('.dot'),worm=$('#worm'),GAP=24;let idx=0;
+const step=()=>vp.clientWidth+GAP;
+const cx=new Spring(0,{k:200,c:22,onUpdate:(x,v)=>{
+  track.style.transform=`translateX(${x}px)`;
+  const s=clamp(v/2500,-1,1),skew=-s*7,sq=Math.abs(s);
+  slides.forEach(el=>el.style.transform=`skewX(${skew}deg) scale(${1+sq*.03},${1-sq*.07})`);
+}});
+const wormEp=edgePair((L,R)=>{worm.style.transform=`translateX(${L}px)`;worm.style.width=Math.max(4,R-L)+'px'});
+const dotPos=i=>{const c=dots[i].offsetLeft+12;return[c-4,c+4]};
+function go(i,v){
+  idx=clamp(i,0,slides.length-1);
+  if(v!==undefined)cx.v=v;
+  cx.to(-idx*step());
+  const[a,b]=dotPos(idx);wormEp.to(a,b);
+  slides.forEach((s,j)=>s.setAttribute('aria-hidden',String(j!==idx)));
+  dots.forEach((d,j)=>d.setAttribute('aria-current',j===idx?'true':'false'));
+}
+$('#prev').addEventListener('click',()=>go(idx-1));
+$('#next').addEventListener('click',()=>go(idx+1));
+dots.forEach((d,i)=>d.addEventListener('click',()=>go(i)));
+let drag=null;
+vp.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;
+  drag={x0:e.clientX,o0:cx.x,lastX:e.clientX,lastT:performance.now(),v:0};
+  vp.setPointerCapture(e.pointerId);
+});
+vp.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  const now=performance.now();let o=drag.o0+(e.clientX-drag.x0);
+  const min=-(slides.length-1)*step();
+  if(o>0)o*=.35;else if(o<min)o=min+(o-min)*.35;
+  const dt=Math.max(1,now-drag.lastT),inst=(e.clientX-drag.lastX)/dt*1000;
+  drag.v=drag.v*.6+inst*.4;drag.lastX=e.clientX;drag.lastT=now;
+  cx.drag(o,drag.v);
+});
+const cEnd=()=>{
+  if(!drag)return;
+  const v=performance.now()-drag.lastT>90?0:drag.v;
+  go(Math.round(-(cx.x+v*.18)/step()),v);drag=null;
+};
+vp.addEventListener('pointerup',cEnd);vp.addEventListener('pointercancel',cEnd);
+(()=>{const[a,b]=dotPos(0);wormEp.set(a,b);go(0)})();
+onResync(()=>{cx.set(-idx*step());const[a,b]=dotPos(idx);wormEp.set(a,b)});
+
+/* ---------- send button ---------- */
+const send=$('#send'),sendStatus=$('#sendStatus'),SEND_W=200;
+const sendW=new Spring(SEND_W,{k:260,c:17,onUpdate:(w,v)=>{
+  send.style.width=w+'px';
+  send.style.transform=`scaleY(${clamp(1-v/6000,.86,1.2)})`;
+}});
+let sending=false;
+send.addEventListener('click',()=>{
+  if(sending)return;sending=true;
+  send.classList.add('busy','loading');send.setAttribute('aria-busy','true');
+  sendStatus.textContent='กำลังส่ง…';sendW.to(56);
+  setTimeout(()=>{send.classList.remove('loading');send.classList.add('done');sendStatus.textContent='ส่งแล้ว';sendW.kick(700)},1500);
+  setTimeout(()=>{send.classList.remove('done','busy');send.removeAttribute('aria-busy');sendStatus.textContent='';sendW.to(SEND_W);sending=false},3400);
+});
+
+/* ---------- toggles ---------- */
+function makeToggle(btn,on,onChange){
+  const knob=$('.knob',btn),K=26,P=4,TW=60,OFF=[P,P+K],ON=[TW-P-K,TW-P];
+  const ep=edgePair((L,R)=>{
+    const w=Math.max(K*.6,R-L);
+    knob.style.width=w+'px';
+    knob.style.height=Math.max(16,K-(w-K)*.3)+'px';
+    knob.style.transform=`translate(${L}px,-50%)`;
+  },{fast:{k:520,c:34},slow:{k:170,c:19}});
+  const apply=(v,anim)=>{on=v;btn.setAttribute('aria-checked',String(v));const[a,b]=v?ON:OFF;anim?ep.to(a,b):ep.set(a,b)};
+  apply(on,false);
+  btn.addEventListener('click',()=>{apply(!on,true);onChange&&onChange(on)});
+}
+const sw=$$('.switch'),root=document.documentElement;
+makeToggle(sw[0],matchMedia('(prefers-color-scheme: dark)').matches,on=>{root.dataset.theme=on?'dark':'light'});
+makeToggle(sw[1],true);
+makeToggle(sw[2],false);
+
+/* ---------- radio and checkbox ---------- */
+const rg=$('#radios'),radioDot=$('#radioDot'),radioIns=$$('input[type=radio]',rg);
+const rDot=edgePair((T,B)=>{radioDot.style.transform=`translateY(${T}px)`;radioDot.style.height=Math.max(6,B-T)+'px'},{fast:{k:460,c:30},slow:{k:150,c:17}});
+function placeRadio(anim){
+  const inp=radioIns.find(x=>x.checked),r=inp.nextElementSibling.getBoundingClientRect(),g=rg.getBoundingClientRect();
+  const x=r.left-g.left+r.width/2,y=r.top-g.top+r.height/2;
+  radioDot.style.left=(x-6)+'px';
+  anim?rDot.to(y-6,y+6):rDot.set(y-6,y+6);
+}
+radioIns.forEach(x=>x.addEventListener('change',()=>placeRadio(true)));
+placeRadio(false);onResync(()=>placeRadio(false));
+$$('.cb input').forEach(inp=>{
+  const box=inp.nextElementSibling;
+  const q=new Spring(0,{k:420,c:14,eps:.001,onUpdate:s=>box.style.transform=`scale(${1+s*.22},${1-s*.22})`});
+  inp.addEventListener('change',()=>q.kick(inp.checked?7:-7));
+});
+
+/* ---------- chips ---------- */
+const chipMsg=$('#chipsMsg'),chipEls=$$('.chip');
+chipEls.forEach(c=>{
+  const ic=$('.chip-ic',c),svg=$('svg',ic);let on=false;
+  const w=new Spring(0,{k:320,c:15,onUpdate:x=>{const v=Math.max(0,x);ic.style.width=v+'px';ic.style.marginRight=(v/20*6)+'px';svg.style.transform=`scale(${clamp(v/20,0,1.3)})`}});
+  const q=new Spring(0,{k:400,c:16,eps:.001,onUpdate:s=>c.style.transform=`scale(${1-s*.08},${1+s*.06})`});
+  c.addEventListener('click',()=>{
+    on=!on;c.setAttribute('aria-pressed',String(on));w.to(on?20:0);q.kick(on?6:-6);
+    const n=chipEls.filter(x=>x.getAttribute('aria-pressed')==='true').length;
+    chipMsg.textContent=`พบ ${Math.max(3,48-n*9)} ร้าน`;
+  });
+});
+
+/* ---------- search ---------- */
+const search=$('#search'),sBtn=$('.search-btn',search),sIn=$('.search-input',search),sX=$('.search-close',search),sugg=$('#sugg'),suggBtns=$$('button',sugg);
+let sOpen=false;
+const sW=new Spring(52,{k:240,c:17,onUpdate:(w,v)=>{search.style.width=Math.max(40,w)+'px';search.style.transform=`scaleY(${clamp(1-v/6000,.86,1.18)})`}});
+const sTarget=()=>Math.min(340,search.parentElement.clientWidth-8);
+function setSearch(o){
+  sOpen=o;search.classList.toggle('open',o);sugg.classList.toggle('open',o);
+  sBtn.setAttribute('aria-expanded',String(o));sIn.tabIndex=o?0:-1;sX.tabIndex=o?0:-1;
+  suggBtns.forEach(b=>b.tabIndex=o?0:-1);
+  sW.to(o?sTarget():52);
+  if(o)setTimeout(()=>sIn.focus({preventScroll:true}),120);else{sIn.value='';sBtn.focus({preventScroll:true})}
+}
+sBtn.addEventListener('click',()=>sOpen?sIn.focus():setSearch(true));
+sX.addEventListener('click',()=>setSearch(false));
+search.addEventListener('keydown',e=>{if(e.key==='Escape'&&sOpen)setSearch(false)});
+suggBtns.forEach(b=>b.addEventListener('click',()=>{sIn.value=b.textContent;sIn.focus()}));
+onResync(()=>{if(sOpen)sW.set(sTarget())});
+
+/* ---------- dropdown ---------- */
+const dd=$('#dd'),ddBtn=$('#ddBtn'),ddVal=$('#ddVal'),ddList=$('#ddList'),ddOpts=$$('[role=option]',ddList),ddInd=$('#ddInd'),prodsEl=$('#prods');
+const DD_W=260,DD_H=52;let ddOpen=false,ddSel=0,ddAct=0;
+const ddH=new Spring(DD_H,{k:210,c:15,onUpdate:(h,v)=>{dd.style.height=Math.max(40,h)+'px';dd.style.width=(DD_W*(1-clamp(v/9000,-.06,.06)))+'px'}});
+const ddWorm=edgePair((T,B)=>{ddInd.style.transform=`translateY(${T}px)`;ddInd.style.height=Math.max(8,B-T)+'px'});
+const optPos=i=>{const r=ddOpts[i].getBoundingClientRect(),d=dd.getBoundingClientRect();return[r.top-d.top,r.bottom-d.top]};
+function setAct(i,anim=true){ddAct=clamp(i,0,ddOpts.length-1);ddList.setAttribute('aria-activedescendant',ddOpts[ddAct].id);const[a,b]=optPos(ddAct);anim?ddWorm.to(a,b):ddWorm.set(a,b)}
+function openDD(){ddOpen=true;dd.classList.add('open');ddBtn.setAttribute('aria-expanded','true');ddList.inert=false;setAct(ddSel,false);ddH.to(DD_H+ddList.offsetHeight);ddList.focus({preventScroll:true})}
+function closeDD(focusBtn=true){if(!ddOpen)return;ddOpen=false;dd.classList.remove('open');ddBtn.setAttribute('aria-expanded','false');ddList.inert=true;ddH.to(DD_H);if(focusBtn)ddBtn.focus({preventScroll:true})}
+function selectDD(i){ddSel=i;ddOpts.forEach((o,j)=>o.setAttribute('aria-selected',String(j===i)));ddVal.textContent=ddOpts[i].textContent;closeDD();renderProds(true)}
+ddBtn.addEventListener('click',()=>ddOpen?closeDD():openDD());
+ddOpts.forEach((o,i)=>{o.addEventListener('pointerenter',()=>setAct(i));o.addEventListener('click',()=>selectDD(i))});
+ddList.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'){e.preventDefault();setAct(ddAct+1)}
+  else if(e.key==='ArrowUp'){e.preventDefault();setAct(ddAct-1)}
+  else if(e.key==='Enter'||e.key===' '){e.preventDefault();selectDD(ddAct)}
+  else if(e.key==='Escape'){e.preventDefault();closeDD()}
+  else if(e.key==='Tab'){closeDD(false)}
+});
+document.addEventListener('pointerdown',e=>{if(ddOpen&&!dd.contains(e.target))closeDD(false)});
+const PRODS=[
+  {n:'ข้าวมันไก่ไข่ต้ม',p:60,r:4.7,s:320,d:5},
+  {n:'ก๋วยเตี๋ยวเรือ',p:45,r:4.4,s:510,d:12},
+  {n:'ข้าวกะเพราหมูกรอบ',p:70,r:4.8,s:280,d:2},
+  {n:'ชาไทยปั่น',p:35,r:4.5,s:640,d:8}
+];
+const SORTS=[(a,b)=>a.d-b.d,(a,b)=>a.p-b.p,(a,b)=>b.p-a.p,(a,b)=>b.s-a.s,(a,b)=>b.r-a.r];
+PRODS.forEach(p=>{
+  const li=document.createElement('li');
+  li.innerHTML='<div><b></b><small></small></div><span class="price"></span>';
+  $('b',li).textContent=p.n;$('small',li).textContent=`คะแนน ${p.r} ขายแล้ว ${p.s} จาน`;$('.price',li).textContent=`${p.p} บาท`;
+  p.el=li;prodsEl.appendChild(li);
+  p.sp=new Spring(0,{k:230,c:20,onUpdate:(y,v)=>{li.style.transform=`translateY(${y}px) scale(${1-Math.min(.05,Math.abs(v)/14000)},${1+Math.min(.14,Math.abs(v)/5000)})`}});
+});
+function renderProds(anim){
+  const first=new Map(PRODS.map(p=>[p,p.el.getBoundingClientRect().top]));
+  [...PRODS].sort(SORTS[ddSel]).forEach(p=>prodsEl.appendChild(p.el));
+  if(!anim)return;
+  PRODS.forEach(p=>{const d=first.get(p)-p.el.getBoundingClientRect().top;p.sp.drag(p.sp.x+d,p.sp.v);p.sp.to(0)});
+}
+renderProds(false);
+
+/* ---------- slider ---------- */
+const sl=$('#slider'),thumb=$('.thumb',sl),fill=$('.fill',sl),bub=$('.bubble',sl),volOut=$('#volOut');
+let val=40,tx=0,bx=0,bs=0,dragging=false,bubTimer=0;
+const sx=new Spring(0,{k:650,c:42,onUpdate:x=>{tx=x;drawSlider()}});
+const sbx=new Spring(0,{k:150,c:11,onUpdate:x=>{bx=x;drawSlider()}});
+const sbs=new Spring(0,{k:320,c:18,eps:.002,onUpdate:x=>{bs=x;drawSlider()}});
+function drawSlider(){
+  const s=Math.min(.7,Math.abs(sx.v)/2600);
+  thumb.style.transform=`translate(${tx}px,-50%) translateX(-50%) scale(${1+s},${1-s*.42})`;
+  fill.style.width=Math.max(0,tx)+'px';
+  bub.style.transform=`translateX(${tx}px) translateX(-50%) rotate(${clamp((bx-tx)*.7,-32,32)}deg) scale(${Math.max(0,bs)})`;
+}
+function setVal(v,anim=true){
+  val=clamp(Math.round(v),0,100);
+  const x=val/100*sl.clientWidth;
+  if(anim){sx.to(x);sbx.to(x)}else{sx.set(x);sbx.set(x)}
+  sl.setAttribute('aria-valuenow',val);volOut.textContent=val;bub.textContent=val;
+}
+const pct=e=>{const r=sl.getBoundingClientRect();return (e.clientX-r.left)/r.width*100};
+sl.addEventListener('pointerdown',e=>{dragging=true;sl.setPointerCapture(e.pointerId);clearTimeout(bubTimer);sbs.to(1);setVal(pct(e))});
+sl.addEventListener('pointermove',e=>{if(dragging)setVal(pct(e))});
+const slEnd=()=>{if(!dragging)return;dragging=false;sbs.to(0)};
+sl.addEventListener('pointerup',slEnd);sl.addEventListener('pointercancel',slEnd);
+sl.addEventListener('keydown',e=>{
+  const m={ArrowRight:5,ArrowUp:5,ArrowLeft:-5,ArrowDown:-5}[e.key];
+  let nv=null;if(m)nv=val+m;else if(e.key==='Home')nv=0;else if(e.key==='End')nv=100;
+  if(nv===null)return;e.preventDefault();setVal(nv);sbs.to(1);clearTimeout(bubTimer);bubTimer=setTimeout(()=>sbs.to(0),900);
+});
+setVal(40,false);
+onResync(()=>setVal(val,false));
+
+/* ---------- quantity ---------- */
+const qty=$('#qty'),qCur=$('.qty-cur',qty),qOld=$('.qty-old',qty),qTotal=$('#qtyTotal');
+let qn=1,qDir=1,qs=0,qx=0;
+const qDraw=()=>qty.style.transform=`translateX(${qx}px) scale(${1+qs*.14},${1-qs*.08})`;
+const qS=new Spring(0,{k:380,c:14,eps:.001,onUpdate:s=>{qs=s;qDraw()}});
+const qX=new Spring(0,{k:600,c:12,eps:.05,onUpdate:x=>{qx=x;qDraw()}});
+const qP=new Spring(1,{k:300,c:24,eps:.001,onUpdate:p=>{
+  qOld.style.transform=`translateY(${-qDir*p*100}%)`;qOld.style.opacity=1-clamp(p,0,1);
+  qCur.style.transform=`translateY(${qDir*(1-p)*100}%)`;
+}});
+$$('.qty-b',qty).forEach(b=>b.addEventListener('click',()=>{
+  const d=+b.dataset.d,nn=qn+d;
+  if(nn<1||nn>9){qX.kick(d*-500);return}
+  qty.style.transformOrigin=d>0?'left center':'right center';qS.kick(6);
+  qOld.textContent=qn;qn=nn;qCur.textContent=qn;qDir=d;qP.set(0);qP.to(1);
+  qTotal.textContent=`${qn} จาน รวม ${qn*60} บาท`;
+}));
+
+/* ---------- rating ---------- */
+const rate=$('#rate'),stars=$$('.star',rate),rCap=$('#rateCap'),rWord=$('#rateWord');
+const WORDS=['แตะดาวเพื่อให้คะแนน','แย่','พอใช้','ดี','ดีมาก','ยอดเยี่ยม'];
+let rVal=0;
+const rEP=edgePair((L,R)=>{rCap.style.transform=`translateX(${L}px)`;rCap.style.width=Math.max(0,R-L)+'px'});
+stars.forEach(s=>{const svg=$('svg',s);s._p=new Spring(0,{k:420,c:14,eps:.001,onUpdate:x=>svg.style.transform=`scale(${1+x*.35})`})});
+const capFor=n=>{if(!n){const c=stars[0].offsetLeft+stars[0].offsetWidth/2;return[c,c]}return[stars[0].offsetLeft-4,stars[n-1].offsetLeft+stars[n-1].offsetWidth+4]};
+function paint(n,anim=true){stars.forEach((s,i)=>s.classList.toggle('lit',i<n));const[a,b]=capFor(n);anim?rEP.to(a,b):rEP.set(a,b);rWord.textContent=WORDS[n]}
+function commit(n){
+  rVal=n;stars.forEach((s,i)=>{s.setAttribute('aria-checked',String(i===n-1));s.tabIndex=(i===Math.max(0,n-1))?0:-1});
+  paint(n);stars.slice(0,n).forEach((s,i)=>setTimeout(()=>s._p.kick(9),i*55));
+}
+stars.forEach((s,i)=>{
+  s.addEventListener('pointerenter',()=>paint(i+1));
+  s.addEventListener('click',()=>commit(i+1));
+});
+rate.addEventListener('pointerleave',()=>paint(rVal));
+rate.addEventListener('keydown',e=>{
+  const d=(e.key==='ArrowRight'||e.key==='ArrowUp')?1:(e.key==='ArrowLeft'||e.key==='ArrowDown')?-1:0;if(!d)return;
+  e.preventDefault();const n=clamp((rVal||0)+d,1,5);commit(n);stars[n-1].focus();
+});
+stars.forEach((s,i)=>s.tabIndex=i===0?0:-1);
+paint(0,false);onResync(()=>{const[a,b]=capFor(rVal);rEP.set(a,b)});
+
+/* ---------- add to cart ---------- */
+const shop=$('#shop'),cart=$('#cart'),cartIc=$('.cart-ic',cart),cartBadge=$('#cartBadge'),cartTx=$('#cartTx'),cartM=$('#cartMeasure'),cartLive=$('#cartLive'),shipNote=$('#shipNote'),cartRing=$('#cartRing');
+const cartQ=new Map();
+const cartW=new Spring(48,{k:240,c:18,onUpdate:w=>cart.style.width=Math.max(40,w)+'px'});
+const cartS=new Spring(0,{k:380,c:13,eps:.001,onUpdate:s=>cart.style.transform=`scale(${1+s*.12},${1-s*.12})`});
+const icS=new Spring(0,{k:420,c:12,eps:.001,onUpdate:s=>cartIc.style.transform=`translateY(${s*4}px) rotate(${-s*10}deg)`});
+const badgeS=new Spring(0,{k:380,c:16,eps:.001,onUpdate:s=>cartBadge.style.transform=`scale(${Math.max(0,s)})`});
+function renderCart(){
+  let n=0,t=0;cartQ.forEach((q,p)=>{n+=q;t+=q*p.price});
+  cartBadge.textContent=n;
+  if(n){const text=`${t} บาท`;cartTx.textContent=text;cartM.textContent=text;cart.classList.add('has');cartW.to(46+cartM.offsetWidth+16);badgeS.to(1)}
+  else{cart.classList.remove('has');cartW.to(48);badgeS.to(0)}
+  shipNote.textContent=t===0?'ส่งฟรีเมื่อซื้อครบ 200 บาท':t>=200?'ได้ส่งฟรีแล้ว':`ซื้ออีก ${200-t} บาท ได้ส่งฟรี`;
+  shipNote.classList.toggle('free',t>=200);
+  return{n,t};
+}
+const easeIO=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,easeOut=t=>1-Math.pow(1-t,3);
+function fly(p,onArrive){
+  if(RM.matches){onArrive();return}
+  const sr=shop.getBoundingClientRect(),a=p.art.getBoundingClientRect(),c=cartIc.getBoundingClientRect();
+  const x0=a.left+a.width/2-sr.left,y0=a.top+a.height/2-sr.top,x1=c.left+c.width/2-sr.left,y1=c.top+c.height/2-sr.top;
+  const w0=a.width+20,h0=a.height+20,E=30,cx=x0+(x1-x0)*.35,cy=Math.min(y0,y1)-90,D=800,t0=performance.now();
+  const el=document.createElement('div');el.className='fly';el.style.background=p.tile;
+  const art=p.art.cloneNode(true);art.removeAttribute('style');el.appendChild(art);shop.appendChild(el);
+  let px=x0,py=y0,pt=t0,st=0,ang=0;
+  (function frame(now){
+    const t=clamp((now-t0)/D,0,1);
+    const lift=Math.sin(clamp(t/.14,0,1)*Math.PI/2)*(1-clamp((t-.14)/.3,0,1));
+    const u=easeIO(clamp((t-.1)/.9,0,1)),s=easeOut(clamp((t-.08)/.72,0,1));
+    const bx=(1-u)*(1-u)*x0+2*u*(1-u)*cx+u*u*x1,by=(1-u)*(1-u)*y0+2*u*(1-u)*cy+u*u*y1-lift*12;
+    const dt=Math.max(1,now-pt),vx=(bx-px)/dt*1000,vy=(by-py)/dt*1000;px=bx;py=by;pt=now;
+    const sp=Math.hypot(vx,vy);
+    st=st*.7+Math.min(.34,sp/3400)*.3;if(sp>40)ang=Math.atan2(vy,vx)*180/Math.PI;
+    const w=w0+(E-w0)*s,h=h0+(E-h0)*s,sc=1+lift*.08;
+    el.style.width=w+'px';el.style.height=h+'px';el.style.borderRadius=(20+(E/2-20)*s)+'px';
+    el.style.transform=`translate(${bx}px,${by}px) translate(-50%,-50%) rotate(${ang}deg) scale(${(1+st)*sc},${(1-st*.45)*sc}) rotate(${-ang}deg)`;
+    if(t<1)requestAnimationFrame(frame);
+    else{el.classList.add('gone');el.style.transform+=' scale(.4)';setTimeout(()=>el.remove(),180);onArrive()}
+  })(t0);
+}
+$$('.prod',shop).forEach(el=>{
+  const p={name:el.dataset.name,price:+el.dataset.price,tile:el.dataset.tile,art:$('.prod-img svg',el)};cartQ.set(p,0);
+  const atc=$('.atc',el),body=$('.atc-body',atc),add=$('.atc-add',atc),minus=$('.atc-minus',atc),plus=$('.atc-plus',atc),nEl=$('.atc-n',atc);
+  const W=()=>atc.clientWidth;let mt=0;
+  const w=new Spring(W(),{k:260,c:19,onUpdate:(x,v)=>{body.style.width=Math.max(40,x)+'px';body.style.transform=`translateX(-50%) scaleY(${clamp(1-v/9000,.93,1.07)})`}});
+  const nS=new Spring(0,{k:420,c:14,eps:.001,onUpdate:s=>nEl.style.transform=`translateX(-50%) scale(${1+s*.3})`});
+  const artS=new Spring(0,{k:360,c:13,eps:.001,onUpdate:s=>p.art.style.transform=`scale(${1-s*.07},${1+s*.04})`});
+  w.set(W());
+  const setQ=q=>{cartQ.set(p,q);nEl.textContent=q;nS.kick(q>0?8:-8)};
+  const lock=()=>{add.inert=true;minus.inert=true;plus.inert=true};
+  function toStepper(){
+    clearTimeout(mt);const hf=atc.contains(document.activeElement);lock();
+    atc.classList.add('busy','adding');w.to(46);
+    mt=setTimeout(()=>{atc.classList.remove('busy','adding');atc.classList.add('on');minus.inert=false;plus.inert=false;w.to(W());if(hf)plus.focus({preventScroll:true})},640);
+  }
+  function toAdd(){
+    clearTimeout(mt);const hf=atc.contains(document.activeElement);lock();
+    atc.classList.add('busy');w.to(46);
+    mt=setTimeout(()=>{atc.classList.remove('busy','on');add.inert=false;w.to(W());if(hf)add.focus({preventScroll:true})},220);
+  }
+  const arrive=()=>{
+    const{n}=renderCart();cartS.kick(10);icS.kick(14);badgeS.kick(10);
+    cartRing.classList.remove('go');void cartRing.offsetWidth;cartRing.classList.add('go');
+    cartLive.textContent=`เพิ่ม${p.name}แล้ว ตะกร้ามี ${n} ชิ้น`;
+  };
+  const launch=()=>{fly(p,arrive);artS.kick(8)};
+  add.addEventListener('click',()=>{setQ(1);launch();toStepper()});
+  plus.addEventListener('click',()=>{const q=cartQ.get(p);if(q>=9){w.kick(400);return}setQ(q+1);launch()});
+  minus.addEventListener('click',()=>{
+    const q=cartQ.get(p)-1;setQ(q);const{n}=renderCart();cartS.kick(-6);
+    cartLive.textContent=q?`เหลือ${p.name} ${q} ชิ้น ตะกร้ามี ${n} ชิ้น`:`เอา${p.name}ออกจากตะกร้าแล้ว`;
+    if(q===0)toAdd();
+  });
+  onResync(()=>{if(!atc.classList.contains('busy'))w.set(W())});
+});
+
+/* ---------- goo menu ---------- */
+const gooMain=$('.goo-main'),gooItems=$$('.goo-item'),gooStatus=$('#gooStatus');
+const ANG=[-150,-90,-30],RAD=96;let gooOpen=false,gooTimers=[];
+gooItems.forEach((it,i)=>{
+  const a=ANG[i]*Math.PI/180;
+  it._sp=new Spring(0,{k:220,c:15,eps:.001,onUpdate:p=>{
+    it.style.transform=`translate(-50%,-50%) translate(${Math.cos(a)*RAD*p}px,${Math.sin(a)*RAD*p}px) scale(${.5+.5*Math.min(p,1.15)})`;
+  }});
+  it.addEventListener('click',()=>{gooStatus.textContent='คุณเลือก '+it.getAttribute('aria-label');setGoo(false);gooMain.focus()});
+});
+function setGoo(o){
+  gooOpen=o;gooMain.setAttribute('aria-expanded',String(o));gooMain.setAttribute('aria-label',o?'ปิดเมนู':'เปิดเมนู');
+  gooTimers.forEach(clearTimeout);gooTimers=[];
+  gooItems.forEach((it,i)=>{
+    it.tabIndex=o?0:-1;it.inert=!o;
+    gooTimers.push(setTimeout(()=>it._sp.to(o?1:0),(o?i:gooItems.length-1-i)*70));
+  });
+}
+gooMain.addEventListener('click',()=>setGoo(!gooOpen));
+
+/* ---------- modal ---------- */
+const modal=$('#modal'),scrim=$('#scrim'),mTrig=$('#mTrig'),mIn=$('.modal-in',modal),mStatus=$('#mStatus'),mCancel=$('#mCancel'),mOk=$('#mOk');
+let mOpen=false,mClosing=false,mTimer=0;
+const mDraw=()=>{modal.style.transform=`translate(${mx.x}px,${my.x}px)`;modal.style.width=Math.max(20,mw.x)+'px';modal.style.height=Math.max(20,mh.x)+'px';modal.style.borderRadius=Math.max(8,mr.x)+'px'};
+const mRest=()=>{if(mClosing&&[mx,my,mw,mh,mr].every(s=>!s.raf)){mClosing=false;modal.hidden=true;mTrig.style.visibility='';mTrig.focus({preventScroll:true})}};
+const mOpt={eps:.6,onUpdate:mDraw,onRest:mRest};
+const mx=new Spring(0,mOpt),my=new Spring(0,mOpt),mw=new Spring(0,mOpt),mh=new Spring(0,mOpt),mr=new Spring(0,mOpt);
+function modalTarget(){const w=Math.min(380,innerWidth-32);mIn.style.width=w+'px';const h=mIn.offsetHeight;return{w,h,x:(innerWidth-w)/2,y:(innerHeight-h)/2}}
+function openModal(){
+  if(mOpen)return;mOpen=true;mClosing=false;
+  const r=mTrig.getBoundingClientRect();
+  mx.set(r.left);my.set(r.top);mw.set(r.width);mh.set(r.height);mr.set(r.height/2);
+  modal.hidden=false;mTrig.style.visibility='hidden';
+  const t=modalTarget();
+  modal.classList.remove('open');void modal.offsetWidth;modal.classList.add('open');scrim.classList.add('on');
+  mx.to(t.x,{k:240,c:22});my.to(t.y,{k:200,c:20});mw.to(t.w,{k:260,c:21});mh.to(t.h,{k:150,c:15});mr.to(28,{k:220,c:20});
+  setTimeout(()=>mCancel.focus({preventScroll:true}),200);
+}
+function closeModal(ok){
+  if(!mOpen)return;mOpen=false;mClosing=true;
+  modal.classList.remove('open');scrim.classList.remove('on');
+  const r=mTrig.getBoundingClientRect();
+  mx.to(r.left,{k:240,c:22});my.to(r.top,{k:240,c:22});mw.to(r.width,{k:170,c:17});mh.to(r.height,{k:280,c:24});mr.to(r.height/2,{k:240,c:22});
+  if(ok){clearTimeout(mTimer);mStatus.textContent='ลบโปรเจกต์แล้ว (แค่ตัวอย่าง ไม่มีอะไรถูกลบจริง)';mTimer=setTimeout(()=>mStatus.textContent='',3200)}
+}
+mTrig.addEventListener('click',openModal);
+mCancel.addEventListener('click',()=>closeModal(false));
+mOk.addEventListener('click',()=>closeModal(true));
+scrim.addEventListener('click',()=>closeModal(false));
+modal.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){e.preventDefault();closeModal(false)}
+  else if(e.key==='Tab'){e.preventDefault();const f=[mCancel,mOk],i=f.indexOf(document.activeElement);f[(i+(e.shiftKey?-1:1)+2)%2].focus()}
+});
+addEventListener('resize',()=>{if(mOpen){const t=modalTarget();mx.set(t.x);my.set(t.y);mw.set(t.w);mh.set(t.h)}});
+
+/* ---------- toast ---------- */
+const tStage=$('#toastStage'),tWrap=$('#toasts');
+const TMSG=['บันทึกการแก้ไขแล้ว','อัปโหลดรูป 3 รูปแล้ว','คัดลอกลิงก์แล้ว','ส่งคำเชิญให้ต้นแล้ว'];
+let tI=0;const toasts=[];
+const layoutToasts=()=>toasts.forEach((t,i)=>t.y.to(-i*58));
+function addToast(){
+  const el=document.createElement('div');el.className='toast';el.setAttribute('role','status');
+  el.innerHTML='<span class="toast-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="toast-tx"></span>';
+  $('.toast-tx',el).textContent=TMSG[tI++%TMSG.length];
+  tWrap.appendChild(el);
+  const W=Math.min(320,tStage.clientWidth-40),t={el,yv:60,wv:48};
+  const draw=()=>{el.style.transform=`translate(-50%,${t.yv}px)`;el.style.width=t.wv+'px'};
+  t.y=new Spring(60,{k:220,c:18,onUpdate:x=>{t.yv=x;draw()}});
+  t.w=new Spring(48,{k:260,c:17,onUpdate:x=>{t.wv=Math.max(30,x);draw()}});
+  draw();toasts.unshift(t);layoutToasts();
+  setTimeout(()=>{if(!t.gone){t.w.to(W);el.classList.add('wide')}},140);
+  t.timer=setTimeout(()=>dismiss(t),3800);
+  el.addEventListener('click',()=>dismiss(t));
+  while(toasts.length>3)dismiss(toasts[toasts.length-1]);
+}
+function dismiss(t){
+  if(t.gone)return;t.gone=true;clearTimeout(t.timer);
+  const i=toasts.indexOf(t);if(i>=0)toasts.splice(i,1);
+  t.el.classList.remove('wide');t.w.to(48);
+  setTimeout(()=>{t.y.to(t.yv+24);t.el.classList.add('out');setTimeout(()=>t.el.remove(),320)},240);
+  layoutToasts();
+}
+$('#toastBtn').addEventListener('click',addToast);
+
+/* ---------- tooltip ---------- */
+const toolbar=$('#toolbar'),tip=$('#tip'),tipTx=$('#tipTx'),tipM=$('#tipMeasure'),tbBtns=$$('button',toolbar),sample=$('#sample');
+let tpx=0,tpw=60,tps=0,tipHide=0;
+const tipDraw=()=>{const s=Math.min(.5,Math.abs(tX.v)/2500);tip.style.width=tpw+'px';tip.style.transform=`translateX(${tpx}px) translateX(-50%) scale(${tps*(1+s)},${tps*(1-s*.35)})`};
+const tX=new Spring(0,{k:320,c:24,onUpdate:x=>{tpx=x;tipDraw()}});
+const tW=new Spring(60,{k:280,c:20,onUpdate:x=>{tpw=x;tipDraw()}});
+const tS=new Spring(0,{k:340,c:20,eps:.002,onUpdate:x=>{tps=Math.max(0,x);tipDraw()}});
+function showTip(b){
+  clearTimeout(tipHide);const text=b.dataset.tip;tipTx.textContent=text;tipM.textContent=text;
+  const w=tipM.offsetWidth+28,x=b.offsetLeft+b.offsetWidth/2;
+  if(tps<.05){tX.set(x);tW.set(w)}else{tX.to(x);tW.to(w)}
+  tS.to(1);
+}
+const hideTip=()=>{clearTimeout(tipHide);tipHide=setTimeout(()=>tS.to(0),140)};
+tbBtns.forEach(b=>{
+  b.addEventListener('pointerenter',()=>showTip(b));
+  b.addEventListener('focus',()=>showTip(b));
+  b.addEventListener('pointerleave',hideTip);
+  b.addEventListener('blur',hideTip);
+  b.addEventListener('click',()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));sample.classList.toggle(b.dataset.fx,on)});
+});
+
+/* ---------- bottom sheet ---------- */
+const sheet=$('#sheet'),sheetPath=$('#sheetPath'),sheetScrim=$('#sheetScrim'),sheetOpenBtn=$('#sheetOpen'),sheetGrab=$('#sheetGrab'),sheetStatus=$('#sheetStatus');
+const S_H=()=>sheet.offsetHeight,S_CLOSED=()=>S_H()+30;
+let sheetOpen=false,sheetTimer=0;
+function drawSheet(y,v){
+  sheet.style.transform=`translateY(${y}px)`;
+  const W=sheet.clientWidth,H=S_H(),R=28,b=clamp(-v*.035,-36,36);
+  sheetPath.setAttribute('d',`M0 ${R}Q0 0 ${R} 0Q${W/2} ${b} ${W-R} 0Q${W} 0 ${W} ${R}V${H+60}H0Z`);
+  sheetScrim.style.opacity=clamp(1-y/S_CLOSED(),0,1);
+}
+const shY=new Spring(S_CLOSED(),{k:230,c:22,onUpdate:drawSheet});
+shY.set(S_CLOSED());
+function setSheet(o,v,refocus=true){
+  sheetOpen=o;sheet.inert=!o;sheetScrim.style.pointerEvents=o?'auto':'none';
+  sheetOpenBtn.setAttribute('aria-expanded',String(o));
+  if(v!==undefined)shY.v=v;shY.to(o?0:S_CLOSED());
+  if(o)setTimeout(()=>$('.share-t',sheet).focus({preventScroll:true}),160);
+  else if(refocus&&sheet.contains(document.activeElement))sheetOpenBtn.focus({preventScroll:true});
+}
+sheetOpenBtn.addEventListener('click',()=>setSheet(true));
+$('#sheetCancel').addEventListener('click',()=>setSheet(false));
+sheetScrim.addEventListener('click',()=>setSheet(false));
+sheet.addEventListener('keydown',e=>{if(e.key==='Escape')setSheet(false)});
+$$('.share-t',sheet).forEach(b=>b.addEventListener('click',()=>{
+  clearTimeout(sheetTimer);sheetStatus.textContent=b.dataset.done;sheetTimer=setTimeout(()=>sheetStatus.textContent='',2600);setSheet(false);
+}));
+let sd=null;
+sheetGrab.addEventListener('pointerdown',e=>{if(!sheetOpen)return;sd={y0:e.clientY,o0:shY.x,ly:e.clientY,lt:performance.now(),v:0};sheetGrab.setPointerCapture(e.pointerId)});
+sheetGrab.addEventListener('pointermove',e=>{
+  if(!sd)return;
+  const now=performance.now();let y=sd.o0+(e.clientY-sd.y0);if(y<0)y*=.3;
+  const inst=(e.clientY-sd.ly)/Math.max(1,now-sd.lt)*1000;sd.v=sd.v*.6+inst*.4;sd.ly=e.clientY;sd.lt=now;
+  shY.drag(y,sd.v);
+});
+const sheetEnd=()=>{
+  if(!sd)return;
+  const v=performance.now()-sd.lt>90?0:sd.v;
+  const close=v>500||(v>-300&&shY.x>S_H()*.4);
+  setSheet(!close,v,false);sd=null;
+};
+sheetGrab.addEventListener('pointerup',sheetEnd);sheetGrab.addEventListener('pointercancel',sheetEnd);
+onResync(()=>{if(!sheetOpen)shY.set(S_CLOSED());else drawSheet(shY.x,0)});
+
+/* ---------- fab ---------- */
+const fab=$('#fab'),fabStage=$('#fabStage'),fOpen=$('.fab-open',fab),fPanel=$('.fab-panel',fab),fText=$('textarea',fab),notes=$('#notes');
+let fabIsOpen=false;
+const fw=new Spring(60,{onUpdate:x=>fab.style.width=Math.max(24,x)+'px'});
+const fh=new Spring(60,{onUpdate:x=>fab.style.height=Math.max(24,x)+'px'});
+const fr=new Spring(30,{onUpdate:x=>fab.style.borderRadius=Math.max(8,x)+'px'});
+const openSize=()=>[Math.min(300,fabStage.clientWidth-40),236,26];
+function setFab(o,refocus=true){
+  fabIsOpen=o;fab.classList.toggle('open',o);fOpen.setAttribute('aria-expanded',String(o));
+  fOpen.inert=o;fPanel.inert=!o;
+  if(o){
+    const[w,h,r]=openSize();fPanel.style.width=w+'px';fPanel.style.height=h+'px';
+    fw.to(w,{k:320,c:24});fh.to(h,{k:150,c:16});fr.to(r,{k:260,c:24});
+    setTimeout(()=>fText.focus({preventScroll:true}),180);
+  }else{
+    fw.to(60,{k:150,c:16});fh.to(60,{k:320,c:24});fr.to(30,{k:260,c:24});
+    if(refocus)fOpen.focus({preventScroll:true});
+  }
+}
+fOpen.addEventListener('click',()=>setFab(true));
+$('.fab-close',fab).addEventListener('click',()=>setFab(false));
+fab.addEventListener('keydown',e=>{if(e.key==='Escape'&&fabIsOpen)setFab(false)});
+$('.fab-save',fab).addEventListener('click',()=>{
+  const t=fText.value.trim();
+  if(!t){fText.placeholder='พิมพ์โน้ตก่อน แล้วค่อยกดบันทึก';fText.focus();return}
+  const li=document.createElement('li');li.textContent=t;li.className='pop';notes.prepend(li);
+  while(notes.children.length>4)notes.lastElementChild.remove();
+  fText.value='';fText.placeholder='จดอะไรไว้หน่อย';setFab(false);
+});
+onResync(()=>{if(fabIsOpen){const[w]=openSize();fPanel.style.width=w+'px';fw.set(w)}});
+
+/* ---------- accordion ---------- */
+const accItems=$$('.acc-item');let accOpen=-1;
+accItems.forEach((it,i)=>{
+  const panel=$('.acc-panel',it),inner=$('.acc-in',panel);
+  it._h=new Spring(0,{k:210,c:14,onUpdate:(h,v)=>{panel.style.height=Math.max(0,h)+'px';inner.style.transform=`translateY(${clamp(-v*.012,-10,10)}px)`}});
+  panel.inert=true;
+  $('.acc-btn',it).addEventListener('click',()=>setAcc(accOpen===i?-1:i));
+});
+function setAcc(i){
+  accOpen=i;
+  accItems.forEach((it,j)=>{
+    const on=j===i,panel=$('.acc-panel',it);
+    $('.acc-btn',it).setAttribute('aria-expanded',String(on));it.classList.toggle('open',on);panel.inert=!on;
+    it._h.to(on?$('.acc-in',panel).offsetHeight:0);
+  });
+}
+onResync(()=>{if(accOpen>=0){const it=accItems[accOpen];it._h.set($('.acc-in',it).offsetHeight)}});
+</script>
+</body>
+</html>
