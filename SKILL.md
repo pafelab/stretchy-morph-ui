@@ -1,6 +1,7 @@
 ---
 name: stretchy-morph-ui
 description: Make web UI morph like rubber, with springs that squash, stretch, overshoot and settle instead of easing curves. Use whenever the user wants animated, bouncy, elastic, gooey or alive-feeling UI, micro-interactions or morph transitions, or asks which parts of their interface could feel more fluid, even if they never say spring. Includes a spring engine and 24 reference components. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, ทำให้ UI ดูมีชีวิต, ตรวจโค้ดว่าทำให้ยืดได้ตรงไหน.
+license: MIT
 ---
 
 # Stretchy morph UI
