@@ -414,15 +414,21 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .fab-save{align-self:flex-end;border:0;border-radius:999px;background:#fff;color:#4A32D6;font-weight:700;padding:6px 22px;cursor:pointer}
 
 /* accordion */
-.acc-stage{place-items:start center;min-height:420px}
-.acc{width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px}
-.acc-item{background:var(--surface);border-radius:20px}
-.acc-item h4{margin:0;font-size:inherit}
-.acc-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 20px;border:0;background:none;cursor:pointer;font-weight:600;text-align:left;border-radius:20px;line-height:1.4}
-.acc-btn svg{transition:transform .5s cubic-bezier(.3,1.7,.5,1)}
-.acc-item.open .acc-btn svg{transform:rotate(180deg)}
+.acc-stage{place-items:start center;min-height:560px}
+@media (max-width:600px){.acc-stage{min-height:620px}}  /* fits all three open in หลายข้อ mode */
+.acc-wrap{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.acc{width:100%;display:flex;flex-direction:column;gap:10px}
+.acc details{background:var(--surface);border-radius:20px;transition:box-shadow .3s}
+.acc details.open{box-shadow:0 16px 30px -20px rgba(60,30,180,.6)}
+.acc summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 20px;cursor:pointer;font-weight:600;line-height:1.4;list-style:none;border-radius:20px;transition:color .25s}
+.acc summary::-webkit-details-marker{display:none}
+.acc details.open summary{color:var(--violet)}
+/* the chevron's transform is written by a spring: no CSS transition on it */
 .acc-panel{height:0;overflow:hidden}
 .acc-in{padding:0 20px 18px;color:var(--muted);font-size:15px}
+.acc-in p{margin:0}
+.acc-pay{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.acc-pay li{padding:2px 12px;border-radius:999px;background:var(--stage-v);color:var(--ink);font-size:14px}
 
 /* add to cart */
 .shop-stage{display:block;place-items:normal;padding:24px}
@@ -1113,23 +1119,31 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
 
       <article class="spec">
         <div class="stage acc-stage" style="background:var(--stage-v)">
-          <div class="acc" id="acc">
-            <div class="acc-item">
-              <h4><button class="acc-btn" id="acc-b0" aria-expanded="false" aria-controls="acc-p0">ส่งของภายในกี่วัน<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></h4>
-              <div class="acc-panel" id="acc-p0" role="region" aria-labelledby="acc-b0"><div class="acc-in">กรุงเทพฯ และปริมณฑลได้รับภายใน 1–2 วันทำการ ต่างจังหวัด 2–4 วันทำการ สั่งก่อนบ่ายสองโมงส่งออกวันเดียวกัน</div></div>
+          <div class="acc-wrap">
+            <div class="seg" id="accMode" role="group" aria-label="การเปิดคำถาม">
+              <span class="seg-ind"></span>
+              <button data-seg>ทีละข้อ</button>
+              <button data-seg>หลายข้อ</button>
             </div>
-            <div class="acc-item">
-              <h4><button class="acc-btn" id="acc-b1" aria-expanded="false" aria-controls="acc-p1">เปลี่ยนไซซ์ได้ไหม<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></h4>
-              <div class="acc-panel" id="acc-p1" role="region" aria-labelledby="acc-b1"><div class="acc-in">เปลี่ยนได้ภายใน 7 วันหลังได้รับสินค้า ป้ายต้องยังติดอยู่และสินค้ายังไม่ผ่านการใช้งาน</div></div>
-            </div>
-            <div class="acc-item">
-              <h4><button class="acc-btn" id="acc-b2" aria-expanded="false" aria-controls="acc-p2">ชำระเงินทางไหนได้บ้าง<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></h4>
-              <div class="acc-panel" id="acc-p2" role="region" aria-labelledby="acc-b2"><div class="acc-in">พร้อมเพย์ บัตรเครดิต และเก็บเงินปลายทาง ยอดสั่งซื้อตั้งแต่ 3,000 บาทผ่อน 0% ได้ 3 เดือน</div></div>
+            <div class="acc" id="acc">
+              <details name="faq">
+                <summary>ส่งของภายในกี่วัน<svg class="i" data-acc-chev viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+                <p>กรุงเทพฯ และปริมณฑลได้รับภายใน 1–2 วันทำการ ต่างจังหวัด 2–4 วันทำการ สั่งก่อนบ่ายสองโมงส่งออกวันเดียวกัน</p>
+              </details>
+              <details name="faq">
+                <summary>เปลี่ยนไซซ์ได้ไหม<svg class="i" data-acc-chev viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+                <p>เปลี่ยนได้ภายใน 7 วันหลังได้รับสินค้า ป้ายต้องยังติดอยู่และสินค้ายังไม่ผ่านการใช้งาน</p>
+              </details>
+              <details name="faq">
+                <summary>ชำระเงินทางไหนได้บ้าง<svg class="i" data-acc-chev viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+                <p>ยอดตั้งแต่ 3,000 บาทผ่อน 0% ได้ 3 เดือน</p>
+                <ul class="acc-pay"><li>พร้อมเพย์</li><li>บัตรเครดิต</li><li>เก็บเงินปลายทาง</li></ul>
+              </details>
             </div>
           </div>
         </div>
         <h3>คำถามที่พับเก็บแบบยืดหยุ่น</h3>
-        <p>ความสูงพุ่งเลยเป้าไปนิดแล้วดีดกลับ ข้อความด้านในหน่วงตามเล็กน้อยเหมือนของที่ถูกเขย่าในกล่อง เปิดได้ทีละข้อ</p>
+        <p>ความสูงพุ่งเลยเป้าแล้วดีดกลับ ข้อความข้างในหน่วงตามเหมือนของในกล่องที่ถูกเขย่า การ์ดที่เปิดแยกตัวจากเพื่อน ใบที่ถูกดันแบนลงนิดหนึ่ง สร้างจาก &lt;details&gt; ธรรมดา ไม่มี JavaScript ก็ยังเปิดได้</p>
       </article>
     </div>
   </section>
@@ -1215,6 +1229,149 @@ function makeSegmented(root,{attr='aria-pressed',initial=0,onChange}={}){
   select(initial,false,false);
   onResync(()=>{const[a,b]=pos(cur);ep.set(a,b)});
   return{select,get index(){return cur}};
+}
+
+/* ---------------------------------------------------------------------
+   makeAccordion: elastic accordion. The panel's height overshoots and
+   settles (the hero), its content lags like something shaken in a box,
+   the opened card drifts apart from its neighbours, the cards below
+   squash a little as they are pushed, and the chevron flips with a pop.
+   Works on two kinds of markup, items being direct children of root:
+     <details>  <summary>…</summary> any content </details>   (enhanced in
+       place: content is wrapped in .acc-panel > .acc-in; a `name` group
+       becomes single mode, since the browser would close siblings with
+       no animation)
+     <div class="acc-item"> <button class="acc-btn" aria-controls>…</button>
+       <div class="acc-panel"><div class="acc-in">…</div></div> </div>
+   A chevron is any [data-acc-chev] or svg inside the header.
+   Options: single (one open at a time; default true, or false for details
+   without a name), initial (index or array), gap (px each opened card
+   moves away from its neighbours, 0 = off), squash (pushed-card squash),
+   onChange(openIndexes).
+   --------------------------------------------------------------------- */
+function makeAccordion(root, { single, initial = [], gap = 0, squash = true, onChange } = {}) {
+  const items = $$(':scope > details, :scope > .acc-item', root);
+  const isDet = items[0] && items[0].tagName === 'DETAILS';
+  if (single === undefined) single = !isDet || items.some(d => d.hasAttribute('name'));
+  const st = items.map((item, i) => {
+    let header, panel, inner;
+    if (item.tagName === 'DETAILS') {
+      header = $(':scope > summary', item);
+      if (item.hasAttribute('name')) { item.dataset.accName = item.getAttribute('name'); item.removeAttribute('name'); }
+      panel = $(':scope > .acc-panel', item);
+      if (!panel) {
+        panel = document.createElement('div'); panel.className = 'acc-panel';
+        inner = document.createElement('div'); inner.className = 'acc-in';
+        [...item.childNodes].forEach(n => { if (n !== header) inner.appendChild(n); });
+        panel.appendChild(inner); item.appendChild(panel);
+      }
+    } else {
+      header = $('.acc-btn', item); panel = $('.acc-panel', item);
+    }
+    inner = inner || $('.acc-in', panel) || panel.firstElementChild;
+    panel.style.overflow = 'hidden'; panel.style.height = '0px';
+    inner.style.display = 'flow-root';                                   // flow-root: child margins count
+    const chev = $('[data-acc-chev]', header) || $('svg', header);
+    const s = { item, header, panel, inner, chev, open: false, det: item.tagName === 'DETAILS', expect: item.open };
+    let rot = 0, pop = 0;
+    const drawChev = () => { if (chev) chev.style.transform = `rotate(${rot}deg) scale(${1 + pop * .22},${1 - pop * .22})`; };
+    s.h = new Spring(0, { k: 210, c: 14, eps: .5,
+      onUpdate: (h, v) => {
+        // A closing panel lands on a floor at 0 instead of ringing back open
+        // (any global bounce can make the closing spring underdamped).
+        if (!s.open && h <= 0 && v < 0) { s.h.x = 0; s.h.v = 0; h = v = 0; }
+        panel.style.height = Math.max(0, h) + 'px';
+        inner.style.transform = `translateY(${clamp(-v * .012, -10, 10)}px)`;
+        if (squash) drawPush();
+      },
+      onRest: () => {                       // re-check: also fires after an open, or a close that was interrupted
+        if (s.open) return;
+        panel.style.height = '0px';
+        if (s.det && item.open) detOpen(s, false);
+      } });
+    s.sep = new Spring(0, { k: 260, c: 18, eps: .001, onUpdate: x => {
+      if (!gap) return;
+      item.style.marginTop = i > 0 ? x * gap + 'px' : '';
+      item.style.marginBottom = i < items.length - 1 ? x * gap + 'px' : '';
+    } });
+    s.rot = new Spring(0, { k: 300, c: 15, eps: .1, onUpdate: x => { rot = x; drawChev(); } });
+    s.pop = new Spring(0, { k: 420, c: 14, eps: .001, onUpdate: x => { pop = x; drawChev(); } });
+    panel.inert = true; if (!s.det) header.setAttribute('aria-expanded', 'false');
+    return s;
+  });
+
+  /* Remember what we set, so the async toggle event can tell our changes from external ones. */
+  function detOpen(s, v) { s.expect = v; s.item.open = v; }
+
+  /* Pushed cards: each card below a moving panel squashes by the sum of the
+     panels' height velocities above it (pushed down = flatter, pulled up = taller). */
+  function drawPush() {
+    let v = 0;
+    st.forEach(s => {
+      const y = clamp(v / 30000, -.04, .04);
+      s.item.style.transformOrigin = '50% 0';
+      s.item.style.transform = Math.abs(y) < .001 ? '' : `scale(${1 + y * .5},${1 - y})`;
+      v += s.h.v;
+    });
+  }
+
+  function setOpen(i, on, anim = true) {
+    const s = st[i]; if (!s || s.open === on) return;
+    s.open = on;                                                   // state first: under reduced motion
+    s.item.classList.toggle('open', on);                           // to() calls onRest synchronously
+    if (!s.det) s.header.setAttribute('aria-expanded', String(on));
+    s.panel.inert = !on;
+    if (on) {
+      if (s.det && !s.item.open) detOpen(s, true);                 // render the content before measuring
+      const H = s.inner.offsetHeight;
+      anim ? s.h.to(H, { k: 210, c: 14 }) : s.h.set(H);            // underdamped: visible overshoot
+    } else {
+      anim ? s.h.to(0, { k: 260, c: 30 }) : (s.h.set(0), s.h.rest());  // ζ≈.93: no ringing back open at bounce .5
+    }
+    anim ? s.sep.to(on ? 1 : 0) : s.sep.set(on ? 1 : 0);
+    anim ? s.rot.to(on ? 180 : 0) : s.rot.set(on ? 180 : 0);
+    if (anim) s.pop.kick(on ? 7 : -5);
+  }
+  const openIndexes = () => st.map((s, i) => s.open ? i : -1).filter(i => i >= 0);
+  function toggle(i, on = !st[i].open, anim = true) {
+    if (on && single) st.forEach((s, j) => j !== i && setOpen(j, false, anim));
+    setOpen(i, on, anim);
+    onChange && onChange(openIndexes());
+  }
+
+  st.forEach((s, i) => {
+    s.header.addEventListener('click', e => { e.preventDefault(); toggle(i); });
+    if (s.det) s.item.addEventListener('toggle', () => {        // find-in-page, #hash, other scripts
+      if (s.item.open === s.expect) return;                      // our own change, possibly already superseded
+      s.expect = s.item.open; toggle(i, s.item.open, s.item.open);
+    });
+  });
+  root.addEventListener('keydown', e => {
+    const i = st.findIndex(s => s.header === e.target); if (i < 0) return;
+    const n = st.length, to = { ArrowDown: (i + 1) % n, ArrowUp: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
+    if (to === undefined) return;
+    e.preventDefault(); st[to].header.focus();
+  });
+
+  /* Re-measure open panels when their content or width changes. */
+  const remeasure = () => st.forEach(s => {
+    if (!s.open) return;
+    const H = s.inner.offsetHeight; if (Math.abs(H - s.h.t) < 1) return;
+    s.h.raf ? s.h.to(H) : s.h.set(H);
+  });
+  if (window.ResizeObserver) { const ro = new ResizeObserver(remeasure); st.forEach(s => ro.observe(s.inner)); }
+  onResync(remeasure);
+
+  const init = new Set([].concat(initial));
+  st.forEach((s, i) => { if (init.has(i) || (s.det && s.item.open)) { if (s.det) detOpen(s, false); init.add(i); } });
+  [...init].slice(0, single ? 1 : undefined).forEach(i => setOpen(i, true, false));
+
+  return {
+    open: i => toggle(i, true), close: i => toggle(i, false), toggle: i => toggle(i),
+    get openIndexes() { return openIndexes(); },
+    get single() { return single; },
+    set single(x) { single = x; if (x) openIndexes().slice(1).forEach(i => setOpen(i, false)); }
+  };
 }
 
 /* ---------- header: bounciness ---------- */
@@ -2030,22 +2187,8 @@ $('.fab-save',fab).addEventListener('click',()=>{
 onResync(()=>{if(fabIsOpen){const[w]=openSize();fPanel.style.width=w+'px';fw.set(w)}});
 
 /* ---------- accordion ---------- */
-const accItems=$$('.acc-item');let accOpen=-1;
-accItems.forEach((it,i)=>{
-  const panel=$('.acc-panel',it),inner=$('.acc-in',panel);
-  it._h=new Spring(0,{k:210,c:14,onUpdate:(h,v)=>{panel.style.height=Math.max(0,h)+'px';inner.style.transform=`translateY(${clamp(-v*.012,-10,10)}px)`}});
-  panel.inert=true;
-  $('.acc-btn',it).addEventListener('click',()=>setAcc(accOpen===i?-1:i));
-});
-function setAcc(i){
-  accOpen=i;
-  accItems.forEach((it,j)=>{
-    const on=j===i,panel=$('.acc-panel',it);
-    $('.acc-btn',it).setAttribute('aria-expanded',String(on));it.classList.toggle('open',on);panel.inert=!on;
-    it._h.to(on?$('.acc-in',panel).offsetHeight:0);
-  });
-}
-onResync(()=>{if(accOpen>=0){const it=accItems[accOpen];it._h.set($('.acc-in',it).offsetHeight)}});
+const faq=makeAccordion($('#acc'),{gap:6});
+makeSegmented($('#accMode'),{onChange:i=>{faq.single=i===0}});
 </script>
 </body>
 </html>

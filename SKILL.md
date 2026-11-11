@@ -1,6 +1,6 @@
 ---
 name: stretchy-morph-ui
-description: Turn web UI into stretchy morph UI, where transitions squash, stretch, overshoot and settle on springs instead of easing curves. When invoked, first audit the user's existing code for components that could become stretchy (tabs, toggles, buttons, modals, dropdowns, accordions, carousels, toasts, sidebars, date pickers, add to cart and more), then list what can change and ask the user to confirm or add their own requests before editing anything. Includes a spring engine, 24 working reference components, a scanner, a browser checker, and a method for inventing new stretchy components. Use whenever the user wants animated or alive-feeling UI, micro-interactions, spring, elastic, bouncy, gooey, liquid or morph transitions, or wants an existing interface to feel more fluid, tactile or playful, even if they never say spring. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, แอนิเมชันปุ่ม, ทำให้ UI ดูมีชีวิต, ตรวจโค้ดว่าทำให้ยืดได้ตรงไหน.
+description: Make web UI morph like rubber, with springs that squash, stretch, overshoot and settle instead of easing curves. Use whenever the user wants animated, bouncy, elastic, gooey or alive-feeling UI, micro-interactions or morph transitions, or asks which parts of their interface could feel more fluid, even if they never say spring. Includes a spring engine and 24 reference components. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, ทำให้ UI ดูมีชีวิต, ตรวจโค้ดว่าทำให้ยืดได้ตรงไหน.
 ---
 
 # Stretchy morph UI
@@ -9,9 +9,9 @@ This skill produces interfaces where every state change *morphs*: a tab indicato
 
 The look comes from one idea: **stretch is caused by something.** An element deforms because its parts disagree (one edge arrives before the other), because it is moving fast (it lengthens along its path), because it is being squeezed (it bulges the other way to keep its volume), or because it was just hit (it wobbles). Random wobble on a loop looks cheap; stretch with a cause looks like material.
 
-## Step 0, every time: audit the user's code and confirm
+## Step 0: audit existing code, then confirm
 
-Before building or editing anything, find out what in the user's own interface can become stretchy, and let them choose. Details, judgement criteria and message templates are in `references/audit.md`; the short version:
+When the request is about the user's existing interface in general ("make my app feel alive", "what could stretch here", a repo or files in scope with no specific parts named), find out what can become stretchy and let them choose before editing. Details, judgement criteria and message templates are in `references/audit.md`; the short version:
 
 1. **Find the code**: pasted code, attached files (on claude.ai, list `/mnt/user-data/uploads`), the working directory or repo, an artifact link (read it with the artifact tool), or a source the user points to. If there is none, say what you looked for and offer two paths: share the code, or build something new from scratch.
 2. **Scan it**: `python scripts/audit_ui.py <paths>` reports the stack, existing motion, missing reduced-motion handling, and candidates per UI category with `file:line`, each mapped to a showcase component and technique.
@@ -20,7 +20,7 @@ Before building or editing anything, find out what in the user's own interface c
 5. **Ask for confirmation** in the user's language: the numbered proposals, then a question inviting them to pick numbers, take all recommended, or type extra parts they want stretchy that are not on the list. Use a tappable-choice tool if the environment has one, otherwise plain text. **End the turn there; make no edits before the reply.**
 6. **Build what they chose** plus anything they added, then follow the Workflow below and report per item.
 
-If the user already named the parts they want, still audit: put their parts first, offer the rest as optional, and keep the question short.
+Skip the audit when the user asks for something new ("build a stretchy toggle") or already named the parts to change ("make my tabs stretchy"): go straight to the Workflow. If you noticed other good candidates along the way, mention them in one line at the end.
 
 ## Files
 
@@ -28,7 +28,7 @@ All paths are relative to this skill's folder (the folder containing this `SKILL
 
 | Path | What it is | When to open it |
 |---|---|---|
-| [`assets/stretchy-core.js`](assets/stretchy-core.js) | The spring engine plus helpers (edge pairs, segmented indicator, volume scale, bulging SVG edges, FLIP reorder, thrown objects) | Paste into every page you build. Read it once so you know the helpers. |
+| [`assets/stretchy-core.js`](assets/stretchy-core.js) | The spring engine plus helpers (edge pairs, segmented indicator, elastic accordion that also enhances `<details>`, volume scale, bulging SVG edges, FLIP reorder, thrown objects) | Paste into every page you build. Read it once so you know the helpers. |
 | [`assets/starter.html`](assets/starter.html) | Page skeleton: light/dark tokens, Thai-capable variable font, reduced-motion handling, the core inlined, one example component | Start a new page from it |
 | [`assets/showcase.html`](assets/showcase.html) | All 24 working components from the original build. Each JS section starts with a banner like `/* ---------- tabs ---------- */` | When a request matches a catalog component, `grep -n "/\* ---------- " assets/showcase.html` and read just that section plus its CSS |
 | [`references/audit.md`](references/audit.md) | How to find, scan, judge and prioritise the user's code, and the confirmation message templates (Thai and English) | At Step 0, every time |
@@ -82,6 +82,7 @@ Damping ratio ζ = c / (2√k). UI state changes feel right around ζ 0.6–0.8;
 | Lagging follower (bubble) | 150 | 11 | Loose on purpose |
 | Kick feedback | 380–420 | 12–16 | Kick with 6–10 |
 | Height with visible overshoot (accordion) | 210 | 14 | |
+| Height closing to 0 (accordion) | 260 | 30 | Plus a floor at 0 (`techniques.md`, Kick) |
 
 ## Rules of thumb
 
@@ -123,10 +124,8 @@ The first add-to-cart version flew a plain coloured ball along two independent s
 | Whole page scrolls sideways on phones | `grid-template-columns:1fr` lets a child's min-content (a carousel track) blow out the column | Use `minmax(0,1fr)` |
 | Button could not be clicked | An invisible (opacity 0) sibling layer sat on top of it | `pointer-events:none` on hidden layers |
 | Indicator lands in the wrong place on first paint | Measured before the web font loaded | Re-measure on `document.fonts.ready` and resize |
-| Dot misaligned inside a `fieldset` | `legend` shifts the fieldset box in odd ways | Use a `div role="radiogroup"`, measure with `getBoundingClientRect` differences |
 | Dialog lingered ~1 s after visibly closing | Rest threshold `eps` of 0.05 px is far stricter than the eye | Use `eps≈0.5` for pixel springs whose `onRest` triggers logic |
-| Stepper "Next" button lost focus | Disabled while focused | Change its label/action instead of disabling, or move focus first |
-| Under reduced motion, the choice-chip blob settled on the chip's old, narrower size | The usual reduced-motion rule `*{transition-duration:.01s!important}` keeps `transition-property:all`, so every width a spring writes becomes a 10 ms CSS transition and a measurement taken right after the write reads the old layout | Give elements whose size a spring writes and another part measures `transition:none!important` (beats the `*` rule on specificity) |
+| Under reduced motion, a measured size was stale (choice chips) | `*{transition-duration:.01s!important}` keeps `transition-property:all`, so a size a spring writes becomes a 10 ms transition and an immediate measurement reads the old layout | `transition:none!important` on elements whose size a spring writes and another part measures |
 | Slider broke after adding the date picker | Both declared `function setVal`; in one script the later declaration silently replaces the earlier | Prefix helpers per component (`dpText`), or wrap each component in its own block or module; check with `grep -oE "function [A-Za-z_]+" \| sort \| uniq -d` |
 | A helper worked in the skill's starter but threw in a bigger page | The page never included it (`replayClass`) | Paste the whole core, or inline the two lines you need |
 

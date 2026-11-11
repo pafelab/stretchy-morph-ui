@@ -1,73 +1,73 @@
 # stretchy-morph-ui
 
-สกิลสำหรับ AI coding agent (Claude และ Google Antigravity) ที่ทำให้ UI บนเว็บ **morph แบบยืดหยุ่นเหมือนยาง**: องค์ประกอบจะบีบ ยืด เด้งเลยเป้าแล้วค่อยนิ่ง โดยใช้ spring แทน easing curve
+A skill for AI coding agents (Claude and Google Antigravity) that gives web UIs **rubbery, elastic morphing**: elements squish, stretch, overshoot their target, and settle into place using physical springs instead of easing curves.
 
-ตัวอย่างเช่น เส้นใต้แท็บที่ยืดตัวแบบหนอนไปหาแท็บถัดไป ปุ่มที่หดเป็นวงโหลดแล้วพองกลับ หรือรูปสินค้าที่ลอยออกจากการ์ด หดเป็นวงกลม แล้วตกลงในตะกร้า
+For example: a tab underline that stretches like an inchworm to the next tab, a button that collapses into a loading ring and inflates back, or a product image that lifts off its card, compresses into a circle, and drops into the cart.
 
-> **หลักการเดียวของสกิลนี้:** การยืดต้องมีสาเหตุ
-> ขอบหน้าไปถึงก่อนขอบหลัง, เคลื่อนที่เร็วเลยยืดตามทิศทาง, ถูกบีบเลยพองอีกแกนเพื่อรักษาปริมาตร, หรือถูกกระทบเลยสั่น
-> ถ้าดุ๊กดิ๊กวนไปเรื่อย ๆ โดยไม่มีสาเหตุจะดูถูก ๆ แต่ถ้ายืดเพราะมีสาเหตุจะดูเหมือนวัสดุจริง
+> **The core principle of this skill:** Stretch must have a physical cause.
+> The leading edge arrives before the trailing edge; fast movement stretches along the direction of travel; compression along one axis bulges the other to preserve volume; or an impact induces oscillation.
+> Aimless wobbling looks cheap, but purposeful deformation feels like real physical matter.
 
-## สิ่งที่อยู่ในสกิล
+## What's Included
 
-- **Spring engine** ไม่มี dependency (`assets/stretchy-core.js`) พร้อมฟังก์ชันช่วย เช่น edge pair, volume preservation, bulging SVG edge, FLIP reorder, thrown object
-- **Showcase 24 คอมโพเนนต์** ที่ใช้งานได้จริง ได้แก่ tabs, stepper, sidebar, carousel, send button, toggles, radio/checkbox, chips, search, dropdown, slider, quantity, rating, add to cart, goo menu, modal, toast, tooltip, bottom sheet, FAB, accordion, dynamic island date picker (เลือกวันเดียวหรือช่วง) และ choice chips (ชิปเลือกได้ทีละอัน)
-- **เทคนิคการยืด 11+ แบบ** พร้อมโค้ดและค่า spring ที่ปรับไว้แล้ว
-- **วิธีออกแบบคอมโพเนนต์ใหม่** ที่ไม่อยู่ในแคตตาล็อก พร้อมตัวอย่าง 14 แบบ (pull to refresh, swipe to delete, OTP input, date picker ฯลฯ) และแนวทาง port ไป React
-- **ขั้นตอน audit โค้ดของผู้ใช้ก่อนลงมือ** (Step 0) สแกนโค้ดที่มีอยู่ด้วย `scripts/audit_ui.py` หาส่วนที่ทำให้ยืดได้ (tabs, toggle, modal, dropdown, accordion ฯลฯ) สรุปเป็นรายการพร้อม `file:line` แล้วถามผู้ใช้ให้ยืนยันหรือเพิ่มเอง **ก่อนแก้ไฟล์ใด ๆ**
-- **สคริปต์ตรวจหน้าเว็บ** ด้วย headless Chromium ตรวจ JS error, การล้นจอแนวนอน, layer ล่องหนที่บังการคลิก และถ่ายภาพเฟรมแอนิเมชันมาเรียงเป็น contact sheet
+- **Zero-dependency Spring Engine** (`assets/stretchy-core.js`) with helper utilities including edge pairs, volume preservation, bulging SVG edges, FLIP reordering, thrown objects, and `makeAccordion` to make existing `<details>` elements instantly elastic.
+- **24 Working Showcase Components**: tabs, stepper, sidebar, carousel, send button, toggles, radio/checkbox, chips, search, dropdown, slider, quantity, rating, add to cart, goo menu, modal, toast, tooltip, bottom sheet, FAB, accordion, dynamic island date picker (single or range selection), and choice chips (single-select chips).
+- **11+ Elastic Deformation Techniques** with code recipes and tuned spring presets.
+- **Guide for Designing New Components** not in the catalog, featuring 14 examples (pull-to-refresh, swipe-to-delete, OTP input, date picker, etc.) and guidance on porting to React.
+- **Pre-flight Code Audit Workflow** (Step 0, when asked to generally enhance existing UI without specific targets): scan existing code using `scripts/audit_ui.py` to identify candidates for elasticity (tabs, toggles, modals, dropdowns, accordions, etc.), summarize findings with `file:line`, and ask the user to confirm or customize **before modifying any files**.
+- **Page Inspection Script** powered by headless Chromium: detects JavaScript errors, horizontal overflow, invisible click-blocking layers, and captures animation frames arranged into a contact sheet.
 
-## โครงสร้าง
+## Structure
 
 ```
 stretchy-morph-ui/
-├── SKILL.md                    คำสั่งหลักที่ Claude อ่าน (workflow, กฎ, checklist)
+├── SKILL.md                    Main instructions read by the agent (workflow, rules, checklist)
 ├── references/
-│   ├── audit.md                วิธีหา สแกน ตัดสิน และจัดลำดับส่วนที่ควรทำให้ยืด + แม่แบบข้อความถามยืนยัน (ไทย/อังกฤษ)
-│   ├── techniques.md           เทคนิคการยืดแต่ละแบบ โค้ด และค่าที่ใช้ปรับ
-│   ├── components.md           แคตตาล็อกคอมโพเนนต์: recipe, ค่า spring, ข้อควรระวัง
-│   └── new-components.md       วิธีออกแบบคอมโพเนนต์ใหม่ + ตัวอย่าง + React port
+│   ├── audit.md                How to identify, scan, decide, and rank candidate elements + confirmation templates (TH/EN)
+│   ├── techniques.md           Deformation techniques, code, and tuning parameters
+│   ├── components.md           Component catalog: recipes, spring values, gotchas
+│   └── new-components.md       Designing new components + examples + React porting guide
 ├── assets/
-│   ├── stretchy-core.js        spring engine + helpers
-│   ├── starter.html            โครงหน้าเปล่า (light/dark, ฟอนต์ไทย, reduced motion)
-│   └── showcase.html           คอมโพเนนต์ทั้ง 24 ตัว
+│   ├── stretchy-core.js        Spring engine + helpers
+│   ├── starter.html            Starter template (light/dark mode, Thai typography, reduced motion)
+│   └── showcase.html           All 24 showcase components
 └── scripts/
-    ├── audit_ui.py             สแกนโค้ดของผู้ใช้: stack, แอนิเมชันที่มีอยู่, ส่วนที่ทำให้ยืดได้
-    └── check_page.py           smoke test + ถ่ายเฟรมแอนิเมชัน
+    ├── audit_ui.py             Scans user code: tech stack, existing animations, elasticity candidates
+    └── check_page.py           Smoke testing + animation frame capture
 ```
 
-## ติดตั้ง
+## Installation
 
-สกิลนี้ใช้รูปแบบมาตรฐาน `SKILL.md` (frontmatter มี `name` + `description`) จึงใช้โฟลเดอร์เดียวกันได้ทั้ง Claude และ Antigravity ไม่ต้องแปลงไฟล์ แค่ clone ไปวางในตำแหน่งที่แต่ละเครื่องมือค้นหาสกิล
+This skill follows the standard `SKILL.md` format (YAML frontmatter with `name` + `description`), allowing the exact same folder to be used in both Claude and Antigravity without file conversion. Simply clone it into the skills directory for your tool of choice.
 
-| เครื่องมือ | ทุกโปรเจกต์ (global) | เฉพาะโปรเจกต์ (workspace) |
+| Tool | Global (All Projects) | Workspace (Project Only) |
 |---|---|---|
 | Claude Code | `~/.claude/skills/stretchy-morph-ui/` | `.claude/skills/stretchy-morph-ui/` |
-| Antigravity (IDE และ `agy` CLI) | `~/.gemini/config/skills/stretchy-morph-ui/` | `.agents/skills/stretchy-morph-ui/` |
+| Antigravity (IDE & `agy` CLI) | `~/.gemini/config/skills/stretchy-morph-ui/` | `.agents/skills/stretchy-morph-ui/` |
 
 ### Claude Code
 
 ```bash
-# ทุกโปรเจกต์
+# Global (all projects)
 git clone <repo-url> ~/.claude/skills/stretchy-morph-ui
 
-# เฉพาะโปรเจกต์
+# Project only
 git clone <repo-url> .claude/skills/stretchy-morph-ui
 ```
 
 ### Antigravity
 
 ```bash
-# ทุกโปรเจกต์
+# Global (all projects)
 git clone <repo-url> ~/.gemini/config/skills/stretchy-morph-ui
 
-# เฉพาะโปรเจกต์ (commit .agents/ ขึ้น git เพื่อแชร์ให้ทีมได้)
+# Project only (commit .agents/ to git to share with your team)
 git clone <repo-url> .agents/skills/stretchy-morph-ui
 ```
 
-Antigravity ยังรับ `.agent/`, `_agents/`, `_agent/` แทน `.agents/` ได้ด้วย และจะค้นจากโฟลเดอร์ที่เปิดอยู่ขึ้นไปจนถึง root ของ repo
+Antigravity also accepts `.agent/`, `_agents/`, and `_agent/` in place of `.agents/`, searching upwards from the active folder to the repository root.
 
-ถ้าอยากเก็บ repo ไว้ที่อื่น ให้ลงทะเบียนโฟลเดอร์แม่ของสกิลใน `skills.json` (วางใน `~/.gemini/config/` หรือ `.agents/` ของโปรเจกต์) Antigravity จะสแกนโฟลเดอร์ใน `path` ลงไปหนึ่งชั้น
+To store the repository elsewhere, register the skill's parent directory in `skills.json` (placed in `~/.gemini/config/` or the project's `.agents/`). Antigravity scans one level down inside each configured `path`:
 
 ```json
 {
@@ -77,9 +77,9 @@ Antigravity ยังรับ `.agent/`, `_agents/`, `_agent/` แทน `.agen
 }
 ```
 
-### ใช้ร่วมกันทั้งสองเครื่องมือ (Windows)
+### Shared Setup for Both Tools (Windows)
 
-clone ไว้ที่เดียว แล้วสร้าง junction ชี้ไปจากอีกที่ แก้ไฟล์ครั้งเดียวจะเห็นผลทั้งคู่ (junction บน Windows ไม่ต้องใช้สิทธิ์ admin)
+Clone once, then create a directory junction pointing from the other location. Edits immediately reflect in both tools (junctions on Windows require no admin privileges):
 
 ```powershell
 git clone <repo-url> "$HOME\.claude\skills\stretchy-morph-ui"
@@ -87,28 +87,31 @@ New-Item -ItemType Junction -Path "$HOME\.gemini\config\skills\stretchy-morph-ui
          -Target "$HOME\.claude\skills\stretchy-morph-ui"
 ```
 
-บน macOS / Linux ใช้ `ln -s ~/.claude/skills/stretchy-morph-ui ~/.gemini/config/skills/stretchy-morph-ui`
+On macOS / Linux, use:
+```bash
+ln -s ~/.claude/skills/stretchy-morph-ui ~/.gemini/config/skills/stretchy-morph-ui
+```
 
 ### claude.ai
 
-zip โฟลเดอร์นี้ (ให้ `stretchy-morph-ui/` อยู่ชั้นบนสุดใน zip) แล้วอัปโหลดในหน้า Settings → Capabilities → Skills
+Zip this folder (ensuring `stretchy-morph-ui/` is at the top level of the archive) and upload it under Settings → Capabilities → Skills:
 
 ```bash
 zip -r stretchy-morph-ui.skill stretchy-morph-ui -x "*.git*"
 ```
 
-## การใช้งาน
+## Usage
 
-ไม่ต้องเรียกสกิลเอง agent (Claude หรือ Antigravity) จะหยิบไปใช้เมื่อคำขอเกี่ยวกับ UI ที่เคลื่อนไหว เช่น
+You do not need to invoke the skill manually. The coding agent (Claude or Antigravity) automatically activates it whenever your prompt involves dynamic or animated UI, for instance:
 
-- "ทำ tab ที่เส้นใต้ยืดตอนเปลี่ยนแท็บ"
-- "ทำปุ่ม add to cart ให้รูปบินเข้าตะกร้า"
-- "ทำให้หน้านี้ดูมีชีวิต เด้ง ๆ หน่อย"
-- "make this toggle feel more springy / gooey / elastic"
+- "Build tabs where the active indicator stretches when switching."
+- "Create an 'Add to Cart' button where the product image flies into the basket."
+- "Make this page feel more alive and bouncy."
+- "Make this toggle feel more springy / gooey / elastic."
 
-### ใช้ spring engine ตรง ๆ
+### Using the Spring Engine Standalone
 
-`stretchy-core.js` ใช้แยกจากสกิลได้ แค่วางไว้ใน `<script>` (เป็น global) หรือใส่ `export` หน้าสิ่งที่ต้องการเพื่อทำเป็น module
+`stretchy-core.js` can be used completely independently of the skill. Simply include it via a `<script>` tag (exposing globals) or add `export` statements to import it as an ES module:
 
 ```js
 const box = document.querySelector('.box');
@@ -118,51 +121,59 @@ const w = new Spring(120, {
   onUpdate: x => box.style.width = x + 'px',
 });
 
-w.to(320);      // ไปที่เป้าหมาย โดยเก็บความเร็วเดิมไว้ (กดรัว ๆ ก็ต่อเนื่อง)
-w.kick(8);      // กระตุกให้สั่นแล้วนิ่ง
-setBounce(0.5); // ปรับความเด้งทั้งหน้า: 1.8 นุ่ม, 1 เด้ง, 0.5 ยืดมาก
+w.to(320);      // Animate to target while preserving current momentum (handles rapid clicks seamlessly)
+w.kick(8);      // Impulse nudge that oscillates and settles
+setBounce(0.5); // Global bounciness multiplier: 1.8 soft/stiff, 1 balanced bounce, 0.5 highly elastic
 ```
 
-ถ้าผู้ใช้เปิด `prefers-reduced-motion: reduce` อยู่ `to()` จะกระโดดไปเป้าหมายทันทีและเรียก `onRest` เลย โค้ดที่รอแอนิเมชันจบจึงยังทำงานต่อได้
+Easily wrap existing accordions to make them smoothly stretch. Supports native `<details>` elements (which remain functional without JavaScript and allow browser find-in-page to automatically reveal matching items) as well as button + panel markup:
 
-### สแกนโค้ดว่าตรงไหนทำให้ยืดได้
+```js
+const faq = makeAccordion(document.querySelector('.faq'), { gap: 6 }); // details sharing the same name = mutually exclusive
+faq.single = false;  // Allow multiple panels open simultaneously
+faq.open(0);         // Programmatically open first panel
+```
 
-ไม่ต้องติดตั้งอะไรเพิ่ม (Python ล้วน) รับได้ทั้งไฟล์และโฟลเดอร์ รองรับ HTML/CSS/JS และเฟรมเวิร์กทั่วไป
+When `prefers-reduced-motion: reduce` is active, `to()` instantly snaps to the target value and invokes `onRest` immediately, ensuring code awaiting animation completion continues to work seamlessly.
+
+### Scanning Code for Elastic UI Candidates
+
+Zero external dependencies required (pure Python). Accepts individual files or entire directories, supporting HTML/CSS/JS and modern frameworks:
 
 ```bash
 python scripts/audit_ui.py ./src
 python scripts/audit_ui.py ./src --json --max-hits 10
 ```
 
-ผลลัพธ์บอก stack ที่พบ, แอนิเมชันและ `prefers-reduced-motion` ที่มีอยู่แล้ว, และรายการแยกตามประเภท พร้อมบอกว่าแต่ละอันจะกลายเป็นอะไรและใช้เทคนิคไหน ผลนี้เป็นแค่การคัดกรองด้วย heuristic ต้องอ่านโค้ดรอบ ๆ ทุกจุดก่อนเสนอผู้ใช้
+The output identifies the detected tech stack, existing animations, and existing `prefers-reduced-motion` handling, followed by categorized candidate components explaining what each element can morph into and which technique to apply. This output is a heuristic-based screening; always inspect surrounding code before presenting suggestions to the user.
 
-### ตรวจหน้าเว็บ
+### Page Inspection & Smoke Testing
 
-ต้องมี Playwright
+Requires Playwright:
 
 ```bash
 pip install playwright
 playwright install chromium
 
-# ตรวจ error, การล้นจอ, ตัวบังการคลิก ที่ความกว้าง 1280 และ 390
+# Check for console errors, horizontal overflow, and click blockers at 1280px and 390px widths
 python scripts/check_page.py assets/showcase.html --out out/
 
-# คลิก selector แล้วถ่าย 8 เฟรม ห่างกัน 110 ms ครอปเฉพาะ .stage
+# Click a selector and capture 8 frames spaced 110ms apart, cropped to .stage
 python scripts/check_page.py page.html --frames "#tabs button:nth-child(3)@.stage"
 ```
 
-exit code เป็น 1 เมื่อพบปัญหา จึงใช้ใน CI ได้
+Exits with code 1 if issues are detected, making it suitable for CI pipelines.
 
-## ค่า spring ที่ใช้บ่อย
+## Common Spring Tuning Values
 
-| บทบาท | k | c |
+| Role | k | c |
 |---|---|---|
-| ขอบนำของ edge pair | 420–520 | 30–34 |
-| ขอบตามของ edge pair | 140–170 | 17–19 |
-| ความกว้างของ container | 240–320 | 18–24 |
-| ความสูงของ container | 150–170 | 15–17 |
-| kick feedback | 380–420 | 12–16 |
+| Leading edge of edge pair | 420–520 | 30–34 |
+| Trailing edge of edge pair | 140–170 | 17–19 |
+| Container width | 240–320 | 18–24 |
+| Container height | 150–170 | 15–17 |
+| Kick / Impulse feedback | 380–420 | 12–16 |
 
-Damping ratio ζ = c / (2√k): การเปลี่ยน state ทั่วไปอยู่ราว 0.6–0.8, feedback แบบขี้เล่นราว 0.3–0.5, เกิน 1 จะไม่เด้งเลยเป้า
+Damping ratio $\zeta = c / (2\sqrt{k})$: general state transitions typically range between 0.6–0.8, playful feedback between 0.3–0.5; values exceeding 1.0 will not overshoot.
 
-รายละเอียดเพิ่มเติมอยู่ใน [`SKILL.md`](SKILL.md) และ [`references/techniques.md`](references/techniques.md)
+For more details, see [`SKILL.md`](SKILL.md) and [`references/techniques.md`](references/techniques.md).

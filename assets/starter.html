@@ -204,6 +204,149 @@ function makeSegmented(root, { attr = 'aria-pressed', initial = 0, onChange } = 
 }
 
 /* ---------------------------------------------------------------------
+   makeAccordion: elastic accordion. The panel's height overshoots and
+   settles (the hero), its content lags like something shaken in a box,
+   the opened card drifts apart from its neighbours, the cards below
+   squash a little as they are pushed, and the chevron flips with a pop.
+   Works on two kinds of markup, items being direct children of root:
+     <details>  <summary>…</summary> any content </details>   (enhanced in
+       place: content is wrapped in .acc-panel > .acc-in; a `name` group
+       becomes single mode, since the browser would close siblings with
+       no animation)
+     <div class="acc-item"> <button class="acc-btn" aria-controls>…</button>
+       <div class="acc-panel"><div class="acc-in">…</div></div> </div>
+   A chevron is any [data-acc-chev] or svg inside the header.
+   Options: single (one open at a time; default true, or false for details
+   without a name), initial (index or array), gap (px each opened card
+   moves away from its neighbours, 0 = off), squash (pushed-card squash),
+   onChange(openIndexes).
+   --------------------------------------------------------------------- */
+function makeAccordion(root, { single, initial = [], gap = 0, squash = true, onChange } = {}) {
+  const items = $$(':scope > details, :scope > .acc-item', root);
+  const isDet = items[0] && items[0].tagName === 'DETAILS';
+  if (single === undefined) single = !isDet || items.some(d => d.hasAttribute('name'));
+  const st = items.map((item, i) => {
+    let header, panel, inner;
+    if (item.tagName === 'DETAILS') {
+      header = $(':scope > summary', item);
+      if (item.hasAttribute('name')) { item.dataset.accName = item.getAttribute('name'); item.removeAttribute('name'); }
+      panel = $(':scope > .acc-panel', item);
+      if (!panel) {
+        panel = document.createElement('div'); panel.className = 'acc-panel';
+        inner = document.createElement('div'); inner.className = 'acc-in';
+        [...item.childNodes].forEach(n => { if (n !== header) inner.appendChild(n); });
+        panel.appendChild(inner); item.appendChild(panel);
+      }
+    } else {
+      header = $('.acc-btn', item); panel = $('.acc-panel', item);
+    }
+    inner = inner || $('.acc-in', panel) || panel.firstElementChild;
+    panel.style.overflow = 'hidden'; panel.style.height = '0px';
+    inner.style.display = 'flow-root';                                   // flow-root: child margins count
+    const chev = $('[data-acc-chev]', header) || $('svg', header);
+    const s = { item, header, panel, inner, chev, open: false, det: item.tagName === 'DETAILS', expect: item.open };
+    let rot = 0, pop = 0;
+    const drawChev = () => { if (chev) chev.style.transform = `rotate(${rot}deg) scale(${1 + pop * .22},${1 - pop * .22})`; };
+    s.h = new Spring(0, { k: 210, c: 14, eps: .5,
+      onUpdate: (h, v) => {
+        // A closing panel lands on a floor at 0 instead of ringing back open
+        // (any global bounce can make the closing spring underdamped).
+        if (!s.open && h <= 0 && v < 0) { s.h.x = 0; s.h.v = 0; h = v = 0; }
+        panel.style.height = Math.max(0, h) + 'px';
+        inner.style.transform = `translateY(${clamp(-v * .012, -10, 10)}px)`;
+        if (squash) drawPush();
+      },
+      onRest: () => {                       // re-check: also fires after an open, or a close that was interrupted
+        if (s.open) return;
+        panel.style.height = '0px';
+        if (s.det && item.open) detOpen(s, false);
+      } });
+    s.sep = new Spring(0, { k: 260, c: 18, eps: .001, onUpdate: x => {
+      if (!gap) return;
+      item.style.marginTop = i > 0 ? x * gap + 'px' : '';
+      item.style.marginBottom = i < items.length - 1 ? x * gap + 'px' : '';
+    } });
+    s.rot = new Spring(0, { k: 300, c: 15, eps: .1, onUpdate: x => { rot = x; drawChev(); } });
+    s.pop = new Spring(0, { k: 420, c: 14, eps: .001, onUpdate: x => { pop = x; drawChev(); } });
+    panel.inert = true; if (!s.det) header.setAttribute('aria-expanded', 'false');
+    return s;
+  });
+
+  /* Remember what we set, so the async toggle event can tell our changes from external ones. */
+  function detOpen(s, v) { s.expect = v; s.item.open = v; }
+
+  /* Pushed cards: each card below a moving panel squashes by the sum of the
+     panels' height velocities above it (pushed down = flatter, pulled up = taller). */
+  function drawPush() {
+    let v = 0;
+    st.forEach(s => {
+      const y = clamp(v / 30000, -.04, .04);
+      s.item.style.transformOrigin = '50% 0';
+      s.item.style.transform = Math.abs(y) < .001 ? '' : `scale(${1 + y * .5},${1 - y})`;
+      v += s.h.v;
+    });
+  }
+
+  function setOpen(i, on, anim = true) {
+    const s = st[i]; if (!s || s.open === on) return;
+    s.open = on;                                                   // state first: under reduced motion
+    s.item.classList.toggle('open', on);                           // to() calls onRest synchronously
+    if (!s.det) s.header.setAttribute('aria-expanded', String(on));
+    s.panel.inert = !on;
+    if (on) {
+      if (s.det && !s.item.open) detOpen(s, true);                 // render the content before measuring
+      const H = s.inner.offsetHeight;
+      anim ? s.h.to(H, { k: 210, c: 14 }) : s.h.set(H);            // underdamped: visible overshoot
+    } else {
+      anim ? s.h.to(0, { k: 260, c: 30 }) : (s.h.set(0), s.h.rest());  // ζ≈.93: no ringing back open at bounce .5
+    }
+    anim ? s.sep.to(on ? 1 : 0) : s.sep.set(on ? 1 : 0);
+    anim ? s.rot.to(on ? 180 : 0) : s.rot.set(on ? 180 : 0);
+    if (anim) s.pop.kick(on ? 7 : -5);
+  }
+  const openIndexes = () => st.map((s, i) => s.open ? i : -1).filter(i => i >= 0);
+  function toggle(i, on = !st[i].open, anim = true) {
+    if (on && single) st.forEach((s, j) => j !== i && setOpen(j, false, anim));
+    setOpen(i, on, anim);
+    onChange && onChange(openIndexes());
+  }
+
+  st.forEach((s, i) => {
+    s.header.addEventListener('click', e => { e.preventDefault(); toggle(i); });
+    if (s.det) s.item.addEventListener('toggle', () => {        // find-in-page, #hash, other scripts
+      if (s.item.open === s.expect) return;                      // our own change, possibly already superseded
+      s.expect = s.item.open; toggle(i, s.item.open, s.item.open);
+    });
+  });
+  root.addEventListener('keydown', e => {
+    const i = st.findIndex(s => s.header === e.target); if (i < 0) return;
+    const n = st.length, to = { ArrowDown: (i + 1) % n, ArrowUp: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
+    if (to === undefined) return;
+    e.preventDefault(); st[to].header.focus();
+  });
+
+  /* Re-measure open panels when their content or width changes. */
+  const remeasure = () => st.forEach(s => {
+    if (!s.open) return;
+    const H = s.inner.offsetHeight; if (Math.abs(H - s.h.t) < 1) return;
+    s.h.raf ? s.h.to(H) : s.h.set(H);
+  });
+  if (window.ResizeObserver) { const ro = new ResizeObserver(remeasure); st.forEach(s => ro.observe(s.inner)); }
+  onResync(remeasure);
+
+  const init = new Set([].concat(initial));
+  st.forEach((s, i) => { if (init.has(i) || (s.det && s.item.open)) { if (s.det) detOpen(s, false); init.add(i); } });
+  [...init].slice(0, single ? 1 : undefined).forEach(i => setOpen(i, true, false));
+
+  return {
+    open: i => toggle(i, true), close: i => toggle(i, false), toggle: i => toggle(i),
+    get openIndexes() { return openIndexes(); },
+    get single() { return single; },
+    set single(x) { single = x; if (x) openIndexes().slice(1).forEach(i => setOpen(i, false)); }
+  };
+}
+
+/* ---------------------------------------------------------------------
    Deformation helpers
    --------------------------------------------------------------------- */
 

@@ -77,7 +77,7 @@ const w = new Spring(200, { k: 260, c: 17, onUpdate: (x, v) => {
 - Apply as `transform`, never by changing the height property, so layout around it does not jump.
 - Combine with centre anchoring (`left:50%; transform: translateX(-50%) scaleY(...)`) when the element should shrink toward its centre.
 
-Seen in: send button, search field, add-to-cart button, dropdown width (inverted: grows taller, gets narrower).
+Seen in: send button, search field, add-to-cart button, dropdown width (inverted: grows taller, gets narrower), accordion cards pushed by a growing panel (squash by the summed height velocity above them, ±4 %).
 
 ## 4. Velocity stretch
 
@@ -141,7 +141,7 @@ const tilt = clamp((lag.x - main.x) * .7, -32, 32);
 - Anchor the follower to the main element's position and use the gap only for rotation or offset; otherwise it drifts away visibly.
 - Inner content of an expanding panel: `translateY(clamp(-v*.012, ±10))` gives a "contents shaken in a box" feel.
 
-Seen in: slider value bubble, accordion.
+Seen in: slider value bubble, accordion (`makeAccordion`).
 
 ## 7. Kick (impulse wobble)
 
@@ -158,7 +158,9 @@ input.addEventListener('change', () => q.kick(input.checked ? 7 : -7));
 - "Can't do that" feedback: kick a translateX spring (k 600, c 12) for a head-shake, or kick the width spring for a bulge.
 - `transform-origin` decides where it stretches from: quantity stepper uses `left center` for + and `right center` for −, so it stretches toward the side pressed.
 
-Seen in: checkbox, chips, quantity, stars, cart, badge, send button success.
+Seen in: checkbox, chips, quantity, stars, cart, badge, send button success, accordion chevron.
+
+A spring that closes something to 0 (a panel height, a width) should *land* rather than ring: in `onUpdate`, when closing and `x <= 0` with `v < 0`, set `x` and `v` to 0. The global `bounce` can halve any damping, so "well damped" closing springs still cross 0 and reopen a few pixels.
 
 ## 8. Goo filter
 

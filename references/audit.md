@@ -1,6 +1,6 @@
 # Audit the user's code, then confirm
 
-Every time this skill is used, start here. The user wants to know *what in their own interface* can become stretchy before anything is changed. This file covers finding the code, scanning it, judging the candidates, and asking for confirmation.
+Start here when the request is about the user's existing interface in general and names no specific parts. (A request for something new, or for parts the user already named, skips the audit: see Step 0 in SKILL.md.) The user wants to know *what in their own interface* can become stretchy before anything is changed. This file covers finding the code, scanning it, judging the candidates, and asking for confirmation.
 
 Contents
 1. Find the code
@@ -22,7 +22,7 @@ Look in this order and use everything that exists:
 - A claude.ai artifact link: read it with the artifact tool so its files land in the container.
 - A connected source (GitHub, Drive) if the user points to one.
 
-If there is no code anywhere, do not guess and do not silently build a demo. Say what you looked for, then offer the two ways forward: share the code (attach, paste, a path or a link), or build something new from scratch (then skip to the normal workflow in SKILL.md, still confirming the list of components first).
+If there is no code anywhere, do not guess and do not silently build a demo. Say what you looked for, then offer the two ways forward: share the code (attach, paste, a path or a link), or build something new from scratch (then go to the Workflow in SKILL.md).
 
 If the codebase is large, ask nothing yet: scan everything, then focus the reading on the screens with the most candidates and on shared components (a `Button` or `Tabs` used in 40 places is worth more than a one-off page).
 
@@ -52,6 +52,8 @@ For each real candidate, write down:
   - An animation library is already in use (Framer Motion, React Spring, GSAP): either reuse its springs with the same technique, or replace it on that component only; do not run two systems on one element.
   - A native control (`<select>`, `<input type="date">`): replacing it costs accessibility and mobile pickers. Prefer animating around it, or propose a custom control only where the user benefits, and say so.
   - Server-rendered or CMS templates: the core must be loaded as a separate script and attach to markup by data attributes.
+  - `<details>`/`<summary>` in plain, server-rendered or CMS HTML: low risk. `makeAccordion(container)` enhances them in place, keeps them working without JS and with find-in-page, and turns a `name` group into a one-open-at-a-time accordion. Effort is usually small.
+  - `<details>` or accordions rendered by React, Vue or Svelte: do **not** run the helper on raw markup. It moves each item's children into a new `.acc-panel > .acc-in` and writes `open`, which the framework does not know about (a later update can throw, a bound `open` fights it). Either render `.acc-panel > .acc-in` in the template yourself (the helper then moves nothing), leave `open` unbound and call the helper once on mount (it has no teardown, so mount it once per container), or port the recipe as a component like the `WormTabs` example in `new-components.md`. Effort: medium.
   - Lists with hundreds of rows: do not give every row its own running spring.
 
 Skip, and say why, when a candidate would hurt: dense data tables, forms where speed matters more than delight, admin screens used all day, or anything already animated well.
@@ -95,14 +97,14 @@ Thai template:
 
 English template: the same structure with "Recommended", "Worth doing", "Not recommended", and the closing question "Tell me which to do (for example "1, 2, 5" or "all recommended"), and add anything else you want to feel stretchy that isn't listed."
 
-If the environment has a tappable-choice tool (for example `ask_user_input_v0` on claude.ai), send the full list as text first, then offer the choice through the tool so it is one tap on mobile. The tool takes 2–4 options per question, so offer groups rather than every item:
+If the environment has a tappable-choice tool (`ask_user_input_v0` on claude.ai, `AskUserQuestion` in Claude Code), send the full list as text first, then offer the choice through the tool so it is one tap on mobile. The tool takes 2–4 options per question, so offer groups rather than every item:
 
 - multi-select "จะให้ทำส่วนไหน": "ทั้งหมดที่แนะนำ (1–2)", "แนะนำ + น่าทำ (1–6)", "เลือกเองตามหมายเลข", "มีส่วนอื่นจะเพิ่ม"
 - optionally single-select "ความเด้ง": "นุ่ม", "เด้ง", "ยืดสุด"
 
-Remind them they can also type numbers or extra requests. If no such tool exists (Claude Code, API), ask in plain text. Either way, end the turn after asking.
+Remind them they can also type numbers or extra requests. If no such tool exists (for example over the API), ask in plain text. Either way, end the turn after asking.
 
-If the user's request already named specific parts ("make my tabs stretchy"), still run the audit, put their parts first marked as requested, list the other candidates as optional, and ask a shorter question: "จะทำแท็บตามที่ขอ จะเพิ่มข้อไหนจากรายการด้วยไหม".
+If the request already named specific parts ("make my tabs stretchy"), you should not be here: build those, and mention other candidates you noticed in one line at the end.
 
 ## 6. After the reply
 
