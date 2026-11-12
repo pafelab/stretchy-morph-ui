@@ -96,16 +96,23 @@ if (document.fonts) document.fonts.ready.then(resyncAll);
    The root must be position:relative; the indicator absolute, left:0.
    --------------------------------------------------------------------- */
 function makeSegmented(root, { attr = 'aria-pressed', initial = 0, onChange } = {}) {
-  const btns = $$('[data-seg]', root), ind = $('.seg-ind', root); let cur = -1;
-  const ep = edgePair((L, R) => { ind.style.transform = `translateX(${L}px)`; ind.style.width = Math.max(0, R - L) + 'px'; });
+  const btns = $$('[data-seg]', root), ind = $('.seg-ind', root); let cur = -1, lit = -1, tgt = [0, 0];
+  /* The selected look (.on, a light label) switches on only once the indicator covers the button:
+     switched on at click, a light label would sit on the light track until the worm arrives. */
+  const light = i => { lit = i; btns.forEach((b, j) => b.classList.toggle('on', j === i)); };
+  const ep = edgePair((L, R) => {
+    ind.style.transform = `translateX(${L}px)`; ind.style.width = Math.max(0, R - L) + 'px';
+    if (lit !== cur && L <= tgt[0] + 2 && R >= tgt[1] - 2) light(cur);
+  });
   const pos = i => [btns[i].offsetLeft, btns[i].offsetLeft + btns[i].offsetWidth];
   function select(i, anim = true, notify = true) {
     if (i === cur) return; cur = i;
     btns.forEach((b, j) => {
-      b.setAttribute(attr, String(j === i)); b.classList.toggle('on', j === i);
+      b.setAttribute(attr, String(j === i));
       if (attr === 'aria-selected') b.tabIndex = j === i ? 0 : -1;
     });
-    const [a, b] = pos(i); anim ? ep.to(a, b) : ep.set(a, b);
+    light(-1); tgt = pos(i);
+    const [a, b] = tgt; anim ? ep.to(a, b) : ep.set(a, b);
     if (notify && onChange) onChange(i, btns[i]);
   }
   btns.forEach((b, i) => b.addEventListener('click', () => select(i)));
@@ -114,7 +121,7 @@ function makeSegmented(root, { attr = 'aria-pressed', initial = 0, onChange } = 
     e.preventDefault(); const n = (cur + d + btns.length) % btns.length; select(n); btns[n].focus();
   });
   select(initial, false, false);
-  onResync(() => { const [a, b] = pos(cur); ep.set(a, b); });
+  onResync(() => { tgt = pos(cur); ep.set(tgt[0], tgt[1]); });
   return { select, get index() { return cur; } };
 }
 

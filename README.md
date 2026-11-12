@@ -160,9 +160,16 @@ python scripts/check_page.py assets/showcase.html --out out/
 
 # Click a selector and capture 8 frames spaced 110ms apart, cropped to .stage
 python scripts/check_page.py page.html --frames "#tabs button:nth-child(3)@.stage"
+
+# Also capture jump strips for a custom selection group (tabs and radio groups are found automatically)
+python scripts/check_page.py page.html --jumps ".brand-filter button"
 ```
 
-Exits with code 1 if issues are detected, making it suitable for CI pipelines.
+Frames and jump strips are captured in slow motion (`--slowmo 4` by default, `1` turns it off). A screenshot takes 100–200 ms, so at full speed a spring has nearly settled by the second frame.
+
+For every tab and radio group the script saves `jump_N.png`: it selects the first item, clicks the last one, and stacks one frame per row. Look at the clicked item in every row. It must stay readable until the indicator reaches it, and the indicator must pass over the items it crosses, not hide behind them.
+
+Exits with code 1 if errors, overflow or click blockers are detected, making it suitable for CI pipelines. Frames and jump strips are for review and never change the exit code.
 
 ## Common Spring Tuning Values
 

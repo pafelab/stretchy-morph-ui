@@ -185,15 +185,16 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .chip-ic svg{width:18px;height:18px;transform:scale(0);stroke-width:2.6}
 .chips-msg{margin:20px 0 0;text-align:center;color:var(--muted);font-size:15px}
 
-/* choice chips: chip surface (z -2) < travelling blob (z -1) < chip label and border */
+/* choice chips: chip surface AND border (::before, z -2) < travelling blob (z -1) < chip label.
+   A border on the chip itself would paint over the blob as a ring on every chip it crosses. */
 .cc-title{font-weight:700;margin:0 0 14px;text-align:center}
 .cchips{position:relative;isolation:isolate;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:380px}
 .cc-blob{position:absolute;left:0;top:0;width:0;height:0;background:var(--violet);z-index:-1;pointer-events:none}
-.cchip{position:relative;display:inline-flex;align-items:center;height:40px;padding:0 29px;border-radius:999px;border:1px solid var(--line);background:none;font-size:15px;white-space:nowrap;cursor:pointer;transition:color .15s,border-color .2s}
-.cchip::before{content:"";position:absolute;inset:-1px;border-radius:inherit;background:var(--surface);z-index:-2}
-.cchip:hover{border-color:var(--muted)}
-.cchip.cc-on{color:#fff;border-color:transparent;transition:color .15s,border-color .15s}
-.cchip.cc-on::before{background:var(--violet)}
+.cchip{position:relative;display:inline-flex;align-items:center;height:40px;padding:0 29px;border-radius:999px;border:1px solid transparent;background:none;font-size:15px;white-space:nowrap;cursor:pointer;transition:color .15s}
+.cchip::before{content:"";position:absolute;inset:-1px;border-radius:inherit;border:1px solid var(--line);background:var(--surface);z-index:-2;transition:border-color .2s}
+.cchip:hover::before{border-color:var(--muted)}
+.cchip.cc-on{color:#fff}
+.cchip.cc-on::before{background:var(--violet);border-color:transparent}
 /* a spring writes this width every frame; the reduced-motion rule below would otherwise turn each
    write into a 10 ms CSS transition that lags the padding the same spring writes, so widths would jump */
 .cchip-ic{display:inline-grid;place-items:center;width:0;height:20px;transition:none!important}
@@ -1213,13 +1214,17 @@ addEventListener('resize',resyncAll);
 if(document.fonts)document.fonts.ready.then(resyncAll);
 
 function makeSegmented(root,{attr='aria-pressed',initial=0,onChange}={}){
-  const btns=$$('[data-seg]',root),ind=$('.seg-ind',root);let cur=-1;
-  const ep=edgePair((L,R)=>{ind.style.transform=`translateX(${L}px)`;ind.style.width=Math.max(0,R-L)+'px'});
+  const btns=$$('[data-seg]',root),ind=$('.seg-ind',root);let cur=-1,lit=-1,tgt=[0,0];
+  /* .on (light label) only once the indicator covers the button, or the label vanishes on the light track */
+  const light=i=>{lit=i;btns.forEach((b,j)=>b.classList.toggle('on',j===i))};
+  const ep=edgePair((L,R)=>{ind.style.transform=`translateX(${L}px)`;ind.style.width=Math.max(0,R-L)+'px';
+    if(lit!==cur&&L<=tgt[0]+2&&R>=tgt[1]-2)light(cur)});
   const pos=i=>[btns[i].offsetLeft,btns[i].offsetLeft+btns[i].offsetWidth];
   function select(i,anim=true,notify=true){
     if(i===cur)return;cur=i;
-    btns.forEach((b,j)=>{b.setAttribute(attr,String(j===i));b.classList.toggle('on',j===i);if(attr==='aria-selected')b.tabIndex=j===i?0:-1});
-    const[a,b]=pos(i);anim?ep.to(a,b):ep.set(a,b);
+    btns.forEach((b,j)=>{b.setAttribute(attr,String(j===i));if(attr==='aria-selected')b.tabIndex=j===i?0:-1});
+    light(-1);tgt=pos(i);
+    const[a,b]=tgt;anim?ep.to(a,b):ep.set(a,b);
     if(notify&&onChange)onChange(i,btns[i]);
   }
   btns.forEach((b,i)=>b.addEventListener('click',()=>select(i)));
@@ -1228,7 +1233,7 @@ function makeSegmented(root,{attr='aria-pressed',initial=0,onChange}={}){
     e.preventDefault();const n=(cur+d+btns.length)%btns.length;select(n);btns[n].focus();
   });
   select(initial,false,false);
-  onResync(()=>{const[a,b]=pos(cur);ep.set(a,b)});
+  onResync(()=>{tgt=pos(cur);ep.set(tgt[0],tgt[1])});
   return{select,get index(){return cur}};
 }
 

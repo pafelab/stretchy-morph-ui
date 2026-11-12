@@ -37,7 +37,7 @@ All paths are relative to this skill's folder (the folder containing this `SKILL
 | [`references/components.md`](references/components.md) | Catalog: each component's recipe, spring values and gotchas | When the request names or resembles a catalog component |
 | [`references/new-components.md`](references/new-components.md) | How to design a stretchy version of *any* component, plus 14 worked designs not in the showcase | Whenever the request is outside the catalog |
 | [`scripts/audit_ui.py`](scripts/audit_ui.py) | Scanner for the user's code: stack, existing motion, and stretchy candidates with `file:line` | At Step 0, every time |
-| [`scripts/check_page.py`](scripts/check_page.py) | Headless browser check: JS errors, sideways overflow on phone and desktop, invisible elements stealing clicks, and contact sheets of animation frames | After every build, before you hand anything over |
+| [`scripts/check_page.py`](scripts/check_page.py) | Headless browser check: JS errors, sideways overflow on phone and desktop, invisible elements stealing clicks, slow-motion contact sheets, and a first-to-last jump strip for every tab and radio group | After every build, before you hand anything over |
 
 If a visual design skill is available (for example `frontend-design` or `ui-ux-pro-max`), read it too. That skill decides how the page looks (palette, type, layout); this one decides how it moves. Motion polish cannot rescue a generic-looking page.
 
@@ -49,7 +49,7 @@ If a visual design skill is available (for example `frontend-design` or `ui-ux-p
 4. **Plan the content.** Text and icons must not reflow or squash while the container morphs. Give each content state its own layer at its final size, anchored (usually centred), and crossfade: exit fast (≈150 ms), enter after a ≈100–150 ms delay with a slight scale or blur. The container's `overflow:hidden` reveals content as it grows.
 5. **Build** from `assets/starter.html` with the core inlined. Write styles directly in spring callbacks; never trigger a framework re-render per frame.
 6. **Accessibility and interruption pass** (checklist below).
-7. **Test and look.** Run `scripts/check_page.py`, then capture frame contact sheets of the important interactions and actually look at them. The add-to-cart animation in the original build "worked" but looked cheap until frames were inspected; the fixes are in "Making it look good".
+7. **Test and look.** Run `scripts/check_page.py`, then capture frame contact sheets of the important interactions and actually look at them. The add-to-cart animation in the original build "worked" but looked cheap until frames were inspected; the fixes are in "Making it look good". The script also saves a `jump_N.png` strip for every tab and radio group (first item to last, in slow motion, one frame per row; add other groups with `--jumps SELECTOR`). Open each strip and check the two indicator rules below in every row. A clean exit code says nothing about them.
 
 ## Where the stretch comes from
 
@@ -95,6 +95,15 @@ Damping ratio ζ = c / (2√k). UI state changes feel right around ζ 0.6–0.8;
 - **One bold motion per component.** The rest of the component stays quiet: a colour change, a short fade.
 - **Calm when idle.** Nothing wobbles on its own. At most one orchestrated moment on page load (the showcase opens the island once after 900 ms).
 
+## Moving indicators: two rules that break when porting
+
+Any component where one shape travels to the chosen item (worm tabs, choice chips, segmented controls, radio dots, nav highlights, rating capsules) depends on two things besides its springs. Both were lost when the choice chips were ported into a real filter bar: the clicked chip vanished for about 0.2 s on every pick, and the capsule showed only in the gaps between chips.
+
+1. **The selected look arrives with the indicator, not with the click.** Update `aria-selected`/`aria-checked`, focus and app state on click. Switch the *visual* selected style (light label, transparent or coloured fill, hidden border) only on the first frame the indicator covers the item; the core's `makeSegmented` adds `.on` from the indicator's draw callback once it covers the button, and the showcase's choice chips add `.cc-on` the same way. Until then the item keeps its unselected look. If the style switches on click, a light label sits on a light surface while the indicator is still on its way, and the item disappears. Styling `[aria-checked=true]` or a framework's `selected` prop directly does exactly that, so bind the visual style to a separate class that the animation sets.
+2. **The indicator paints above item surfaces and below item content.** Container: `position:relative; isolation:isolate`. Item surface **and border**: a `::before` with `z-index:-2` (the item itself has no `background`, no visible `border` and no `z-index`; keep a transparent border on it if the box size depends on it). Indicator: `z-index:-1`, `pointer-events:none`. Only labels and icons paint on top. A border left on the item paints over the indicator as a ring on every item it crosses. If items keep their own background (component libraries usually do), the indicator slides *behind* every item it crosses and shows only in the gaps, so the worm reads as broken pieces and the slow trailing edge looks like it is stuck behind the neighbour. When the library cannot be restyled, override its surface to transparent and draw the surfaces yourself.
+
+When you port any catalog component into an existing codebase or component library, copy its layer order and the timing of its state classes, not only its springs. Diff the CSS of the stateful classes against the showcase.
+
 ## Making it look good (lessons from the build)
 
 The first add-to-cart version flew a plain coloured ball along two independent springs, shrank the button into an empty violet oval and squashed the cart. The user said it was not pretty. What fixed it generalises:
@@ -125,6 +134,9 @@ The first add-to-cart version flew a plain coloured ball along two independent s
 | Whole page scrolls sideways on phones | `grid-template-columns:1fr` lets a child's min-content (a carousel track) blow out the column | Use `minmax(0,1fr)` |
 | Button could not be clicked | An invisible (opacity 0) sibling layer sat on top of it | `pointer-events:none` on hidden layers |
 | Indicator lands in the wrong place on first paint | Measured before the web font loaded | Re-measure on `document.fonts.ready` and resize |
+| The clicked chip vanished for ~0.2 s on every pick (ported choice chips) | The selected style (white label, transparent fill) was bound to the selected state, so it switched on at click while the capsule was still travelling: white on white | Switch the visual style when the indicator covers the item (rule 1 under "Moving indicators") |
+| The capsule showed only in the gaps between chips, as broken pieces | Each chip kept its own `background`, painted above the capsule | Surfaces in `::before` at `z-index:-2`, capsule at `-1`, container `isolation:isolate` (rule 2) |
+| The capsule showed a white ring over every chip it crossed | The chip borders were on the chips themselves, so they painted above the capsule | Draw the border on the surface `::before` too; the chip keeps only a transparent border (rule 2) |
 | Dialog lingered ~1 s after visibly closing | Rest threshold `eps` of 0.05 px is far stricter than the eye | Use `eps≈0.5` for pixel springs whose `onRest` triggers logic |
 | Under reduced motion, a measured size was stale (choice chips) | `*{transition-duration:.01s!important}` keeps `transition-property:all`, so a size a spring writes becomes a 10 ms transition and an immediate measurement reads the old layout | `transition:none!important` on elements whose size a spring writes and another part measures |
 | Slider broke after adding the date picker | Both declared `function setVal`; in one script the later declaration silently replaces the earlier | Prefix helpers per component (`dpText`), or wrap each component in its own block or module; check with `grep -oE "function [A-Za-z_]+" \| sort \| uniq -d` |

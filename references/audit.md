@@ -48,7 +48,7 @@ For each real candidate, write down:
 - **Becomes:** the morph sentence ("the indicator stretches like a worm to the new tab because its leading edge is stiffer").
 - **Effort:** small (one component, no structural change), medium (new markup layer, measuring, or touching a shared component), large (new interaction such as drag, cross-component choreography like the cart throw, or replacing a library's internals).
 - **Risk or dependency:** anything that can bite, for example:
-  - A component library renders the markup (Radix, Headless UI, MUI): the indicator usually has to be an extra element positioned from measured trigger rects, without forking the library.
+  - A component library renders the markup (Radix, Headless UI, MUI): the indicator usually has to be an extra element positioned from measured trigger rects, without forking the library. Its items usually paint their own background and switch their selected style the moment the state changes; plan to move the surface under the indicator and delay the selected look until the indicator arrives (SKILL.md, "Moving indicators").
   - An animation library is already in use (Framer Motion, React Spring, GSAP): either reuse its springs with the same technique, or replace it on that component only; do not run two systems on one element.
   - A native control (`<select>`, `<input type="date">`): replacing it costs accessibility and mobile pickers. Prefer animating around it, or propose a custom control only where the user benefits, and say so.
   - Server-rendered or CMS templates: the core must be loaded as a separate script and attach to markup by data attributes.
