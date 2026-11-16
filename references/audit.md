@@ -1,6 +1,6 @@
 # Audit the user's code, then confirm
 
-Start here when the request is about the user's existing interface in general and names no specific parts. (A request for something new, or for parts the user already named, skips the audit: see Step 0 in SKILL.md.) The user wants to know *what in their own interface* can become stretchy before anything is changed. This file covers finding the code, scanning it, judging the candidates, and asking for confirmation.
+Read this only at Step 0: the request is about the user's existing interface in general and names no specific parts. This file covers finding the code, scanning it, judging the candidates, and asking for confirmation. Make no edits before the user replies.
 
 Contents
 1. Find the code
@@ -33,11 +33,13 @@ python scripts/audit_ui.py <paths…>            # readable report
 python scripts/audit_ui.py <paths…> --json     # if you want to post-process
 ```
 
-The report gives the stack (framework, Tailwind, component libraries, animation libraries), how much motion exists today, whether `prefers-reduced-motion` is handled, and candidates per UI category with `file:line` and a snippet, each mapped to a showcase component and technique.
+The report gives the stack (framework, Tailwind, component libraries, animation libraries; it says so when the stretchy core is already in the code), how much motion exists today, whether `prefers-reduced-motion` is handled, the shared components with their use counts (a `Button` used 40 times is one proposal, not 40), and candidates per UI category: one line per file with its `file:line` numbers (`d` marks a component definition) and a snippet, mapped to a showcase component and technique. Paths are relative to the scanned root. Tests, stories, minified and generated files, comment lines and the skill's own folder are skipped, as is a copy of the stretchy core already in the project (it is reported in the stack line only); a category found only in CSS is flagged "CSS only" (often dead styles). `--max-hits N` (default 6) sets how many line numbers each category shows; `--json` is for post-processing only, read the text report otherwise.
 
 For pasted code with no files, either save it to a temp file and scan it, or read it directly against the category list in `audit_ui.py`.
 
-The scanner is a keyword pass. It finds dead CSS, commented-out code and words used in other senses ("cart" in a URL, "modal" in a class nobody uses). Every candidate must be confirmed by reading the code around the hit.
+A path that does not exist stops the scan with one line and exit code 2.
+
+The scanner is a keyword pass: it still finds words used in other senses ("cart" in a variable name, a "modal" class nobody uses). Confirm every candidate by reading the code around the hit: the definition line first, then one usage.
 
 ## 3. Judge each candidate
 
@@ -49,12 +51,13 @@ For each real candidate, write down:
 - **Effort:** small (one component, no structural change), medium (new markup layer, measuring, or touching a shared component), large (new interaction such as drag, cross-component choreography like the cart throw, or replacing a library's internals).
 - **Risk or dependency:** anything that can bite, for example:
   - A component library renders the markup (Radix, Headless UI, MUI): the indicator usually has to be an extra element positioned from measured trigger rects, without forking the library. Its items usually paint their own background and switch their selected style the moment the state changes; plan to move the surface under the indicator and delay the selected look until the indicator arrives (SKILL.md, "Moving indicators").
-  - An animation library is already in use (Framer Motion, React Spring, GSAP): either reuse its springs with the same technique, or replace it on that component only; do not run two systems on one element.
+  - An animation library is already in use (Framer Motion, React Spring, GSAP): either reuse its springs with the same technique, or replace it on that component only; do not run two systems on one element. A widget library that animates itself (react-hot-toast, Sonner, a carousel package) counts the same way: replace it on that widget only, or leave it and say so.
   - A native control (`<select>`, `<input type="date">`): replacing it costs accessibility and mobile pickers. Prefer animating around it, or propose a custom control only where the user benefits, and say so.
   - Server-rendered or CMS templates: the core must be loaded as a separate script and attach to markup by data attributes.
   - `<details>`/`<summary>` in plain, server-rendered or CMS HTML: low risk. `makeAccordion(container)` enhances them in place, keeps them working without JS and with find-in-page, and turns a `name` group into a one-open-at-a-time accordion. Effort is usually small.
-  - `<details>` or accordions rendered by React, Vue or Svelte: do **not** run the helper on raw markup. It moves each item's children into a new `.acc-panel > .acc-in` and writes `open`, which the framework does not know about (a later update can throw, a bound `open` fights it). Either render `.acc-panel > .acc-in` in the template yourself (the helper then moves nothing), leave `open` unbound and call the helper once on mount (it has no teardown, so mount it once per container), or port the recipe as a component like the `WormTabs` example in `new-components.md`. Effort: medium.
+  - `<details>` or accordions rendered by React, Vue or Svelte: do **not** run `makeAccordion` on raw framework markup: it re-parents each item's children and writes `open`, which the framework does not know about (a later update can throw, a bound `open` fights it). Render `.acc-panel > .acc-in` yourself, leave `open` unbound, call the helper once on mount and its `destroy()` on unmount, or port the recipe as a component (React example: `references/frameworks.md`). Details: `python scripts/show_component.py accordion --recipe`. Effort: medium.
   - Lists with hundreds of rows: do not give every row its own running spring.
+  - The stretchy core is already in the codebase (the scan says so): reuse that copy; never add a second one.
 
 Skip, and say why, when a candidate would hurt: dense data tables, forms where speed matters more than delight, admin screens used all day, or anything already animated well.
 
@@ -68,7 +71,7 @@ Rank by visibility × frequency × fit:
 
 Group duplicates: twelve buttons with loading states are one proposal ("all submit buttons via the shared `Button`"), not twelve.
 
-Also list cross-cutting work that comes with any change: adding the core once (as a module or script), reduced-motion handling if the scan found none, and a global bounce setting if they want one.
+Also list cross-cutting work that comes with any change: adding the core once (see `references/frameworks.md` for a framework codebase), reduced-motion handling if the scan found none, and a global bounce setting if they want one.
 
 Cap the list at about ten items so the choice stays easy; mention that more exist if they do.
 
@@ -79,38 +82,36 @@ Write in the user's language. Lead with what you looked at, then the proposals, 
 Thai template:
 
 ```
-ตรวจโค้ดแล้ว: 6 ไฟล์ (React + Tailwind, ใช้ react-hot-toast, ยังไม่รองรับการลดการเคลื่อนไหว)
+ตรวจโค้ดแล้ว: 6 ไฟล์ (React + Tailwind, ยังไม่รองรับการลดการเคลื่อนไหว)
 
 แนะนำมาก
 1. แท็บสินค้า (ProductTabs.tsx:5) ตอนนี้เส้นใต้กระโดดทันที → ตัวชี้ยืดแบบหนอนไปหาแท็บใหม่ [เล็ก]
-2. ปุ่มเพิ่มลงตะกร้า (ProductCard.tsx:15) ตอนนี้แค่เปลี่ยนข้อความ → รูปสินค้าลอยเข้าตะกร้า ปุ่มหดเป็นวงพร้อมเครื่องหมายถูกแล้วกลายเป็นตัวนับจำนวน [ใหญ่]
 
 น่าทำ
-3. คำถามที่พบบ่อย (Faq.tsx:2, <details>) → ความสูงพุ่งเลยแล้วดีดกลับ [เล็ก]
-…
+2. คำถามที่พบบ่อย (Faq.tsx:2, <details>) → ความสูงพุ่งเลยแล้วดีดกลับ [กลาง]
 
 ไม่แนะนำ
-- ช่องเลือกวันที่ (Checkout.tsx:10) เป็นช่องวันที่ของเบราว์เซอร์ ถ้าเปลี่ยนเป็นปฏิทินเองจะเสียตัวเลือกวันที่ของมือถือ บอกได้ถ้ายังอยากเปลี่ยน
+- ช่องเลือกวันที่ (Checkout.tsx:10) เป็นช่องวันที่ของเบราว์เซอร์ ถ้าเปลี่ยนเป็นปฏิทินเองจะเสียตัวเลือกวันที่ของมือถือ
 
-เลือกได้เลยว่าจะให้ทำข้อไหน (เช่น "1, 2, 5" หรือ "ทั้งหมดที่แนะนำ") และถ้ามีส่วนอื่นที่อยากให้ยืดได้แต่ไม่อยู่ในรายการ พิมพ์เพิ่มมาได้
+เลือกได้เลยว่าจะให้ทำข้อไหน (เช่น "1, 2" หรือ "ทั้งหมดที่แนะนำ") และถ้ามีส่วนอื่นที่อยากให้ยืดได้แต่ไม่อยู่ในรายการ พิมพ์เพิ่มมาได้
 ```
 
-English template: the same structure with "Recommended", "Worth doing", "Not recommended", and the closing question "Tell me which to do (for example "1, 2, 5" or "all recommended"), and add anything else you want to feel stretchy that isn't listed."
+Each item: where (file:line), what happens now → what it becomes, [effort: เล็ก / กลาง / ใหญ่ or small / medium / large].
+
+English template: the same structure with "Recommended", "Worth doing", "Not recommended", and the closing question "Tell me which to do (for example "1, 2" or "all recommended"), and add anything else you want to feel stretchy that isn't listed."
 
 If the environment has a tappable-choice tool (`ask_user_input_v0` on claude.ai, `AskUserQuestion` in Claude Code), send the full list as text first, then offer the choice through the tool so it is one tap on mobile. The tool takes 2–4 options per question, so offer groups rather than every item:
 
-- multi-select "จะให้ทำส่วนไหน": "ทั้งหมดที่แนะนำ (1–2)", "แนะนำ + น่าทำ (1–6)", "เลือกเองตามหมายเลข", "มีส่วนอื่นจะเพิ่ม"
+- multi-select "จะให้ทำส่วนไหน": "ทั้งหมดที่แนะนำ (1–n)", "แนะนำ + น่าทำ (1–m)", "เลือกเองตามหมายเลข", "มีส่วนอื่นจะเพิ่ม"
 - optionally single-select "ความเด้ง": "นุ่ม", "เด้ง", "ยืดสุด"
 
 Remind them they can also type numbers or extra requests. If no such tool exists (for example over the API), ask in plain text. Either way, end the turn after asking.
-
-If the request already named specific parts ("make my tabs stretchy"), you should not be here: build those, and mention other candidates you noticed in one line at the end.
 
 ## 6. After the reply
 
 - Build only what was chosen, plus anything they added in their own words (treat additions like new candidates: read the code, pick the technique, mention effort if it is large).
 - If a choice is ambiguous ("ทำปุ่ม" with three kinds of buttons listed), make the reasonable pick and say which in one line rather than asking again.
-- Follow the workflow in SKILL.md: add the core once, keep the component's public API unchanged, keep state in the framework and springs out of it, handle reduced motion, focus and `aria-*`.
+- Follow the workflow in SKILL.md: add the core once (framework codebase: `python scripts/add_core.py --module <dest.js>`, and read `references/frameworks.md`), keep the component's public API unchanged, keep state in the framework and springs out of it, handle reduced motion, focus and `aria-*`.
 - Change the smallest surface that achieves the effect: wrap or extend existing components instead of rewriting screens.
-- Verify: run the project's own checks if there are any (type check, lint, tests), and for anything that renders as a standalone page, `scripts/check_page.py` with frame contact sheets of each converted interaction. Look at the frames.
+- Verify: run the project's own checks if there are any (type check, lint, tests). Then `python scripts/check_page.py <file.html or http://localhost:PORT/route>` with `--frames` for each converted interaction: it checks a standalone page or the running dev server. Look at the frames.
 - Report per item: what changed, which files, anything left undone or deferred, and how to tune it (which spring values or the global bounce).

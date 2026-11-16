@@ -1,6 +1,6 @@
 # Stretch techniques
 
-Eleven ways to make a transition stretch. Each one names its physical cause, shows the core code, gives the numbers that worked, and points to the showcase section that uses it (`grep -n "/\* ---------- name" assets/showcase.html`).
+Eleven ways to make a transition stretch, plus the content rules that apply to all of them. Each one names its physical cause, shows the core code and gives the numbers that worked. Read only the sections for the techniques you picked: `grep -n "^## " references/techniques.md`, then read that range. To see a technique in a working component, `python scripts/show_component.py NAME --js` (names under "Seen in"). Helper signatures and the spring presets are in `references/core-api.md`.
 
 Contents
 1. Edge pair (worm)
@@ -111,14 +111,17 @@ Seen in: slider, carousel, tooltip, thrown cart chip.
 Draw the surface as an SVG path behind the content. Its moving edge is a quadratic curve whose control point is offset by the velocity:
 
 ```js
+let sbH = sb.clientHeight;                                  // measure once, not per frame
+onResync(() => { sbH = sb.clientHeight; });
 const sbW = new Spring(248, { k: 200, c: 17, onUpdate: (w, v) => {
   sb.style.width = w + 'px';
   svg.setAttribute('width', w + 70);                       // room for the bulge
-  path.setAttribute('d', rightEdgePath(w, sb.clientHeight, edgeBulge(v)));  // clamp(-v*.05, ±56)
+  path.setAttribute('d', rightEdgePath(w, sbH, edgeBulge(v)));  // clamp(-v*.05, ±56)
 }});
 ```
 
 - Sign: moving outward (v > 0) gives b < 0, so the middle lags (concave). Overshoot reverses it, so the edge wobbles flat.
+- Never read layout (`clientHeight`, `offsetWidth`, `getBoundingClientRect`) inside `onUpdate`: cache it and refresh it in `onResync`, or in a `ResizeObserver` when the height depends on the width.
 - Bottom sheet: `topEdgePath(w, h, 28, clamp(-v*.035, ±36))`; extend the path 40–60 px below the bottom so an upward overshoot never reveals a gap.
 - Put the SVG at `z-index:-1` inside the surface (which has its own stacking context) and make it `overflow:visible`.
 - Drive it from drag velocity as well (`spring.drag(y, v)`), so the edge bends while the user drags.

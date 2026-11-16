@@ -11,9 +11,12 @@ For example: a tab underline that stretches like an inchworm to the next tab, a 
 ## What's Included
 
 - **Zero-dependency Spring Engine** (`assets/stretchy-core.js`) with helper utilities including edge pairs, volume preservation, bulging SVG edges, FLIP reordering, thrown objects, and `makeAccordion` to make existing `<details>` elements instantly elastic.
-- **24 Working Showcase Components**: tabs, stepper, sidebar, carousel, send button, toggles, radio/checkbox, chips, search, dropdown, slider, quantity, rating, add to cart, goo menu, modal, toast, tooltip, bottom sheet, FAB, accordion, dynamic island date picker (single or range selection), and choice chips (single-select chips).
+- **24 Working Showcase Components**: tabs, stepper, sidebar, carousel, send button, toggles, radio/checkbox, chips, search, dropdown, slider, quantity, rating, add to cart, goo menu, modal, toast, tooltip, bottom sheet, FAB, accordion, dynamic island, date picker (single or range selection), and choice chips (single-select chips).
 - **11+ Elastic Deformation Techniques** with code recipes and tuned spring presets.
-- **Guide for Designing New Components** not in the catalog, featuring 14 examples (pull-to-refresh, swipe-to-delete, OTP input, date picker, etc.) and guidance on porting to React.
+- **Guide for Designing New Components** not in the catalog, featuring 13 worked designs (pull-to-refresh, swipe-to-delete, OTP input, etc.). The React port of the `WormTabs` component moved to a frameworks guide, which also covers Vue, Svelte, component libraries and server rendering.
+- **Component extractor** (`scripts/show_component.py`): prints one showcase component by name (`--recipe`, `--css`, `--html`, `--js`), so the showcase page never has to be read whole. `--list` shows all 24.
+- **Core tool** (`scripts/add_core.py`): writes the spring engine as an ES module for React, Vue or Svelte (`--module`), and keeps a standalone page's inline copy of the core in sync (`--inline`, `--check`).
+- **API cheat sheet** (`references/core-api.md`): signatures of every helper, the spring preset table and runtime cost rules.
 - **Pre-flight Code Audit Workflow** (Step 0, when asked to generally enhance existing UI without specific targets): scan existing code using `scripts/audit_ui.py` to identify candidates for elasticity (tabs, toggles, modals, dropdowns, accordions, etc.), summarize findings with `file:line`, and ask the user to confirm or customize **before modifying any files**.
 - **Page Inspection Script** powered by headless Chromium: detects JavaScript errors, horizontal overflow, invisible click-blocking layers, and captures animation frames arranged into a contact sheet.
 
@@ -26,13 +29,18 @@ stretchy-morph-ui/
 │   ├── audit.md                How to identify, scan, decide, and rank candidate elements + confirmation templates (TH/EN)
 │   ├── techniques.md           Deformation techniques, code, and tuning parameters
 │   ├── components.md           Component catalog: recipes, spring values, gotchas
-│   └── new-components.md       Designing new components + examples + React porting guide
+│   ├── new-components.md       Designing new components + 13 worked designs
+│   ├── core-api.md             Helper signatures, spring presets, runtime cost rules
+│   ├── frameworks.md           Using the core in React, Vue, Svelte, component libraries, server rendering
+│   └── pitfalls.md             Pitfalls from real builds + lessons on making motion look good
 ├── assets/
 │   ├── stretchy-core.js        Spring engine + helpers
 │   ├── starter.html            Starter template (light/dark mode, Thai typography, reduced motion)
 │   └── showcase.html           All 24 showcase components
 └── scripts/
     ├── audit_ui.py             Scans user code: tech stack, existing animations, elasticity candidates
+    ├── add_core.py             Writes the core as an ES module, or syncs a page's inline copy
+    ├── show_component.py       Prints one showcase component (recipe, CSS, HTML, JS)
     └── check_page.py           Smoke testing + animation frame capture
 ```
 
@@ -111,7 +119,7 @@ You do not need to invoke the skill manually. The coding agent (Claude or Antigr
 
 ### Using the Spring Engine Standalone
 
-`stretchy-core.js` can be used completely independently of the skill. Simply include it via a `<script>` tag (exposing globals) or add `export` statements to import it as an ES module:
+`stretchy-core.js` can be used completely independently of the skill. Simply include it via a `<script>` tag (exposing globals), or write an ES module copy with `python scripts/add_core.py --module src/lib/stretchy-core.js`; the module is safe to import during server rendering. Example:
 
 ```js
 const box = document.querySelector('.box');
@@ -132,7 +140,10 @@ Easily wrap existing accordions to make them smoothly stretch. Supports native `
 const faq = makeAccordion(document.querySelector('.faq'), { gap: 6 }); // details sharing the same name = mutually exclusive
 faq.single = false;  // Allow multiple panels open simultaneously
 faq.open(0);         // Programmatically open first panel
+faq.destroy();         // remove listeners and stop springs (call on unmount in a single-page app)
 ```
+
+In a single-page app, also call `spring.stop()` on each `Spring` (it halts in place, keeping its value and target) and the function that `onResync(f)` returned when the component unmounts.
 
 When `prefers-reduced-motion: reduce` is active, `to()` instantly snaps to the target value and invokes `onRest` immediately, ensuring code awaiting animation completion continues to work seamlessly.
 
@@ -145,11 +156,11 @@ python scripts/audit_ui.py ./src
 python scripts/audit_ui.py ./src --json --max-hits 10
 ```
 
-The output identifies the detected tech stack, existing animations, and existing `prefers-reduced-motion` handling, followed by categorized candidate components explaining what each element can morph into and which technique to apply. This output is a heuristic-based screening; always inspect surrounding code before presenting suggestions to the user.
+The report lists the detected stack and existing motion, then candidate hits grouped by UI category, each mapped to a showcase component and a technique. Paths are relative to the scanned root and hits are grouped per file; tests, stories, minified and generated files and comment lines are skipped; CSS-only matches are reported separately; shared components are listed with their use counts. This output is a heuristic-based screening; always inspect surrounding code before presenting suggestions to the user.
 
 ### Page Inspection & Smoke Testing
 
-Requires Playwright:
+Requires Playwright. Its Chromium download is optional, because the script falls back to installed Edge or Chrome when it is missing (`--channel` picks one). It accepts a local file or a URL, and writes to a temp folder unless `--out` is given:
 
 ```bash
 pip install playwright
@@ -157,6 +168,9 @@ playwright install chromium
 
 # Check for console errors, horizontal overflow, and click blockers at 1280px and 390px widths
 python scripts/check_page.py assets/showcase.html --out out/
+
+# Same checks against a running dev server
+python scripts/check_page.py http://localhost:5173/
 
 # Click a selector and capture 8 frames spaced 110ms apart, cropped to .stage
 python scripts/check_page.py page.html --frames "#tabs button:nth-child(3)@.stage"
@@ -170,6 +184,12 @@ Frames and jump strips are captured in slow motion (`--slowmo 4` by default, `1`
 For every tab and radio group the script saves `jump_N.png`: it selects the first item, clicks the last one, and stacks one frame per row. Look at the clicked item in every row. It must stay readable until the indicator reaches it, and the indicator must pass over the items it crosses, not hide behind them.
 
 Exits with code 1 if errors, overflow or click blockers are detected, making it suitable for CI pipelines. Frames and jump strips are for review and never change the exit code.
+
+## Token cost
+
+- SKILL.md is kept small because it is loaded on every activation; details live in `references/` and are read by section.
+- The agent copies `assets/starter.html` and never re-types the core.
+- `scripts/show_component.py` prints one component, so the 162 KB showcase (`assets/showcase.html`) is never read whole.
 
 ## Common Spring Tuning Values
 
