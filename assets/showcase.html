@@ -52,18 +52,18 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
 button:disabled{opacity:.4;cursor:default}
 
-/* header */
+/* ---------- header: bounciness ---------- */
 header{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:22px 0}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px}
 .bounce{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:15px}
 
-/* segmented with stretchy indicator */
+/* ---------- segmented with stretchy indicator ---------- */
 .seg{position:relative;display:inline-flex;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px}
 .seg-ind{position:absolute;left:0;top:4px;bottom:4px;border-radius:999px;background:var(--ink);will-change:transform,width;pointer-events:none}
 .seg button{position:relative;z-index:1;border:0;background:none;color:var(--muted);padding:5px 16px;border-radius:999px;cursor:pointer;transition:color .25s;white-space:nowrap;font-size:15px}
 .seg button.on{color:var(--bg)}
 
-/* hero */
+/* ---------- hero island ---------- */
 .hero{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center;padding:36px 0 96px}
 h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-height:1.14;margin:0}
 .lede{color:var(--muted);max-width:40ch;margin:24px 0 0;font-size:18px}
@@ -98,7 +98,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .accept{background:var(--teal)}
 .phone .seg{position:absolute;bottom:20px;left:50%;transform:translateX(-50%)}
 
-/* groups and specimens */
+/* ---------- groups and specimens ---------- */
 .group+.group{margin-top:120px}
 .group-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:36px}
 .group-head h2{margin:0;font-stretch:70%;font-weight:800;font-size:clamp(38px,5vw,58px);line-height:1.2}
@@ -111,7 +111,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .spec>p{margin:0;color:var(--muted);max-width:52ch}
 .col{display:flex;flex-direction:column;align-items:center;width:100%}
 
-/* tabs */
+/* ---------- tabs ---------- */
 .tab-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px}
 .tab-out{font-stretch:75%;font-weight:700;font-size:28px;line-height:1.3;text-align:center;transition:opacity .14s,transform .14s;min-height:1.3em}
 .tab-out.swap{opacity:0;transform:translateY(6px)}
@@ -120,7 +120,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 13px;font-size:13px;line-height:1.3}
 .tabs button.on{color:#fff}
 
-/* stepper */
+/* ---------- stepper ---------- */
 .stepper{width:100%;max-width:440px}
 .steps{position:relative;display:grid;grid-template-columns:repeat(4,1fr);padding-top:6px}
 .steps-rail{position:absolute;top:22px;left:0;width:0;height:4px;border-radius:2px;background:var(--line)}
@@ -137,7 +137,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .steps-msg{text-align:center;margin:26px 0 0;font-weight:600}
 .steps-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
 
-/* toggles */
+/* ---------- toggles ---------- */
 .setlist{width:100%;max-width:340px;background:var(--surface);border-radius:24px;padding:4px 20px}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
 .setrow+.setrow{border-top:1px solid var(--line)}
@@ -145,7 +145,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .switch[aria-checked="true"]{background:var(--teal)}
 .knob{position:absolute;left:0;top:50%;width:26px;height:26px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(20,10,60,.3);transform:translate(4px,-50%)}
 
-/* send button */
+/* ---------- send button ---------- */
 .send-stage{grid-template-rows:auto auto;gap:14px;align-content:center}
 .send{position:relative;height:56px;width:200px;border-radius:999px;border:0;background:var(--violet);color:#fff;font-weight:600;cursor:pointer;transition:background .3s;overflow:hidden;padding:0;display:grid;place-items:center}
 .send.done{background:var(--teal)}
@@ -159,7 +159,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 @keyframes rot{to{transform:rotate(360deg)}}
 .send-status{min-height:1.7em;color:var(--muted);font-size:15px;text-align:center}
 
-/* checkbox and radio */
+/* ---------- radio and checkbox ---------- */
 .form-card{width:100%;max-width:340px;background:var(--surface);border-radius:24px;padding:18px 22px}
 .radios{position:relative}
 .form-title{font-weight:700;margin-bottom:4px}
@@ -177,7 +177,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .cb input:checked+.cb-box{background:var(--violet);border-color:var(--violet)}
 .cb input:checked+.cb-box path{stroke-dashoffset:0}
 
-/* chips */
+/* ---------- chips ---------- */
 .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:390px}
 .chip{display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:15px;white-space:nowrap;transition:background .25s,color .25s,border-color .25s}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -185,6 +185,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .chip-ic svg{width:18px;height:18px;transform:scale(0);stroke-width:2.6}
 .chips-msg{margin:20px 0 0;text-align:center;color:var(--muted);font-size:15px}
 
+/* ---------- choice chips ---------- */
 /* choice chips: chip surface AND border (::before, z -2) < travelling blob (z -1) < chip label.
    A border on the chip itself would paint over the blob as a ring on every chip it crosses. */
 .cc-title{font-weight:700;margin:0 0 14px;text-align:center}
@@ -201,7 +202,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .cchip-ic svg{width:18px;height:18px;transform:scale(0);stroke-width:2.6}
 .cc-msg{margin:20px 0 0;text-align:center;color:var(--muted);font-size:15px}
 
-/* search */
+/* ---------- search ---------- */
 .search-area{width:100%;display:flex;flex-direction:column;align-items:center;gap:20px}
 .search{position:relative;width:52px;height:52px;border-radius:26px;background:var(--surface);overflow:hidden;box-shadow:0 0 0 1px var(--line)}
 .search:focus-within{box-shadow:0 0 0 2px var(--violet)}
@@ -215,7 +216,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .sugg button{border:0;border-radius:999px;background:var(--surface);padding:5px 14px;font-size:14px;cursor:pointer;opacity:0;transform:translateY(10px) scale(.8);transition:opacity .15s,transform .2s;pointer-events:none}
 .sugg.open button{opacity:1;transform:none;pointer-events:auto;transition:opacity .25s,transform .5s cubic-bezier(.3,1.6,.5,1);transition-delay:calc(var(--i)*50ms + 150ms)}
 
-/* dropdown */
+/* ---------- dropdown ---------- */
 .dd-stage{display:block;place-items:normal;padding:24px;min-height:410px}
 .dd{position:absolute;left:50%;top:24px;transform:translateX(-50%);width:260px;height:52px;background:var(--surface);border-radius:18px;overflow:hidden;z-index:3;box-shadow:0 0 0 1px var(--line);transition:box-shadow .3s}
 .dd.open{box-shadow:0 0 0 1px var(--line),0 24px 40px -18px rgba(20,10,60,.5)}
@@ -236,7 +237,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .prods small{display:block;color:var(--muted);font-size:13px}
 .prods .price{font-weight:700;white-space:nowrap}
 
-/* slider */
+/* ---------- slider ---------- */
 .vol{width:100%;max-width:360px;background:var(--surface);border-radius:24px;padding:22px 22px 18px}
 .vol-head{display:flex;align-items:center;gap:10px;font-weight:600}
 .vol-head output{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted)}
@@ -247,7 +248,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .bubble{position:absolute;left:0;bottom:44px;min-width:44px;padding:3px 10px;border-radius:12px;background:var(--ink);color:var(--bg);font-weight:700;font-size:15px;text-align:center;transform-origin:50% 100%;transform:scale(0);pointer-events:none;font-variant-numeric:tabular-nums}
 .bubble::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;margin-left:-5px;background:inherit;border-radius:2px;transform:rotate(45deg)}
 
-/* quantity */
+/* ---------- quantity ---------- */
 .qty-card{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
 .qty-item b{display:block;font-size:19px;line-height:1.4}
 .qty-item small{color:var(--muted);font-size:15px}
@@ -257,7 +258,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .qty-n span{position:absolute;inset:0;display:grid;place-items:center}
 .qty-total{font-weight:600}
 
-/* rating */
+/* ---------- rating ---------- */
 .rate{position:relative;display:flex;gap:2px;padding:8px}
 .rate-cap{position:absolute;left:0;top:4px;bottom:4px;width:0;border-radius:999px;background:var(--surface);pointer-events:none}
 .star{position:relative;z-index:1;width:50px;height:50px;border:0;background:none;padding:0;cursor:pointer;display:grid;place-items:center;border-radius:50%}
@@ -265,7 +266,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .star.lit svg{fill:var(--sun)}
 .rate-word{margin:16px 0 0;font-weight:700;font-size:18px;min-height:1.7em;text-align:center}
 
-/* carousel */
+/* ---------- carousel ---------- */
 .car-stage{display:block;place-items:normal;background:var(--surface);border:1px solid var(--line);padding:24px}
 .cvp{overflow:hidden;border-radius:26px;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
 .cvp:active{cursor:grabbing}
@@ -281,7 +282,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .dot::before{content:"";position:absolute;left:8px;top:8px;width:8px;height:8px;border-radius:4px;background:var(--muted);opacity:.35}
 .worm{position:absolute;left:0;top:8px;height:8px;width:8px;border-radius:4px;background:var(--ink);pointer-events:none}
 
-/* sidebar */
+/* ---------- sidebar ---------- */
 .sb-stage{display:block;place-items:normal;background:var(--stage-t);padding:24px}
 .app{position:relative;height:420px;border-radius:24px;background:var(--surface);overflow:hidden}
 .sb{position:absolute;left:0;top:0;bottom:0;width:248px;z-index:2;color:#fff;display:flex;flex-direction:column;gap:14px;padding:14px 12px}
@@ -313,7 +314,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .lines{display:flex;flex-direction:column;gap:12px;margin-top:24px}
 .lines span{height:10px;border-radius:5px;background:var(--line)}
 
-/* goo */
+/* ---------- goo menu ---------- */
 .goo{position:absolute;inset:0;filter:url(#goo)}
 .goo-main,.goo-item{position:absolute;left:50%;top:60%;border:0;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;transform:translate(-50%,-50%)}
 .goo-main{width:68px;height:68px;z-index:2}
@@ -322,7 +323,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .goo-main[aria-expanded="true"] svg{transform:rotate(135deg)}
 .goo-status{position:absolute;left:0;right:0;bottom:16px;text-align:center;margin:0;color:var(--muted);font-size:15px}
 
-/* modal */
+/* ---------- modal ---------- */
 .proj{width:100%;max-width:340px;background:var(--surface);border-radius:24px;padding:20px 22px}
 .proj-thumb{height:96px;border-radius:16px;background:var(--stage-v);display:flex;align-items:flex-end;gap:8px;padding:14px}
 .proj-thumb i{display:block;width:22px;border-radius:6px;background:var(--violet)}
@@ -342,7 +343,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .modal-in p{margin:0;color:var(--muted);font-size:15px}
 .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
 
-/* toast */
+/* ---------- toast ---------- */
 .toast-stage{place-items:start center}
 .toasts{position:absolute;left:0;right:0;bottom:28px;height:0}
 .toast{position:absolute;left:50%;bottom:0;height:48px;width:48px;border-radius:24px;background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:10px;padding:0 9px;overflow:hidden;white-space:nowrap;cursor:pointer;font-size:15px;transition:opacity .3s,filter .3s;transform:translate(-50%,60px)}
@@ -352,7 +353,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .toast.wide .toast-tx{opacity:1;transition:opacity .25s .12s}
 .toast.out{opacity:0;filter:blur(4px)}
 
-/* tooltip */
+/* ---------- tooltip ---------- */
 .tb-anchor{position:relative}
 .toolbar{display:flex;gap:4px;padding:6px;background:var(--surface);border-radius:18px;box-shadow:0 0 0 1px var(--line)}
 .toolbar button{width:44px;height:44px;border:0;border-radius:12px;background:none;cursor:pointer;display:grid;place-items:center;font-size:19px;transition:background .2s,color .2s}
@@ -371,7 +372,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .sample.fx-link .sample-tx{color:var(--violet)}
 .sample.fx-img .sample-img{display:block;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
 
-/* bottom sheet */
+/* ---------- bottom sheet ---------- */
 .sheet-stage{padding:24px}
 .sheet-frame{position:relative;width:100%;max-width:340px;height:400px;border-radius:32px;background:var(--surface);overflow:hidden;padding:18px}
 .photo{position:relative;height:150px;border-radius:20px;background:var(--sun);overflow:hidden}
@@ -397,7 +398,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .share-t span{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;color:#fff}
 .sheet-cancel{width:100%;margin-top:14px}
 
-/* fab */
+/* ---------- fab ---------- */
 .fab-stage{place-items:start;min-height:340px}
 .notes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px}
 .notes li{background:var(--surface);border-radius:16px;padding:10px 16px;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
@@ -415,7 +416,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .fab textarea:focus-visible{outline:2px solid #fff;outline-offset:0}
 .fab-save{align-self:flex-end;border:0;border-radius:999px;background:#fff;color:#4A32D6;font-weight:700;padding:6px 22px;cursor:pointer}
 
-/* accordion */
+/* ---------- accordion ---------- */
 .acc-stage{place-items:start center;min-height:560px}
 @media (max-width:600px){.acc-stage{min-height:620px}}  /* fits all three open in หลายข้อ mode */
 .acc-wrap{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:18px}
@@ -432,7 +433,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .acc-pay{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .acc-pay li{padding:2px 12px;border-radius:999px;background:var(--stage-v);color:var(--ink);font-size:14px}
 
-/* add to cart */
+/* ---------- add to cart ---------- */
 .shop-stage{display:block;place-items:normal;padding:24px}
 .shop{position:relative;background:var(--surface);border-radius:24px;padding:20px 22px 24px}
 .shop-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;line-height:1.4}
@@ -485,7 +486,7 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
   .atc{margin-top:8px}
 }
 
-/* date picker */
+/* ---------- date picker ---------- */
 :root{--range:rgba(107,78,255,.15)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--range:rgba(132,112,255,.3)}}
 :root[data-theme="dark"]{--range:rgba(132,112,255,.3)}
@@ -555,6 +556,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
 </style>
 </head>
 <body>
+<!-- component: goo menu -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <filter id="goo">
@@ -564,6 +566,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
     </filter>
   </defs>
 </svg>
+<!-- /component: goo menu -->
 
 <div class="wrap">
   <header>
@@ -582,6 +585,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
     </div>
   </header>
 
+<!-- component: hero island -->
   <section class="hero">
     <div>
       <h1>ยืด หด<br>แล้วเด้งกลับ</h1>
@@ -629,12 +633,14 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
       </div>
     </div>
   </section>
+<!-- /component: hero island -->
 
   <main>
   <!-- ===================== NAVIGATION ===================== -->
   <section class="group" id="navigation">
     <div class="group-head"><h2>นำทาง</h2><p>4 แบบ</p></div>
     <div class="grid">
+<!-- component: tabs -->
       <article class="spec">
         <div class="stage tab-stage" style="background:var(--stage-v)">
           <div class="tab-out" id="tabOut" aria-live="polite">มีอะไรใหม่วันนี้</div>
@@ -649,7 +655,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>แถบนำทางแบบหนอน</h3>
         <p>ขอบด้านหน้าของตัวชี้วิ่งนำ ขอบด้านหลังตามไปทีหลัง ตัวชี้เลยยืดออกระหว่างทางแล้วหดเข้าที่ปลายทาง</p>
       </article>
+<!-- /component: tabs -->
 
+<!-- component: stepper -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-p)">
           <div class="stepper">
@@ -668,7 +676,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ขั้นตอนที่ตัวชี้ไหลไปข้างหน้า</h3>
         <p>วงกลมสีม่วงยืดเป็นแคปซูลระหว่างย้ายขั้น เส้นความคืบหน้าพุ่งเลยไปนิดแล้วดีดกลับ ขั้นที่ผ่านแล้วเด้งเป็นเครื่องหมายถูก</p>
       </article>
+<!-- /component: stepper -->
 
+<!-- component: sidebar -->
       <article class="spec wide">
         <div class="stage sb-stage">
           <div class="app" id="app">
@@ -699,7 +709,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>แถบข้างที่ขอบเป็นเยลลี่</h3>
         <p>กดปุ่มมุมซ้ายบนเพื่อย่อหรือขยาย ขอบขวาโค้งตามความเร็วแล้วสั่นกลับเป็นเส้นตรง ตัวชี้เมนูเป็นหนอนแนวตั้ง ป้ายแจ้งเตือนหดเป็นจุดตอนย่อ บนจอแคบแถบข้างจะลอยทับเนื้อหาแทน</p>
       </article>
+<!-- /component: sidebar -->
 
+<!-- component: carousel -->
       <article class="spec wide">
         <div class="stage car-stage">
           <div class="cvp" id="cvp" aria-roledescription="ภาพเลื่อน" aria-label="ที่เที่ยวในไทย">
@@ -725,6 +737,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>การ์ดเลื่อนแบบเยลลี่</h3>
         <p>ปัดหรือกดลูกศร การ์ดเอียงและยุบตามความเร็วของการเลื่อน ลากเกินขอบแล้วจะมีแรงต้านเหมือนยางยืด จุดบอกหน้าใช้หนอนตัวเดียวกับแถบนำทาง</p>
       </article>
+<!-- /component: carousel -->
     </div>
   </section>
 
@@ -732,6 +745,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
   <section class="group" id="controls">
     <div class="group-head"><h2>ปุ่มและฟอร์ม</h2><p>13 แบบ</p></div>
     <div class="grid">
+<!-- component: send button -->
       <article class="spec">
         <div class="stage send-stage" style="background:var(--stage-p)">
           <button class="send" id="send">
@@ -744,7 +758,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ปุ่มที่หดเป็นวงโหลด</h3>
         <p>ความกว้างหดด้วยสปริง ส่วนความสูงพองชดเชยเพื่อรักษาปริมาตร ก่อนกลายเป็นเครื่องหมายถูกแล้วยืดกลับเป็นปุ่มเดิม</p>
       </article>
+<!-- /component: send button -->
 
+<!-- component: toggles -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-t)">
           <div class="setlist">
@@ -756,7 +772,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>สวิตช์ที่ยืดตอนเลื่อน</h3>
         <p>ปุ่มกลมยืดเป็นแคปซูลและบางลงนิดหนึ่งเหมือนยาง สวิตช์โหมดมืดเปลี่ยนธีมของหน้านี้จริง</p>
       </article>
+<!-- /component: toggles -->
 
+<!-- component: radio and checkbox -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-v)">
           <div class="form-card">
@@ -777,7 +795,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ตัวเลือกที่จุดไหลได้</h3>
         <p>จุดของปุ่มตัวเลือกไหลจากวงหนึ่งไปอีกวงเหมือนหยดน้ำ ใช้ปุ่มลูกศรก็ได้ ส่วนช่องติ๊กจะบีบตัวแล้วเด้งตอนกด</p>
       </article>
+<!-- /component: radio and checkbox -->
 
+<!-- component: chips -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-p)">
           <div class="col">
@@ -795,7 +815,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ชิปตัวกรองที่พองตัว</h3>
         <p>ตอนเลือก ไอคอนติ๊กดันตัวเองเข้ามาด้วยสปริง ชิปเลยพองออกแล้วหดเข้าที่ ชิปข้างๆ ขยับหลบตามจริง</p>
       </article>
+<!-- /component: chips -->
 
+<!-- component: choice chips -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-t)">
           <div class="col">
@@ -814,7 +836,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ชิปตัวเลือกที่ไหลข้ามแถว</h3>
         <p>เลือกได้ทีละอันเหมือนปุ่มตัวเลือก แคปซูลสีม่วงยืดตัวไปหาชิปใหม่ ถ้าอยู่คนละแถวก็ยืดทั้งแนวนอนและแนวตั้งเหมือนหยดน้ำ ใช้ปุ่มลูกศรได้</p>
       </article>
+<!-- /component: choice chips -->
 
+<!-- component: search -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-t)">
           <div class="search-area">
@@ -834,7 +858,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ช่องค้นหาที่แตกออกจากไอคอน</h3>
         <p>ไอคอนแว่นขยายยืดเป็นช่องพิมพ์ ความสูงบีบตัวชดเชยระหว่างยืด คำแนะนำด้านล่างเด้งขึ้นมาทีละอัน</p>
       </article>
+<!-- /component: search -->
 
+<!-- component: dropdown -->
       <article class="spec">
         <div class="stage dd-stage" style="background:var(--stage-v)">
           <div class="dd" id="dd">
@@ -853,7 +879,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>เมนูเลือกที่ไหลลงจากปุ่ม</h3>
         <p>ปุ่มยืดลงมาเป็นรายการและบีบด้านข้างเล็กน้อยระหว่างยืด ตัวไฮไลต์วิ่งตามเมาส์หรือปุ่มลูกศร เลือกแล้วรายการด้านล่างสลับตำแหน่งแบบยืดหยุ่น</p>
       </article>
+<!-- /component: dropdown -->
 
+<!-- component: slider -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-v)">
           <div class="vol">
@@ -872,7 +900,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>แถบเลื่อนที่ยืดตามความเร็ว</h3>
         <p>ยิ่งลากเร็ว หัวจับยิ่งยืดยาว ป้ายตัวเลขด้านบนเอนตามแรงเหวี่ยงเหมือนลูกตุ้มกลับหัว ใช้ปุ่มลูกศรบนคีย์บอร์ดได้ด้วย</p>
       </article>
+<!-- /component: slider -->
 
+<!-- component: quantity -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-p)">
           <div class="qty-card">
@@ -888,7 +918,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ตัวนับจำนวนที่ถูกดัน</h3>
         <p>กดบวกแล้วแคปซูลยืดไปทางขวา กดลบยืดไปทางซ้าย ตัวเลขม้วนขึ้นลงตามทิศ ถึงขีดจำกัด 1 หรือ 9 แล้วจะส่ายหัวแทน</p>
       </article>
+<!-- /component: quantity -->
 
+<!-- component: rating -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-t)">
           <div class="col">
@@ -906,7 +938,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ดาวที่มีแคปซูลยืดตาม</h3>
         <p>ชี้เมาส์ไปบนดาว แคปซูลด้านหลังยืดตามไปทันที คลิกแล้วดาวเด้งทีละดวงไล่จากซ้ายไปขวา</p>
       </article>
+<!-- /component: rating -->
 
+<!-- component: goo menu -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-v)">
           <div class="goo" id="goo">
@@ -920,7 +954,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>เมนูหยดน้ำ</h3>
         <p>ฟิลเตอร์เบลอทุกปุ่มแล้วเร่งความคมของขอบกลับ ปุ่มที่อยู่ใกล้กันจึงหลอมติดกันและขาดออกเหมือนของเหลว</p>
       </article>
+<!-- /component: goo menu -->
 
+<!-- component: add to cart -->
       <article class="spec wide">
         <div class="stage shop-stage" style="background:var(--stage-t)">
           <div class="shop" id="shop">
@@ -977,6 +1013,8 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ปุ่มเพิ่มลงตะกร้าที่โยนของเข้าไป</h3>
         <p>กดแล้วรูปสินค้าลอยขึ้น หดเป็นเม็ดกลมระหว่างโค้งลงตะกร้า และยืดตามทิศที่พุ่ง ปุ่มหดเป็นวงพร้อมเครื่องหมายถูกก่อนยืดออกเป็นตัวนับจำนวน ตะกร้าบีบตัวรับ มีวงคลื่นกระจายออก และแคปซูลยืดตามยอดรวม</p>
       </article>
+<!-- /component: add to cart -->
+<!-- component: date picker -->
       <article class="spec wide">
         <div class="stage dp-stage" style="background:var(--stage-p)">
           <div class="dp-wrap">
@@ -1020,6 +1058,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ปฏิทินที่วงกลมไหลไปหาวัน</h3>
         <p>เลือกได้ทั้งวันเดียวและช่วงวันที่ วงกลมยืดได้ทั้งแนวนอนและแนวตั้งระหว่างย้ายวัน ในโหมดช่วง แถบสีไหลเติมทีละแถวตามเมาส์หรือปุ่มลูกศร เปลี่ยนเดือนแล้วตารางเอียงตามแรงเลื่อน ส่วนกรอบสรุปยืดตามโหมดและตามขั้นที่กำลังเลือก</p>
       </article>
+<!-- /component: date picker -->
 
     </div>
   </section>
@@ -1028,6 +1067,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
   <section class="group" id="overlays">
     <div class="group-head"><h2>ป๊อปอัปและเนื้อหา</h2><p>6 แบบ</p></div>
     <div class="grid">
+<!-- component: modal -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-p)">
           <div class="col">
@@ -1043,7 +1083,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ปุ่มที่ขยายเป็นหน้าต่าง</h3>
         <p>ปุ่มลบลอยออกจากการ์ดแล้วยืดเป็นหน้าต่างยืนยันกลางจอ กว้างกับสูงยืดคนละจังหวะ ตอนปิดหดกลับไปเป็นปุ่มที่ตำแหน่งเดิม</p>
       </article>
+<!-- /component: modal -->
 
+<!-- component: toast -->
       <article class="spec">
         <div class="stage toast-stage" id="toastStage" style="background:var(--stage-t)">
           <button class="btn-solid" id="toastBtn">แสดงการแจ้งเตือน</button>
@@ -1052,7 +1094,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>การแจ้งเตือนที่งอกจากจุด</h3>
         <p>แต่ละอันเริ่มเป็นวงกลมแล้วยืดเป็นแถบ อันเก่าถูกดันขึ้นด้วยสปริง ครบเวลาแล้วหดกลับเป็นวงก่อนหายไป แตะเพื่อปิดก่อนก็ได้</p>
       </article>
+<!-- /component: toast -->
 
+<!-- component: tooltip -->
       <article class="spec">
         <div class="stage" style="background:var(--stage-v)">
           <div class="col">
@@ -1073,7 +1117,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>คำอธิบายที่ไหลตามเมาส์</h3>
         <p>มีป้ายคำอธิบายแค่อันเดียวที่วิ่งไปหาปุ่มที่ชี้อยู่ ป้ายยืดตามความเร็วและปรับความกว้างตามข้อความ กดปุ่มเพื่อจัดรูปแบบข้อความด้านล่างได้จริง</p>
       </article>
+<!-- /component: tooltip -->
 
+<!-- component: bottom sheet -->
       <article class="spec">
         <div class="stage sheet-stage" style="background:var(--stage-p)">
           <div class="sheet-frame" id="sheetFrame">
@@ -1098,7 +1144,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>แผ่นด้านล่างที่ขอบเป็นเยลลี่</h3>
         <p>ลากที่ขีดด้านบนขึ้นลงได้ ขอบบนโค้งตามความเร็วแล้วสั่นกลับ ปล่อยเร็วๆ หรือลากลงต่ำพอ แผ่นจะปิดเอง</p>
       </article>
+<!-- /component: bottom sheet -->
 
+<!-- component: fab -->
       <article class="spec">
         <div class="stage fab-stage" id="fabStage" style="background:var(--stage-t)">
           <ul class="notes" id="notes" aria-label="โน้ตของคุณ">
@@ -1118,7 +1166,9 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>ปุ่มลอยที่แผ่เป็นฟอร์ม</h3>
         <p>ความกว้างกับความสูงใช้สปริงคนละจังหวะ ตอนเปิดปุ่มกลมจึงยืดออกด้านข้างก่อนแล้วค่อยพองขึ้น ตอนปิดสลับกัน</p>
       </article>
+<!-- /component: fab -->
 
+<!-- component: accordion -->
       <article class="spec">
         <div class="stage acc-stage" style="background:var(--stage-v)">
           <div class="acc-wrap">
@@ -1147,6 +1197,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <h3>คำถามที่พับเก็บแบบยืดหยุ่น</h3>
         <p>ความสูงพุ่งเลยเป้าแล้วดีดกลับ ข้อความข้างในหน่วงตามเหมือนของในกล่องที่ถูกเขย่า การ์ดที่เปิดแยกตัวจากเพื่อน ใบที่ถูกดันแบนลงนิดหนึ่ง สร้างจาก &lt;details&gt; ธรรมดา ไม่มี JavaScript ก็ยังเปิดได้</p>
       </article>
+<!-- /component: accordion -->
     </div>
   </section>
   </main>
@@ -1154,6 +1205,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
   <footer>ทุกชิ้นบนหน้านี้ใช้สปริงตัวเดียวกัน ปรับความเด้งได้ที่มุมขวาบน ถ้าเครื่องของคุณเปิดตั้งค่าลดการเคลื่อนไหวไว้ ทุกอย่างจะเปลี่ยนสถานะทันทีโดยไม่เด้ง</footer>
 </div>
 
+<!-- component: modal -->
 <div class="scrim" id="scrim"></div>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" hidden>
   <span class="modal-label" aria-hidden="true">ลบโปรเจกต์</span>
@@ -1163,6 +1215,7 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
     <div class="modal-actions"><button class="btn-ghost" id="mCancel">ยกเลิก</button><button class="btn-danger" id="mOk">ลบโปรเจกต์</button></div>
   </div>
 </div>
+<!-- /component: modal -->
 
 <script>
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];

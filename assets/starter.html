@@ -46,7 +46,7 @@ button{font:inherit;color:inherit}
 .spec>p{margin:0;color:var(--muted);max-width:52ch}
 @media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
 
-/* Example: worm tab bar (segmented control) */
+/* Example: worm tab bar (segmented control). Replace this block, its <article> below and the script lines after CORE END with your own components */
 .seg{position:relative;display:inline-flex;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px}
 .seg-ind{position:absolute;left:0;top:4px;bottom:4px;border-radius:999px;background:var(--accent);pointer-events:none}
 .seg button{position:relative;z-index:1;border:0;background:none;color:var(--muted);padding:6px 18px;border-radius:999px;cursor:pointer;transition:color .25s;white-space:nowrap}
@@ -83,17 +83,22 @@ button{font:inherit;color:inherit}
 </main>
 
 <script>
+/* CORE START: stretchy-core.js, inlined verbatim. Skip this block when reading; its API is in references/core-api.md */
 /* =====================================================================
    stretchy-core.js  —  spring engine + stretch helpers, no dependencies.
-   Paste inline into a page (globals), or turn into a module by adding
-   `export` in front of the declarations you need.
+   Plain script (globals): load it with a <script> tag, or use the copy
+   that assets/starter.html carries inline. ES module for React, Vue or
+   Svelte: python scripts/add_core.py --module <dest.js>.
+   Loading it touches no DOM, so it is safe to import on a server.
+   API summary: references/core-api.md.
    ===================================================================== */
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, t) => a + (b - a) * t;
-const RM = matchMedia('(prefers-reduced-motion: reduce)');
+const RM = typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)')
+  : { matches: true };            // no DOM (server render): nothing animates
 
 /* Global damping multiplier. 1.8 = soft, 1 = bouncy, 0.5 = very stretchy.
    Read on every tick, so changing it retunes animations already running. */
@@ -107,6 +112,7 @@ function setBounce(x) { bounce = x; }
      .set(x)         jump, no animation
      .drag(x, v)     follow a pointer, recording velocity
      .kick(v)        add an impulse (wobble feedback)
+     .stop()         halt where it is, keeping x, v and target (teardown)
    x is in whatever unit you like (px, 0..1, degrees). Pick eps to match:
    0.05 for px springs that only draw, ~0.5 for px springs whose onRest
    triggers logic, 0.001 for 0..1 springs.
@@ -130,6 +136,7 @@ class Spring {
   }
   set(x) { cancelAnimationFrame(this.raf); this.raf = 0; this.x = this.t = x; this.v = 0; this.cb(x, 0); }
   drag(x, v) { cancelAnimationFrame(this.raf); this.raf = 0; this.x = this.t = x; this.v = v; this.cb(x, v); }
+  stop() { cancelAnimationFrame(this.raf); this.raf = 0; }
   kick(v) { if (RM.matches) return; this.v += v; this.to(this.t); }
   tick(now) {
     const dt = Math.max(0, Math.min((now - this.last) / 1000, 1 / 30)); this.last = now;
@@ -151,6 +158,7 @@ class Spring {
    between slots. The edge facing the direction of travel is stiff, the
    other soft, so the shape stretches on the way and contracts on arrival.
    draw(L, R) receives both edges (left/right or top/bottom).
+   Returns { set(a, b), to(a, b), stop() }.
    --------------------------------------------------------------------- */
 function edgePair(draw, o = {}) {
   const fast = o.fast || { k: 420, c: 30 }, slow = o.slow || { k: 150, c: 18 };
@@ -162,26 +170,31 @@ function edgePair(draw, o = {}) {
     to(a, b) {
       if (a >= l.t) { r.to(b, fast); l.to(a, slow); }   // moving right/down: R leads
       else { l.to(a, fast); r.to(b, slow); }            // moving left/up: L leads
-    }
+    },
+    stop() { l.stop(); r.stop(); }
   };
 }
 
 /* ---------------------------------------------------------------------
    Resync registry: re-measure after fonts load and on resize.
+   onResync(f) returns a function that unregisters f.
    --------------------------------------------------------------------- */
 const resyncs = [];
-const onResync = f => resyncs.push(f);
-const resyncAll = () => resyncs.forEach(f => f());
-addEventListener('resize', resyncAll);
-if (document.fonts) document.fonts.ready.then(resyncAll);
+const onResync = f => { resyncs.push(f); return () => { const i = resyncs.indexOf(f); if (i >= 0) resyncs.splice(i, 1); }; };
+const resyncAll = () => [...resyncs].forEach(f => f());
+if (typeof addEventListener === 'function') addEventListener('resize', resyncAll);
+if (typeof document !== 'undefined' && document.fonts) document.fonts.ready.then(resyncAll);
 
 /* ---------------------------------------------------------------------
    makeSegmented: segmented control / tab bar with a worm indicator.
    Markup: <div class="seg"><span class="seg-ind"></span><button data-seg>…</button>…</div>
    The root must be position:relative; the indicator absolute, left:0.
+   Returns { select(i, anim, notify), index, destroy() }.
+   destroy() removes the listeners and stops the indicator where it is.
    --------------------------------------------------------------------- */
 function makeSegmented(root, { attr = 'aria-pressed', initial = 0, onChange } = {}) {
   const btns = $$('[data-seg]', root), ind = $('.seg-ind', root); let cur = -1, lit = -1, tgt = [0, 0];
+  const ac = new AbortController(), sig = { signal: ac.signal };   // destroy() removes every listener
   /* The selected look (.on, a light label) switches on only once the indicator covers the button:
      switched on at click, a light label would sit on the light track until the worm arrives. */
   const light = i => { lit = i; btns.forEach((b, j) => b.classList.toggle('on', j === i)); };
@@ -200,14 +213,14 @@ function makeSegmented(root, { attr = 'aria-pressed', initial = 0, onChange } = 
     const [a, b] = tgt; anim ? ep.to(a, b) : ep.set(a, b);
     if (notify && onChange) onChange(i, btns[i]);
   }
-  btns.forEach((b, i) => b.addEventListener('click', () => select(i)));
+  btns.forEach((b, i) => b.addEventListener('click', () => select(i), sig));
   root.addEventListener('keydown', e => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return;
     e.preventDefault(); const n = (cur + d + btns.length) % btns.length; select(n); btns[n].focus();
-  });
+  }, sig);
   select(initial, false, false);
-  onResync(() => { tgt = pos(cur); ep.set(tgt[0], tgt[1]); });
-  return { select, get index() { return cur; } };
+  const off = onResync(() => { tgt = pos(cur); ep.set(tgt[0], tgt[1]); });
+  return { select, get index() { return cur; }, destroy() { ac.abort(); off(); ep.stop(); } };
 }
 
 /* ---------------------------------------------------------------------
@@ -227,11 +240,16 @@ function makeSegmented(root, { attr = 'aria-pressed', initial = 0, onChange } = 
    without a name), initial (index or array), gap (px each opened card
    moves away from its neighbours, 0 = off), squash (pushed-card squash),
    onChange(openIndexes).
+   Returns { open(i), close(i), toggle(i), openIndexes, single, destroy() }.
+   destroy() removes the listeners and stops the springs, leaving the
+   current inline styles in place: call it when a framework unmounts the
+   container.
    --------------------------------------------------------------------- */
 function makeAccordion(root, { single, initial = [], gap = 0, squash = true, onChange } = {}) {
   const items = $$(':scope > details, :scope > .acc-item', root);
   const isDet = items[0] && items[0].tagName === 'DETAILS';
   if (single === undefined) single = !isDet || items.some(d => d.hasAttribute('name'));
+  const ac = new AbortController(), sig = { signal: ac.signal };   // destroy() removes every listener
   const st = items.map((item, i) => {
     let header, panel, inner;
     if (item.tagName === 'DETAILS') {
@@ -276,6 +294,7 @@ function makeAccordion(root, { single, initial = [], gap = 0, squash = true, onC
     s.rot = new Spring(0, { k: 300, c: 15, eps: .1, onUpdate: x => { rot = x; drawChev(); } });
     s.pop = new Spring(0, { k: 420, c: 14, eps: .001, onUpdate: x => { pop = x; drawChev(); } });
     panel.inert = true; if (!s.det) header.setAttribute('aria-expanded', 'false');
+    if (squash) item.style.transformOrigin = '50% 0';                    // once, not per frame
     return s;
   });
 
@@ -288,8 +307,8 @@ function makeAccordion(root, { single, initial = [], gap = 0, squash = true, onC
     let v = 0;
     st.forEach(s => {
       const y = clamp(v / 30000, -.04, .04);
-      s.item.style.transformOrigin = '50% 0';
-      s.item.style.transform = Math.abs(y) < .001 ? '' : `scale(${1 + y * .5},${1 - y})`;
+      const t = Math.abs(y) < .001 ? '' : `scale(${1 + y * .5},${1 - y})`;
+      if (t !== s.pushT) { s.pushT = t; s.item.style.transform = t; }   // write only when it changes
       v += s.h.v;
     });
   }
@@ -319,18 +338,18 @@ function makeAccordion(root, { single, initial = [], gap = 0, squash = true, onC
   }
 
   st.forEach((s, i) => {
-    s.header.addEventListener('click', e => { e.preventDefault(); toggle(i); });
+    s.header.addEventListener('click', e => { e.preventDefault(); toggle(i); }, sig);
     if (s.det) s.item.addEventListener('toggle', () => {        // find-in-page, #hash, other scripts
       if (s.item.open === s.expect) return;                      // our own change, possibly already superseded
       s.expect = s.item.open; toggle(i, s.item.open, s.item.open);
-    });
+    }, sig);
   });
   root.addEventListener('keydown', e => {
     const i = st.findIndex(s => s.header === e.target); if (i < 0) return;
     const n = st.length, to = { ArrowDown: (i + 1) % n, ArrowUp: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
     if (to === undefined) return;
     e.preventDefault(); st[to].header.focus();
-  });
+  }, sig);
 
   /* Re-measure open panels when their content or width changes. */
   const remeasure = () => st.forEach(s => {
@@ -338,8 +357,9 @@ function makeAccordion(root, { single, initial = [], gap = 0, squash = true, onC
     const H = s.inner.offsetHeight; if (Math.abs(H - s.h.t) < 1) return;
     s.h.raf ? s.h.to(H) : s.h.set(H);
   });
-  if (window.ResizeObserver) { const ro = new ResizeObserver(remeasure); st.forEach(s => ro.observe(s.inner)); }
-  onResync(remeasure);
+  let ro = null, off = () => {};
+  if (window.ResizeObserver) { ro = new ResizeObserver(remeasure); st.forEach(s => ro.observe(s.inner)); }
+  else off = onResync(remeasure);          // the observer already covers resize and late fonts
 
   const init = new Set([].concat(initial));
   st.forEach((s, i) => { if (init.has(i) || (s.det && s.item.open)) { if (s.det) detOpen(s, false); init.add(i); } });
@@ -349,7 +369,8 @@ function makeAccordion(root, { single, initial = [], gap = 0, squash = true, onC
     open: i => toggle(i, true), close: i => toggle(i, false), toggle: i => toggle(i),
     get openIndexes() { return openIndexes(); },
     get single() { return single; },
-    set single(x) { single = x; if (x) openIndexes().slice(1).forEach(i => setOpen(i, false)); }
+    set single(x) { single = x; if (x) openIndexes().slice(1).forEach(i => setOpen(i, false)); },
+    destroy() { ac.abort(); if (ro) ro.disconnect(); off(); st.forEach(s => [s.h, s.sep, s.rot, s.pop].forEach(x => x.stop())); }
   };
 }
 
@@ -385,14 +406,14 @@ const topEdgePath = (w, h, r, b, extra = 60) =>
    els: the items; mutate(): reorders the DOM.
    --------------------------------------------------------------------- */
 function flipReorder(els, mutate) {
-  const first = new Map(els.map(e => [e, e.getBoundingClientRect().top]));
+  const first = els.map(e => e.getBoundingClientRect().top);
   mutate();
-  els.forEach(e => {
+  const last = els.map(e => e.getBoundingClientRect().top);          // read all, then write all: one reflow
+  els.forEach((e, i) => {
     if (!e._flip) e._flip = new Spring(0, { k: 230, c: 20, onUpdate: (y, v) => {
       e.style.transform = `translateY(${y}px) scale(${1 - Math.min(.05, Math.abs(v) / 14000)},${1 + Math.min(.14, Math.abs(v) / 5000)})`;
     } });
-    const d = first.get(e) - e.getBoundingClientRect().top;
-    e._flip.drag(e._flip.x + d, e._flip.v); e._flip.to(0);
+    e._flip.drag(e._flip.x + first[i] - last[i], e._flip.v); e._flip.to(0);
   });
 }
 
@@ -444,6 +465,7 @@ function throwTo({ container, fromEl, toEl, background = 'transparent', duration
 
 /* Restart a CSS keyframe animation (e.g. a ring pulse on arrival). */
 function replayClass(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+/* CORE END */
 
 
 /* ---------- tabs ---------- */

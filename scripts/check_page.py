@@ -3,16 +3,20 @@
 Smoke-test a stretchy UI page in headless Chromium and capture animation frames.
 
 Usage:
-  python check_page.py PAGE.html [--out DIR] [--frames "CLICK_SELECTOR[@CLIP_SELECTOR]" ...]
+  python check_page.py PAGE.html|URL [--out DIR] [--frames "CLICK_SELECTOR[@CLIP_SELECTOR]" ...]
                                   [--count 8] [--interval 110] [--widths 1280,390]
                                   [--jumps SELECTOR ...] [--no-jumps] [--slowmo 4]
+                                  [--channel chromium|msedge|chrome]
+  --out defaults to stretchy-check/STEM under the system temp directory (STEM = parent folder + "-" + page file name, e.g. assets-starter; or "page" for a URL).
 
 What it reports, for each viewport width:
-  * JavaScript errors and console errors (failed web-font loads are expected offline)
+  * JavaScript errors and console errors (failed web-font loads and /favicon.ico requests are ignored)
   * horizontal overflow (page wider than the viewport) and the outermost offending elements
   * visible controls whose centre is covered by another element, with that element's opacity
     (an opacity-0 blocker is the classic "invisible layer steals the click" bug)
 It saves a full-page screenshot per width.
+The browser is Playwright's bundled Chromium when it is installed; otherwise the script falls back to installed Edge or Chrome (--channel picks one).
+A URL (http://localhost:5173/...) lets it check a framework project's dev server instead of a built file.
 
 Jump strips (first width, on by default): for every group of selection controls (a tablist, a
 radiogroup, or the parent of [role=tab] / [role=radio] buttons) it selects the first item, clicks
@@ -40,6 +44,7 @@ your eyes and never change the exit code.
 import argparse
 import pathlib
 import sys
+import tempfile
 import time
 
 try:
@@ -113,7 +118,7 @@ def contact_sheet(paths, out_path, cols=2, scale=0.5):
     for i, im in enumerate(ims):
         sheet.paste(im.resize((tw, th)), ((i % cols) * tw, (i // cols) * th))
     sheet.save(out_path)
-    print(f"  contact sheet: {out_path}")
+    print(f"  contact sheet: {out_path.name}")
 
 
 def capture_frames(page, spec, out_dir, idx, count, interval, slowmo=1):
@@ -225,9 +230,9 @@ def capture_jumps(page, selector, out_dir, slowmo=4, count=10, limit=12):
         import PIL  # noqa: F401
     except ImportError:
         print("  (Pillow not installed; jump strips skipped)")
-        return []
+        return [], []
     n = min(page.evaluate(LIST_GROUPS_JS, selector), limit)
-    saved = []
+    saved, failed = [], []
     for g in range(n):
         try:
             group = page.locator(f'[data-jump-group="{g}"]')
@@ -250,18 +255,51 @@ def capture_jumps(page, selector, out_dir, slowmo=4, count=10, limit=12):
             out = out_dir / f"jump_{g}.png"
             stack_strip(pngs, out)
             label = group.evaluate("e => e.getAttribute('aria-label') || (e.id ? '#' + e.id : e.className && '.' + String(e.className).split(' ')[0]) || e.tagName.toLowerCase()")
-            saved.append(f"{label}: {out}")
+            saved.append(f"{label}: {out.name}")
         except Exception as e:                              # keep going with the other groups
-            saved.append(f"group {g}: could not capture ({e.__class__.__name__})")
+            failed.append(f"group {g}: could not capture ({e.__class__.__name__})")
     page.evaluate("document.querySelectorAll('[data-jump-group],[data-jump-first],[data-jump-last]').forEach(e => "
                   "['data-jump-group','data-jump-first','data-jump-last'].forEach(a => e.removeAttribute(a)))")
-    return saved
+    return saved, failed
+
+
+FONT_HOSTS = ("fonts.googleapis.com", "fonts.gstatic.com")
+FONT_EXTS = (".woff", ".woff2", ".ttf", ".otf")
+
+
+def is_ignorable_failure(text, url):
+    """True for failed font loads and the browser's own /favicon.ico request (a dev server without one is not a bug)."""
+    if "Failed to load resource" not in text and "ERR_" not in text:
+        return False
+    from urllib.parse import urlparse
+    u = urlparse(url or "")
+    return u.netloc in FONT_HOSTS or u.path.lower().endswith(FONT_EXTS) or u.path.lower().endswith("/favicon.ico")
+
+
+def launch_browser(p, channel=""):
+    """Bundled Chromium first, then installed Edge or Chrome, so a missing download is not fatal."""
+    order = [channel] if channel else ["chromium", "msedge", "chrome"]
+    last = ""
+    for ch in order:
+        try:
+            browser = p.chromium.launch() if ch == "chromium" else p.chromium.launch(channel=ch)
+            print(f"browser: {ch}")
+            return browser
+        except Exception as e:                              # missing browser: try the next one
+            last = str(e).strip().splitlines()[0] if str(e).strip() else e.__class__.__name__
+    print("No browser could be started (tried: " + ", ".join(order) + "). "
+          "Install Chrome or Edge, or run: python -m playwright install chromium")
+    print("  last error: " + last[:200])
+    sys.exit(2)
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("page")
-    ap.add_argument("--out", default="check-output")
+    ap.add_argument("page", help="local HTML file, or the URL of a running dev server")
+    ap.add_argument("--out", default=None,
+                    help="output folder (default: stretchy-check/STEM under the system temp directory)")
+    ap.add_argument("--channel", default="",
+                    help="browser channel to use: chromium (Playwright's bundled build), msedge or chrome; default tries them in that order")
     ap.add_argument("--frames", action="append", default=[])
     ap.add_argument("--count", type=int, default=8)
     ap.add_argument("--interval", type=int, default=110)
@@ -275,22 +313,33 @@ def main():
     if hasattr(sys.stdout, "reconfigure"):                  # Thai labels on Windows consoles
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-    page_path = pathlib.Path(args.page).resolve()
-    out_dir = pathlib.Path(args.out)
+    if args.page.lower().startswith(("http://", "https://")):
+        target, stem = args.page, "page"
+    else:
+        page_path = pathlib.Path(args.page).resolve()
+        if not page_path.is_file():
+            print(f"Page not found: {page_path}")
+            sys.exit(2)
+        target = page_path.as_uri()
+        stem = page_path.parent.name + "-" + page_path.stem if page_path.parent.name else page_path.stem
+    out_dir = pathlib.Path(args.out) if args.out else pathlib.Path(tempfile.gettempdir()) / "stretchy-check" / stem
+    # stem: "page" for a URL, else parent-folder-stem (two projects' starter.html do not collide)
     out_dir.mkdir(parents=True, exist_ok=True)
+    print(f"output: {out_dir}  (every file named below is in this folder)")
+    warnings = 0
     problems = 0
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = launch_browser(p, args.channel)
         for width in [int(w) for w in args.widths.split(",")]:
             print(f"\n== {width}px ==")
             page = browser.new_page(viewport={"width": width, "height": 900 if width > 600 else 844})
             if args.slowmo != 1:
                 page.add_init_script(SLOWMO_INIT)
             errors = []
-            page.on("pageerror", lambda e: errors.append(f"pageerror: {e}"))
-            page.on("console", lambda m: errors.append(f"console: {m.text}") if m.type == "error" else None)
-            page.goto(page_path.as_uri())
+            page.on("pageerror", lambda e: errors.append((f"pageerror: {e}", "")))
+            page.on("console", lambda m: errors.append((f"console: {m.text}", (m.location or {}).get("url", ""))) if m.type == "error" else None)
+            page.goto(target)
             page.wait_for_timeout(1200)
 
             ov = page.evaluate(OVERFLOW_JS)
@@ -314,7 +363,7 @@ def main():
 
             shot = out_dir / f"page_{width}.png"
             page.screenshot(path=str(shot), full_page=True)
-            print(f"  screenshot: {shot}")
+            print(f"  screenshot: {shot.name}")
 
             if width == int(args.widths.split(",")[0]):
                 for i, spec in enumerate(args.frames):
@@ -325,24 +374,32 @@ def main():
                         print(f"    could not capture: {e}")
 
             if width == int(args.widths.split(",")[0]) and not args.no_jumps:
-                strips = capture_jumps(page, ", ".join([JUMP_DEFAULT] + args.jumps), out_dir, args.slowmo)
+                strips, failed = capture_jumps(page, ", ".join([JUMP_DEFAULT] + args.jumps), out_dir, args.slowmo)
                 if strips:
                     print("  jump strips (look at the clicked item in every row):")
                     for s in strips:
                         print(f"    {s}")
+                if failed:
+                    warnings += len(failed)
+                    print("  jump strips NOT captured:")
+                    for s in failed:
+                        print(f"    {s}")
 
-            real = [e for e in errors if "ERR_NAME_NOT_RESOLVED" not in e and "Failed to load resource" not in e]
+            real = [(text, url) for text, url in errors if not is_ignorable_failure(text, url)]
             if real:
                 problems += 1
                 print("  JS ERRORS:")
-                for e in real:
-                    print(f"    {e}")
+                for text, url in real:
+                    print(f"    {text}" + (f"  [{url}]" if url else ""))
             else:
-                print("  no JS errors" + (" (font requests failed offline, ignored)" if errors else ""))
+                print("  no JS errors" + (" (failed font or favicon requests ignored)" if errors else ""))
             page.close()
         browser.close()
 
-    print("\nRESULT:", "problems found" if problems else "clean")
+    result = "problems found" if problems else "clean"
+    if warnings:
+        result += f" ({warnings} jump strip(s) not captured)"
+    print("\nRESULT: " + result)
     sys.exit(1 if problems else 0)
 
 

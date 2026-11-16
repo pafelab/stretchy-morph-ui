@@ -1,45 +1,45 @@
 ---
 name: stretchy-morph-ui
-description: Make web UI morph like rubber, with springs that squash, stretch, overshoot and settle instead of easing curves. Use whenever the user wants animated, bouncy, elastic, gooey or alive-feeling UI, micro-interactions or morph transitions, or asks which parts of their interface could feel more fluid, even if they never say spring. Includes a spring engine and 24 reference components. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, ทำให้ UI ดูมีชีวิต, ตรวจโค้ดว่าทำให้ยืดได้ตรงไหน.
+description: Make web UI morph like rubber, with springs that squash, stretch, overshoot and settle instead of easing curves. Use whenever the user wants animated, bouncy, elastic, gooey or alive-feeling UI, micro-interactions or morph transitions, or asks which parts of their interface could feel more fluid, even if they never say spring. Thai triggers include UI ยืดได้, ยืดหยุ่น, เด้ง, morph ตอน transition, ทำให้ UI ดูมีชีวิต, ตรวจโค้ดว่าทำให้ยืดได้ตรงไหน.
 license: MIT
 ---
 
 # Stretchy morph UI
 
-This skill produces interfaces where every state change *morphs*: a tab indicator stretches like a worm on its way to the next tab, a button squeezes into a loading circle and swells back, a product picture lifts off its card, shrinks into a chip and drops into the cart. It was distilled from building a 24-component showcase (in `assets/showcase.html`) and the bugs and design corrections found along the way.
+This skill produces interfaces where every state change *morphs*: a tab indicator stretches like a worm on its way to the next tab, a button squeezes into a loading circle and swells back, a product picture lifts off its card, shrinks into a chip and drops into the cart.
 
 The look comes from one idea: **stretch is caused by something.** An element deforms because its parts disagree (one edge arrives before the other), because it is moving fast (it lengthens along its path), because it is being squeezed (it bulges the other way to keep its volume), or because it was just hit (it wobbles). Random wobble on a loop looks cheap; stretch with a cause looks like material.
 
+## Spend tokens on the design, not on files
+
+- **Copy, never re-type.** A standalone page is a copy of `assets/starter.html` (`cp` / `Copy-Item`), which carries the whole core inline between the lines `/* CORE START` and `/* CORE END */`. Find them with `grep -n "CORE START\|CORE END" page.html`, then Read (with offset and limit) and Edit only the lines outside that block. Never Read the core to paste it, and never emit it yourself.
+- **One component, one command.** `python scripts/show_component.py NAME` prints a catalog component's recipe, CSS, markup and JS. Never Read `assets/showcase.html` whole (166 KB), and never port its engine: use the core.
+- **Read references by section**: `grep -n "^##" references/<file>.md`, then Read only that range.
+
 ## Step 0: audit existing code, then confirm
 
-When the request is about the user's existing interface in general ("make my app feel alive", "what could stretch here", a repo or files in scope with no specific parts named), find out what can become stretchy and let them choose before editing. Details, judgement criteria and message templates are in `references/audit.md`; the short version:
+Only when the request is about the user's existing interface in general ("make my app feel alive", "what could stretch here", a repo or files in scope with no specific parts named). Read `references/audit.md` and follow it: find the code, scan it with `python scripts/audit_ui.py <paths>`, read every hit in context, prioritise, then send the numbered proposals in the user's language and ask which to build. **End the turn there; make no edits before the reply.** If there is no code anywhere, say what you looked for and offer two paths: share the code, or build something new from scratch.
 
-1. **Find the code**: pasted code, attached files (on claude.ai, list `/mnt/user-data/uploads`), the working directory or repo, an artifact link (read it with the artifact tool), or a source the user points to. If there is none, say what you looked for and offer two paths: share the code, or build something new from scratch.
-2. **Scan it**: `python scripts/audit_ui.py <paths>` reports the stack, existing motion, missing reduced-motion handling, and candidates per UI category with `file:line`, each mapped to a showcase component and technique.
-3. **Read every hit in context** and keep only real candidates. For each, note where it is, what happens now, the morph sentence it would become, effort (small, medium, large) and any risk (component library markup, an existing animation library, a native control whose mobile picker would be lost, very long lists).
-4. **Prioritise** by visibility × frequency × fit, group duplicates (all buttons using one shared `Button` are one item), cap the list at about ten, and list anything you advise against with the reason.
-5. **Ask for confirmation** in the user's language: the numbered proposals, then a question inviting them to pick numbers, take all recommended, or type extra parts they want stretchy that are not on the list. Use a tappable-choice tool if the environment has one, otherwise plain text. **End the turn there; make no edits before the reply.**
-6. **Build what they chose** plus anything they added, then follow the Workflow below and report per item.
-
-Skip the audit when the user asks for something new ("build a stretchy toggle") or already named the parts to change ("make my tabs stretchy"): go straight to the Workflow. If you noticed other good candidates along the way, mention them in one line at the end.
+Skip the audit when the user asks for something new ("build a stretchy toggle") or already named the parts to change ("make my tabs stretchy"): go straight to the Workflow. For a named part in a codebase, read that part's file first, then only the matching recipe. If you noticed other good candidates along the way, mention them in one line at the end.
 
 ## Files
 
-All paths are relative to this skill's folder (the folder containing this `SKILL.md`), not to the user's project. Resolve them against the skill folder when you read or run them.
+Paths are relative to this skill's folder (the folder containing this `SKILL.md`), not to the user's project. Open only what the task needs.
 
-| Path | What it is | When to open it |
-|---|---|---|
-| [`assets/stretchy-core.js`](assets/stretchy-core.js) | The spring engine plus helpers (edge pairs, segmented indicator, elastic accordion that also enhances `<details>`, volume scale, bulging SVG edges, FLIP reorder, thrown objects) | Paste into every page you build. Read it once so you know the helpers. |
-| [`assets/starter.html`](assets/starter.html) | Page skeleton: light/dark tokens, Thai-capable variable font, reduced-motion handling, the core inlined, one example component | Start a new page from it |
-| [`assets/showcase.html`](assets/showcase.html) | All 24 working components from the original build. Each JS section starts with a banner like `/* ---------- tabs ---------- */` | When a request matches a catalog component, `grep -n "/\* ---------- " assets/showcase.html` and read just that section plus its CSS |
-| [`references/audit.md`](references/audit.md) | How to find, scan, judge and prioritise the user's code, and the confirmation message templates (Thai and English) | At Step 0, every time |
-| [`references/techniques.md`](references/techniques.md) | The 11 stretch techniques in depth, with code and tuning numbers | Before building anything you have not built before |
-| [`references/components.md`](references/components.md) | Catalog: each component's recipe, spring values and gotchas | When the request names or resembles a catalog component |
-| [`references/new-components.md`](references/new-components.md) | How to design a stretchy version of *any* component, plus 14 worked designs not in the showcase | Whenever the request is outside the catalog |
-| [`scripts/audit_ui.py`](scripts/audit_ui.py) | Scanner for the user's code: stack, existing motion, and stretchy candidates with `file:line` | At Step 0, every time |
-| [`scripts/check_page.py`](scripts/check_page.py) | Headless browser check: JS errors, sideways overflow on phone and desktop, invisible elements stealing clicks, slow-motion contact sheets, and a first-to-last jump strip for every tab and radio group | After every build, before you hand anything over |
+| Path | Use |
+|---|---|
+| `assets/starter.html` | Page skeleton: light/dark tokens, Thai-capable variable font, reduced-motion CSS, the core inline, one tabs example. Copy it to start a standalone page |
+| `assets/stretchy-core.js` | The spring engine and helpers. Copy it, or `python scripts/add_core.py --module <dest.js>` for an ES module. Read it only to change the engine |
+| `references/core-api.md` | Helper signatures, spring presets, runtime cost rules. Read before writing spring code |
+| `scripts/show_component.py` | `NAME` prints one of the 24 showcase components with its recipe from `references/components.md` (`--list` for the names; `--recipe`, `--css`, `--html`, `--js` for one part). Use when the request names or resembles a catalog component |
+| `references/techniques.md` | The 11 stretch techniques with code and tuning numbers. Read the sections for techniques you have not built before |
+| `references/new-components.md` | The method for any component, plus 13 worked designs. Read when the request is outside the catalog |
+| `references/frameworks.md` | React, Vue, Svelte, component libraries, server-rendered sites. Read when the target is a codebase rather than a new page |
+| `references/audit.md`, `scripts/audit_ui.py` | Step 0 only |
+| `references/pitfalls.md` | Symptom, cause, fix table and the polish lessons from the build. Read when a page misbehaves or looks cheap, and before porting a catalog component |
+| `scripts/check_page.py` | Headless check of a file or URL (JS errors, sideways overflow, invisible click blockers, contact sheets, jump strips). Run after every build, before you hand anything over |
 
-If a visual design skill is available (for example `frontend-design` or `ui-ux-pro-max`), read it too. That skill decides how the page looks (palette, type, layout); this one decides how it moves. Motion polish cannot rescue a generic-looking page.
+If a visual design skill is available (for example `frontend-design` or `ui-ux-pro-max`), read it too: it decides how the page looks, this one decides how it moves. Motion polish cannot rescue a generic-looking page.
 
 ## Workflow (after the user confirms)
 
@@ -47,43 +47,33 @@ If a visual design skill is available (for example `frontend-design` or `ui-ux-p
 2. **Pick the technique(s)** from the table. Most components use one primary stretch plus one small feedback wobble.
 3. **Define resting states as numbers**: widths, heights, radii, positions, progress 0 to 1. Springs animate numbers and you write them to `style` in `onUpdate`. CSS transitions handle only colour and opacity (and short content crossfades).
 4. **Plan the content.** Text and icons must not reflow or squash while the container morphs. Give each content state its own layer at its final size, anchored (usually centred), and crossfade: exit fast (≈150 ms), enter after a ≈100–150 ms delay with a slight scale or blur. The container's `overflow:hidden` reveals content as it grows.
-5. **Build** from `assets/starter.html` with the core inlined. Write styles directly in spring callbacks; never trigger a framework re-render per frame.
+5. **Build.** Standalone page: in your copy of the starter, replace the tabs example (the CSS block headed `Example: worm tab bar`, its `<article>`, and the script lines after `/* CORE END */`) and keep the shell and the core. Showcase CSS uses its own colour tokens; `show_component.py` prints how they map to the starter's. Codebase or existing site: follow `references/frameworks.md`. Write styles directly in spring callbacks; never trigger a framework re-render per frame.
 6. **Accessibility and interruption pass** (checklist below).
-7. **Test and look.** Run `scripts/check_page.py`, then capture frame contact sheets of the important interactions and actually look at them. The add-to-cart animation in the original build "worked" but looked cheap until frames were inspected; the fixes are in "Making it look good". The script also saves a `jump_N.png` strip for every tab and radio group (first item to last, in slow motion, one frame per row; add other groups with `--jumps SELECTOR`). Open each strip and check the two indicator rules below in every row. A clean exit code says nothing about them.
+7. **Test and look.** `python scripts/check_page.py <page.html or http://localhost:PORT/route> --frames "CLICK_SELECTOR@CLIP_SELECTOR"` (one `--frames` per important interaction; clip to an area a few hundred pixels wide so the frames are readable). It prints its output folder. Open the contact sheets and every `jump_N.png` strip (each tab or radio group jumping from its first item to its last in slow motion, one frame per row; `--jumps SELECTOR` adds groups) and check the two indicator rules below in every row. A clean exit code says nothing about how it looks: the first add-to-cart animation "worked" but looked cheap until its frames were inspected. When a frame looks cheap, the fixes are in `references/pitfalls.md`.
 
 ## Where the stretch comes from
 
-| Situation | Technique (details in `references/techniques.md`) | Seen in |
-|---|---|---|
-| Something moves between slots | **Edge pair**: two springs for leading and trailing edges, leading one stiff, swapped by direction | Tabs, carousel dots, toggles, choice chips, radio dot, stepper, dropdown highlight, rating capsule, sidebar nav |
-| A container changes size or shape | **Split axes**: separate springs for width, height, radius with different stiffness, so one axis leads | Dynamic island, FAB to form, modal from button, dropdown, add-to-cart button |
-| Something gets narrower or wider fast | **Volume preservation**: scale the other axis by velocity, `scaleY = clamp(1 − v/k)` | Send button, search field, dropdown width |
-| Something travels fast | **Velocity stretch**: lengthen along the direction of motion, thin across it | Slider thumb, thrown cart item, carousel cards (skew), tooltip |
-| A big surface moves | **Bulging edge**: draw the surface as an SVG path whose edge control point is offset by −velocity | Sidebar, bottom sheet |
-| A part hangs off a moving part | **Lagging follower**: a softer spring chases the main one; use the gap for tilt or offset | Slider value bubble, accordion inner text |
-| Feedback for a tap or arrival | **Kick**: add velocity to a spring resting at 0, it wobbles and settles | Checkbox, chips, cart, stars, badge, quantity limit shake |
-| Blobs join or split | **Goo filter**: blur plus alpha threshold, sharp source composited on top | Goo menu |
-| An element becomes a different element | **Container transform**: start at the trigger's rect, spring to the target rect, crossfade content | Modal, FAB, cart throw |
-| The change needs a pause in between | **Sequenced morph through an intermediate shape** that carries meaning (spinner, check) | Send button, add-to-cart button |
-| Dragging past a limit, or a list reorders | **Rubber band** (divide overscroll by ≈3) and **FLIP with springs** that keep velocity | Carousel, sheet, sorted product list |
+Code, numbers and working examples for each technique: `references/techniques.md`.
+
+| Situation | Technique |
+|---|---|
+| Something moves between slots | **Edge pair**: two springs for leading and trailing edges, leading one stiff, swapped by direction |
+| A container changes size or shape | **Split axes**: separate springs for width, height, radius with different stiffness, so one axis leads |
+| Something gets narrower or wider fast | **Volume preservation**: scale the other axis by velocity, `scaleY = clamp(1 − v/k)` |
+| Something travels fast | **Velocity stretch**: lengthen along the direction of motion, thin across it |
+| A big surface moves | **Bulging edge**: draw the surface as an SVG path whose edge control point is offset by −velocity |
+| A part hangs off a moving part | **Lagging follower**: a softer spring chases the main one; use the gap for tilt or offset |
+| Feedback for a tap or arrival | **Kick**: add velocity to a spring resting at 0, it wobbles and settles |
+| Blobs join or split | **Goo filter**: blur plus alpha threshold, sharp source composited on top |
+| An element becomes a different element | **Container transform**: start at the trigger's rect, spring to the target rect, crossfade content |
+| The change needs a pause in between | **Sequenced morph through an intermediate shape** that carries meaning (spinner, check) |
+| Dragging past a limit, or a list reorders | **Rubber band** (divide overscroll by ≈3) and **FLIP with springs** that keep velocity |
 
 ## The engine in one paragraph
 
-`Spring` is a damped harmonic oscillator integrated with semi-implicit Euler in 8 substeps per frame (frame delta capped at 1/30 s so a background tab cannot explode it). `to(target)` retargets **without resetting velocity**, which is what makes rapid clicks feel continuous instead of restarting. `set(x)` jumps without animation, `drag(x, v)` follows a pointer while recording velocity, `kick(v)` injects an impulse. Damping is multiplied by a global `bounce` factor at every tick, so one page-level control (soft 1.8, bouncy 1, stretchy 0.5) re-tunes every component live. Under `prefers-reduced-motion: reduce`, `to()` snaps to the target and fires `onRest` immediately, so logic that waits for an animation still runs.
+`Spring` is a damped oscillator. `to(target)` retargets **without resetting velocity**, which is what makes rapid clicks feel continuous instead of restarting. `set(x)` jumps without animation, `drag(x, v)` follows a pointer while recording velocity, `kick(v)` injects an impulse. Damping is multiplied by a global `bounce` factor at every tick, so one page-level control (soft 1.8, bouncy 1, stretchy 0.5) re-tunes every component live. Under `prefers-reduced-motion: reduce`, `to()` snaps to the target and fires `onRest` immediately, so logic that waits for an animation still runs.
 
-Damping ratio ζ = c / (2√k). UI state changes feel right around ζ 0.6–0.8; playful feedback at 0.3–0.5; above 1 nothing overshoots. The presets used across the showcase:
-
-| Role | k | c | Notes |
-|---|---|---|---|
-| Leading edge of an edge pair | 420–520 | 30–34 | Arrives first |
-| Trailing edge | 140–170 | 17–19 | Lags, which creates the stretch |
-| Container width (morph) | 240–320 | 18–24 | |
-| Container height (morph) | 150–170 | 15–17 | Slower than width, so the shape stretches sideways first |
-| Pointer follower (slider) | 650 | 42 | Tight, but still has velocity to read |
-| Lagging follower (bubble) | 150 | 11 | Loose on purpose |
-| Kick feedback | 380–420 | 12–16 | Kick with 6–10 |
-| Height with visible overshoot (accordion) | 210 | 14 | |
-| Height closing to 0 (accordion) | 260 | 30 | Plus a floor at 0 (`techniques.md`, Kick) |
+Damping ratio ζ = c / (2√k). UI state changes feel right around ζ 0.6–0.8; playful feedback at 0.3–0.5; above 1 nothing overshoots. Preset `k` and `c` for each role, and every helper's signature: `references/core-api.md`.
 
 ## Rules of thumb
 
@@ -97,24 +87,12 @@ Damping ratio ζ = c / (2√k). UI state changes feel right around ζ 0.6–0.8;
 
 ## Moving indicators: two rules that break when porting
 
-Any component where one shape travels to the chosen item (worm tabs, choice chips, segmented controls, radio dots, nav highlights, rating capsules) depends on two things besides its springs. Both were lost when the choice chips were ported into a real filter bar: the clicked chip vanished for about 0.2 s on every pick, and the capsule showed only in the gaps between chips.
+Any component where one shape travels to the chosen item (worm tabs, choice chips, segmented controls, radio dots, nav highlights, rating capsules) depends on two things besides its springs. Ports lose them first: the picked item vanishes for about 0.2 s, or the indicator shows only in the gaps between items.
 
 1. **The selected look arrives with the indicator, not with the click.** Update `aria-selected`/`aria-checked`, focus and app state on click. Switch the *visual* selected style (light label, transparent or coloured fill, hidden border) only on the first frame the indicator covers the item; the core's `makeSegmented` adds `.on` from the indicator's draw callback once it covers the button, and the showcase's choice chips add `.cc-on` the same way. Until then the item keeps its unselected look. If the style switches on click, a light label sits on a light surface while the indicator is still on its way, and the item disappears. Styling `[aria-checked=true]` or a framework's `selected` prop directly does exactly that, so bind the visual style to a separate class that the animation sets.
 2. **The indicator paints above item surfaces and below item content.** Container: `position:relative; isolation:isolate`. Item surface **and border**: a `::before` with `z-index:-2` (the item itself has no `background`, no visible `border` and no `z-index`; keep a transparent border on it if the box size depends on it). Indicator: `z-index:-1`, `pointer-events:none`. Only labels and icons paint on top. A border left on the item paints over the indicator as a ring on every item it crosses. If items keep their own background (component libraries usually do), the indicator slides *behind* every item it crosses and shows only in the gaps, so the worm reads as broken pieces and the slow trailing edge looks like it is stuck behind the neighbour. When the library cannot be restyled, override its surface to transparent and draw the surfaces yourself.
 
 When you port any catalog component into an existing codebase or component library, copy its layer order and the timing of its state classes, not only its springs. Diff the CSS of the stateful classes against the showcase.
-
-## Making it look good (lessons from the build)
-
-The first add-to-cart version flew a plain coloured ball along two independent springs, shrank the button into an empty violet oval and squashed the cart. The user said it was not pretty. What fixed it generalises:
-
-- **Move the real thing.** Clone the product picture, lift it slightly with a shadow, then shrink it into a round chip that still shows the picture while it flies. Abstract dots read as debug output.
-- **Intermediate shapes must carry meaning.** A shrunken button is an empty blob unless it shows something: a spinner, a check that draws itself, a count. The add button now becomes a green circle with a check, then grows into the − n + stepper.
-- **Subtle volume on controls.** A ±18 % vertical bulge on a button looked like a pill-shaped egg. ±7 % reads as soft material.
-- **Arrival needs a receiver.** The cart icon dips and tilts, a ring pulses out, the badge pops. Something must visibly *catch* what was thrown.
-- **Don't clip status marks.** A badge inside a morphing `overflow:hidden` pill gets cut off; put it in a wrapper outside the clip.
-- **Don't repeat information.** The cart pill showed "3 ชิ้น 195 บาท" next to a badge saying 3. It now shows only the total.
-- **Draw illustrations at a fixed aspect.** Percent-positioned CSS shapes inside a tile stretch when the tile widens. Use an inline SVG with a viewBox, centred in the tile.
 
 ## Accessibility and robustness checklist
 
@@ -126,27 +104,17 @@ The first add-to-cart version flew a plain coloured ball along two independent s
 - Announce results that are only visible as motion (`aria-live` status text: "ส่งแล้ว", "เพิ่มลงตะกร้าแล้ว").
 - Measure after fonts load and on resize: register a resync function per component (`onResync` in the core) that `set()`s springs to freshly measured positions.
 
-## Pitfalls that actually happened
+## Traps on every build
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| Wide block children shrink-wrapped and centred | `place-items:center` on a `display:block` container now aligns block children in Chromium | Give block stages `place-items:normal` |
-| Whole page scrolls sideways on phones | `grid-template-columns:1fr` lets a child's min-content (a carousel track) blow out the column | Use `minmax(0,1fr)` |
-| Button could not be clicked | An invisible (opacity 0) sibling layer sat on top of it | `pointer-events:none` on hidden layers |
-| Indicator lands in the wrong place on first paint | Measured before the web font loaded | Re-measure on `document.fonts.ready` and resize |
-| The clicked chip vanished for ~0.2 s on every pick (ported choice chips) | The selected style (white label, transparent fill) was bound to the selected state, so it switched on at click while the capsule was still travelling: white on white | Switch the visual style when the indicator covers the item (rule 1 under "Moving indicators") |
-| The capsule showed only in the gaps between chips, as broken pieces | Each chip kept its own `background`, painted above the capsule | Surfaces in `::before` at `z-index:-2`, capsule at `-1`, container `isolation:isolate` (rule 2) |
-| The capsule showed a white ring over every chip it crossed | The chip borders were on the chips themselves, so they painted above the capsule | Draw the border on the surface `::before` too; the chip keeps only a transparent border (rule 2) |
-| Dialog lingered ~1 s after visibly closing | Rest threshold `eps` of 0.05 px is far stricter than the eye | Use `eps≈0.5` for pixel springs whose `onRest` triggers logic |
-| Under reduced motion, a measured size was stale (choice chips) | `*{transition-duration:.01s!important}` keeps `transition-property:all`, so a size a spring writes becomes a 10 ms transition and an immediate measurement reads the old layout | `transition:none!important` on elements whose size a spring writes and another part measures |
-| Slider broke after adding the date picker | Both declared `function setVal`; in one script the later declaration silently replaces the earlier | Prefix helpers per component (`dpText`), or wrap each component in its own block or module; check with `grep -oE "function [A-Za-z_]+" \| sort \| uniq -d` |
-| A helper worked in the skill's starter but threw in a bigger page | The page never included it (`replayClass`) | Paste the whole core, or inline the two lines you need |
+- Block stages need `place-items:normal`: `place-items:center` on a `display:block` container shrink-wraps and centres block children in Chromium.
+- Grid columns: `minmax(0,1fr)`, not `1fr`, or a child's min-content (a carousel track) makes the whole page scroll sideways on phones.
+- Pixel springs whose `onRest` triggers logic take `eps: 0.5` (the rest threshold). At the default 0.05 px a dialog lingers about 1 s after it visibly closed.
+- Unique helper names in one script: a second `function setVal` silently replaces the first. Check with `grep -oE "function [A-Za-z_]+" page.html | sort | uniq -d`.
+
+More symptoms with their fixes, and the polish lessons from the build (move the real thing, intermediate shapes must carry meaning, arrival needs a receiver): `references/pitfalls.md`.
 
 ## Delivering
 
-- For a standalone demo, build one self-contained HTML file (CSS and JS inline, the core pasted in). Load fonts from Google Fonts with a real fallback stack. Respect the host's dark/light handling. Then hand it over the way your host supports:
-  - Claude (claude.ai or Claude Code with artifact publishing): publish the file as an artifact.
-  - Antigravity: save the file in the workspace and open it in the built-in browser to watch the interactions. A browser recording is a good complement to the `check_page.py` contact sheets.
-  - Anywhere else: save the file and tell the user its path.
-- For a React, Vue or Svelte codebase, keep the core as a plain module. Create springs once (`useRef`/`onMounted`), write styles to element refs inside `onUpdate`, cancel on unmount, and keep component state (selected tab, count) in the framework while the spring only animates presentation. `references/new-components.md` ends with a React port of the worm tabs.
+- Standalone demo: one self-contained HTML file (the copied starter, CSS and JS inline). Load fonts from Google Fonts with a real fallback stack. Respect the host's dark/light handling. Claude (claude.ai or Claude Code with artifact publishing): publish the file as an artifact. Antigravity: save it in the workspace and open it in the built-in browser to watch the interactions. Anywhere else: save the file and tell the user its path.
+- Codebase: keep the core as one module, create springs once, write styles to element refs inside `onUpdate`, keep component state in the framework, stop the springs on unmount. Details and a React port: `references/frameworks.md`.
 - Write UI copy in the user's language. If they write in Thai, the demo content is Thai, and a variable Thai-capable font such as Noto Sans Thai (with its width axis for condensed headlines) is a good default.

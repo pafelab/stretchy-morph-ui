@@ -1,28 +1,15 @@
 # Designing a stretchy version of any component
 
-The catalog covers 24 components, but the method generalises. This file gives the method, 14 worked designs for components that are *not* in the showcase, and a React port pattern.
+The catalog covers 24 components, but the method generalises. This file gives the method and 13 worked designs for components that are *not* in the showcase. For React, Vue and Svelte ports see `references/frameworks.md`.
 
 ## The method
 
 1. **List the state changes and their triggers.** Open/close, select, add/remove, drag, success/error, arrive/leave.
 2. **Find the moving parts** in each change: what travels, what resizes, what appears, what gets touched, what receives something.
-3. **Ask the cause questions for each part.** Each "yes" names a technique from `techniques.md`:
-
-   | Question | Technique |
-   |---|---|
-   | Does it travel between known slots? | Edge pair |
-   | Does it travel freely or fast (drag, throw)? | Velocity stretch |
-   | Does it change size or shape? | Split axes, plus volume preservation if it narrows or widens quickly |
-   | Is it a large surface sliding in? | Bulging SVG edge |
-   | Does something hang off it or sit inside it? | Lagging follower |
-   | Is it tapped, or does it receive something? | Kick |
-   | Does it become a different element? | Container transform (or throw, if it flies elsewhere) |
-   | Is there waiting or confirming in between? | Sequenced morph with a meaningful intermediate |
-   | Can it be dragged past a limit, or do siblings move to make room? | Rubber band, FLIP with springs |
-   | Do several blobs join or split? | Goo filter |
+3. **Name the cause of each part's stretch** with the table "Where the stretch comes from" in SKILL.md: ask of every moving part which situation it is in (travels between slots, changes size, moves fast, is a big surface, hangs off something, gets tapped or receives something, becomes another element, waits in between, is dragged past a limit or reordered, joins or splits). Each "yes" names a technique in `techniques.md`. A part that flies to another place is a throw: `throwTo` in `references/core-api.md`, described under Container transform (section 9) in `techniques.md`.
 
 4. **Choose one hero stretch per component.** Everything else gets a small kick, a fade or a colour change. Two big stretches at once compete and read as chaos.
-5. **Write the numbers.** Resting states (sizes, radii, positions, 0..1 progress) and springs from the preset table in SKILL.md. Decide deformation caps.
+5. **Write the numbers.** Resting states (sizes, radii, positions, 0..1 progress) and springs from the preset table in `references/core-api.md`. Decide deformation caps.
 6. **Plan content.** What is visible in each state, how it is anchored, which layer fades when.
 7. **Plan access.** Native element or ARIA role, state attributes, keyboard, focus after the morph, live text for anything only shown by motion, `inert` on hidden layers.
 8. **Build, check, look, tune.** Run `scripts/check_page.py`, capture frames of the hero interaction, fix whatever looks like debug output.
@@ -99,55 +86,3 @@ The catalog covers 24 components, but the method generalises. This file gives th
 - Sentence: the menu grows out of the exact point you clicked, width first, and shrinks back into it when dismissed.
 - Origin at the pointer; split axes from 0×0 (width k 320, height k 160); items stagger 30 ms; hover highlight is a vertical edge pair.
 - Access: `role=menu`, arrow keys, Esc, return focus to the invoking element.
-
-### Date picker (now built: catalog #23)
-- Sentence: the selected-day highlight worms between days, and changing months slides the grid with a jelly skew.
-- Day highlight: 2-D, so use two edge pairs (x and y) or, across rows, collapse to a dot, move, and expand. Month change: track spring with velocity skew as in the carousel. Range selection: per-row capsules, each an edge pair.
-- Access: grid with `role=grid`, arrow keys move the focused day, Page Up/Down change months.
-
-## Porting to React (pattern)
-
-Keep springs and DOM writes outside React's render cycle; keep the *state* in React.
-
-```jsx
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import { edgePair } from './stretchy-core';   // export what you need from the core
-
-export function WormTabs({ tabs, value, onChange }) {
-  const indRef = useRef(null), btnRefs = useRef([]), ep = useRef(null), first = useRef(true);
-
-  if (!ep.current) ep.current = edgePair((L, R) => {
-    const el = indRef.current; if (!el) return;            // unmounted mid-animation
-    el.style.transform = `translateX(${L}px)`;
-    el.style.width = `${Math.max(0, R - L)}px`;
-  });
-
-  const place = (animate) => {
-    const b = btnRefs.current[value]; if (!b) return;
-    const a = b.offsetLeft, z = a + b.offsetWidth;
-    animate ? ep.current.to(a, z) : ep.current.set(a, z);
-  };
-
-  useLayoutEffect(() => { place(!first.current); first.current = false; }, [value]);
-
-  useEffect(() => {                                        // re-measure on resize and font load
-    const ro = new ResizeObserver(() => place(false));
-    ro.observe(indRef.current.parentElement);
-    document.fonts?.ready.then(() => place(false));
-    return () => ro.disconnect();
-  }, [value]);
-
-  return (
-    <div className="seg" role="tablist">
-      <span className="seg-ind" ref={indRef} />
-      {tabs.map((t, i) => (
-        <button key={t} role="tab" ref={el => (btnRefs.current[i] = el)}
-          aria-selected={i === value} tabIndex={i === value ? 0 : -1}
-          className={i === value ? 'on' : ''} onClick={() => onChange(i)}>{t}</button>
-      ))}
-    </div>
-  );
-}
-```
-
-The same shape works in Vue (`ref`, `onMounted`, `watch`) and Svelte (`bind:this`, `$:`). Never put spring values in component state; a re-render per frame drops frames and fights the spring.
