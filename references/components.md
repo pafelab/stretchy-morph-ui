@@ -1,6 +1,6 @@
 # Component catalog
 
-The 24 components in `assets/showcase.html`. For each: the morph sentence, the techniques, the numbers, and the gotchas found while building it. To reuse one, run `python scripts/show_component.py NAME` (NAME is the banner in the table; `--list` shows them): it prints the entry below plus that component's CSS, markup and JS from the showcase, so you never open the 164 KB file. To read one entry by hand: `grep -n "^### " references/components.md`, then read that range.
+The 31 components in `assets/showcase.html`. For each: the morph sentence, the techniques, the numbers, and the gotchas found while building it. To reuse one, run `python scripts/show_component.py NAME` (NAME is the banner in the table; `--list` shows them): it prints the entry below plus that component's CSS, markup and JS from the showcase, so you never open the 164 KB file. To read one entry by hand: `grep -n "^### " references/components.md`, then read that range.
 
 | # | Component | Banner |
 |---|---|---|
@@ -28,6 +28,13 @@ The 24 components in `assets/showcase.html`. For each: the morph sentence, the t
 | 22 | Elastic accordion | `accordion` |
 | 23 | Date picker, single day or range | `date picker` |
 | 24 | Choice chips (single-select chip radio) | `choice chips` |
+| 25 | Stretchy OTP / PIN input | `otp input` |
+| 26 | Notification bell with popover | `notification bell` |
+| 27 | Grid ↔ list view switcher (FLIP) | `view switcher` |
+| 28 | Stretchy day / night theme toggle | `theme toggle` |
+| 29 | Swipe-to-delete list with rubber band | `swipe to delete` |
+| 30 | Context menu from pointer | `context menu` |
+| 31 | Upload progress ring to check | `upload progress` |
 
 Also global: a segmented "ความเด้ง" control sets `bounce` to 1.8 / 1 / 0.5.
 
@@ -155,3 +162,37 @@ Width (k 320) leads height (k 150) opening; height leads width closing. The form
 
 - **Porting:** keep the `.cc-on` timing and the three-layer paint order; a port that bound the selected style to `aria-checked` and kept `background` on the chips made the picked chip vanish mid-flight and hid the capsule behind the others (SKILL.md, "Moving indicators").
 
+### 25. Stretchy OTP / PIN input
+
+- **Morph:** When focus moves across the 6 digit boxes, a violet border/tint frame worms from box to box (`edgePair`, fast k 480 c 30 / slow k 160 c 18). Typing or pasting a digit kicks a per-box squash-and-stretch spring (k 420 c 14, `scale(1+s·0.18, 1-s·0.12)`). An invalid code injects a horizontal velocity kick into the whole row (`k: 520, c: 14`) so it shakes like rubber.
+- **Access:** `role="group"`, `inputmode="numeric"`, `autocomplete="one-time-code"` on the first box, Backspace/ArrowLeft/ArrowRight navigation, 6-digit paste support, and `aria-live="polite"` feedback.
+
+### 26. Notification bell with popover
+
+- **Morph:** Clicking the bell or adding a notification injects a rotational kick into the bell icon (`k: 380, c: 10`, `transform-origin: 50% 15%`) and pops the unread badge (`k: 420, c: 14`). Opening the popover pours it out of the bell with split axes (width k 320 c 24 leads height k 160 c 16; reversed on close) while content crossfades in with a short delay.
+- **Access:** `aria-haspopup="true"`, `aria-expanded`, `aria-controls`, `inert` while closed, Esc closes and restores focus to the bell.
+
+### 27. Grid ↔ list view switcher (FLIP)
+
+- **Morph:** A worm segmented control (`makeSegmented`, `role="tablist"`) switches between Grid and List. Instead of scaling the card (which squashes text and border-radius), each card is positioned absolutely inside a spring-height container and animates its real `x`, `y`, `width`, `height` with split axes (width leads height on grid→list, height leads width on list→grid) plus subtle velocity skew (`clamp(-vx/340, -4.5, 4.5)deg`), while its artwork thumbnail and text slot spring independently with a 24 ms stagger so text stays crisp at every frame.
+- **Access:** `role="tablist"` with keyboard arrow navigation; under `prefers-reduced-motion: reduce`, layout snaps immediately with no stagger or skew.
+
+### 28. Stretchy day / night theme toggle
+
+- **Morph:** Toggling between light and dark stretches the sun/moon knob into a capsule along its travel path (`edgePair`, fast k 460 c 28 / slow k 150 c 17) while thinning vertically by its elongation (`scaleY = 1 − stretch·0.28`), and kicks a rotational spring (`k: 360, c: 14`) on the sun/moon SVG icon.
+- **Access:** Real `<button role="switch" aria-checked>` with `aria-live="polite"` status label inside a self-contained preview card.
+
+### 29. Swipe-to-delete list with rubber band
+
+- **Morph:** Dragging a row left stretches an independent floating red pill out from the right edge (`width` tracks `-x - 8` on a spring `k: 340, c: 24`), keeping a crisp 8 px gap while the card itself stretches subtly with velocity and tilts (`clamp(v/2400, -1.6, 1.6)deg`). Crossing the −112 px delete threshold snaps the pill into armed state with a scale kick (`k: 440, c: 15`), reveals "ปล่อยเพื่อลบ", and opens the SVG trash lid (`rotate(-28deg)`, `k: 420, c: 14`). Dragging right divides overscroll by 3.4 for rubber-band resistance. Releasing past threshold shoots the row off-screen, expands the red pill across the slot, and collapses both `height` and `margin-bottom` together (`k: 260, c: 25`) with zero layout jump; clicking "ยกเลิก" springs the deleted card back into its original index.
+- **Access:** Keyboard/click `×` delete button on every row, one-click "ลองปัด" auto-demo button, Undo & Reset buttons, and `aria-live="polite"` status announcements.
+
+### 30. Context menu from pointer
+
+- **Morph:** Right-clicking (or clicking on touch) inside the canvas opens the menu at the clamped cursor point with split axes (width leads `k: 360, c: 24`, height follows `k: 180, c: 17`, radius `20 → 16 px`; reversed on close). Moving the pointer or arrow keys across items slides a vertical worm highlight (`edgePair`, fast `k: 480`, slow `k: 180`), switching `.on` text color only once the highlight covers the row.
+- **Access:** `role="menu"` / `role="menuitem"`, `inert` while closed, Up/Down arrows and Esc close with focus restored.
+
+### 31. Upload progress ring to check
+
+- **Morph:** Sequenced morph through an intermediate shape: the 300×142 dropzone compresses with split axes (`k: 300` width, `k: 180` height, radius `24 → 58 px`) into a 116×116 circular progress ring, animates an SVG `stroke-dashoffset` via a spring (`k: 140, c: 18`), kicks with a bounce when complete, and expands into a 240×58 teal confirmation pill.
+- **Access:** Supports real `<input type="file">`, drag-and-drop, keyboard Enter/Space, one-click demo trigger, and `aria-live="polite"` status text.

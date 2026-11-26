@@ -11,10 +11,10 @@ For example: a tab underline that stretches like an inchworm to the next tab, a 
 ## What's Included
 
 - **Zero-dependency Spring Engine** (`assets/stretchy-core.js`) with helper utilities including edge pairs, volume preservation, bulging SVG edges, FLIP reordering, thrown objects, and `makeAccordion` to make existing `<details>` elements instantly elastic.
-- **24 Working Showcase Components**: tabs, stepper, sidebar, carousel, send button, toggles, radio/checkbox, chips, search, dropdown, slider, quantity, rating, add to cart, goo menu, modal, toast, tooltip, bottom sheet, FAB, accordion, dynamic island, date picker (single or range selection), and choice chips (single-select chips).
+- **31 Working Showcase Components**: tabs, stepper, sidebar, carousel, send button, toggles, radio/checkbox, chips, search, dropdown, slider, quantity, rating, add to cart, goo menu, modal, toast, tooltip, bottom sheet, FAB, accordion, dynamic island, date picker (single or range selection), choice chips (single-select chips), stretchy OTP input, notification bell with popover, FLIP grid/list view switcher, stretchy day/night theme toggle, swipe-to-delete list, pointer context menu, and upload progress ring.
 - **11+ Elastic Deformation Techniques** with code recipes and tuned spring presets.
 - **Guide for Designing New Components** not in the catalog, featuring 13 worked designs (pull-to-refresh, swipe-to-delete, OTP input, etc.). The React port of the `WormTabs` component moved to a frameworks guide, which also covers Vue, Svelte, component libraries and server rendering.
-- **Component extractor** (`scripts/show_component.py`): prints one showcase component by name (`--recipe`, `--css`, `--html`, `--js`), so the showcase page never has to be read whole. `--list` shows all 24.
+- **Component extractor** (`scripts/show_component.py`): prints one showcase component by name (`--recipe`, `--css`, `--html`, `--js`), so the showcase page never has to be read whole. `--list` shows all 31.
 - **Core tool** (`scripts/add_core.py`): writes the spring engine as an ES module for React, Vue or Svelte (`--module`), and keeps a standalone page's inline copy of the core in sync (`--inline`, `--check`).
 - **API cheat sheet** (`references/core-api.md`): signatures of every helper, the spring preset table and runtime cost rules.
 - **Pre-flight Code Audit Workflow** (Step 0, when asked to generally enhance existing UI without specific targets): scan existing code using `scripts/audit_ui.py` to identify candidates for elasticity (tabs, toggles, modals, dropdowns, accordions, etc.), summarize findings with `file:line`, and ask the user to confirm or customize **before modifying any files**.
@@ -36,7 +36,7 @@ stretchy-morph-ui/
 ├── assets/
 │   ├── stretchy-core.js        Spring engine + helpers
 │   ├── starter.html            Starter template (light/dark mode, Thai typography, reduced motion)
-│   └── showcase.html           All 24 showcase components
+│   └── showcase.html           All 31 showcase components
 └── scripts/
     ├── audit_ui.py             Scans user code: tech stack, existing animations, elasticity candidates
     ├── add_core.py             Writes the core as an ES module, or syncs a page's inline copy
@@ -147,16 +147,21 @@ In a single-page app, also call `spring.stop()` on each `Spring` (it halts in pl
 
 When `prefers-reduced-motion: reduce` is active, `to()` instantly snaps to the target value and invokes `onRest` immediately, ensuring code awaiting animation completion continues to work seamlessly.
 
-### Scanning Code for Elastic UI Candidates
+### Scanning Existing Websites & Code for Elastic UI Candidates
 
-Zero external dependencies required (pure Python). Accepts individual files or entire directories, supporting HTML/CSS/JS and modern frameworks:
+Static code scanning requires zero external dependencies (pure Python) and supports HTML/CSS/SCSS/Less/Stylus, JS/TS/JSX/TSX/MDX, React, Vue, Svelte, Angular, Astro, Web Components, and server/CMS templates (PHP/Blade, ERB, Twig, Handlebars, Nunjucks, Liquid, EJS, Pug, Jinja2/Django, Razor/Blazor, JSP, Phoenix HEEx, Go Templ) across UI libraries (Tailwind, Bootstrap, DaisyUI, Flowbite, Radix/shadcn, MUI, Chakra, AntD, Mantine, Vuetify, Element Plus, Naive UI, Quasar, Prime, Shoelace, Ionic, Alpine.js, HTMX).
+
+You can also inspect **live websites / dev servers (`http://` / `https://`)** or local HTML with `--dom` in headless Chromium (Playwright, with automatic fallback to Selenium or static HTTP HTML fetch), traversing Shadow DOM and using computed-style/structural heuristics so Tailwind-only, CSS-in-JS, Webflow, WordPress, Shopify, and obfuscated-class sites are still detected:
 
 ```bash
 python scripts/audit_ui.py ./src
+python scripts/audit_ui.py http://localhost:5173/
+python scripts/audit_ui.py page.html --dom
+python scripts/audit_ui.py --stdin --ext .tsx < snippet.tsx
 python scripts/audit_ui.py ./src --json --max-hits 10
 ```
 
-The report lists the detected stack and existing motion, then candidate hits grouped by UI category, each mapped to a showcase component and a technique. Paths are relative to the scanned root and hits are grouped per file; tests, stories, minified and generated files and comment lines are skipped; CSS-only matches are reported separately; shared components are listed with their use counts. This output is a heuristic-based screening; always inspect surrounding code before presenting suggestions to the user.
+The report lists the detected stack and existing motion, shared components with use counts, and candidate hits grouped across 37 UI categories mapped to showcase components and techniques. Paths are relative to the scanned root and hits are grouped per file or DOM selector; tests, stories, minified and generated files and comment lines are skipped; CSS-only matches are reported separately. Always inspect surrounding code or DOM selectors before presenting suggestions to the user.
 
 ### Page Inspection & Smoke Testing
 
