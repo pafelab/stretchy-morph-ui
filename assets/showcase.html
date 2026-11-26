@@ -536,6 +536,154 @@ h1{font-stretch:70%;font-weight:800;font-size:clamp(52px,7.6vw,108px);line-heigh
 .dp-sub{margin:2px 0 0;color:var(--muted);font-size:15px;min-height:1.7em}
 .dp-clear{margin-top:16px}
 
+/* ---------- otp input ---------- */
+.otp-stage{background:var(--stage-v);flex-direction:column;gap:16px}
+.otp-card{width:100%;max-width:360px;background:var(--surface);border-radius:24px;padding:22px 20px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.otp-wrap{position:relative;display:flex;gap:8px;isolation:isolate;will-change:transform}
+.otp-ind{position:absolute;top:0;bottom:0;left:0;border-radius:14px;border:2.5px solid var(--violet);background:rgba(107,78,255,.10);pointer-events:none;z-index:-1;opacity:0;transition:opacity .2s,border-color .25s,background .25s}
+.otp-wrap.active .otp-ind{opacity:1}
+.otp-wrap.err .otp-ind{border-color:var(--pink);background:rgba(255,79,123,.14)}
+.otp-wrap.ok .otp-ind{border-color:var(--teal);background:rgba(15,165,151,.14)}
+.otp-box{width:44px;height:54px;border-radius:14px;border:1.5px solid var(--line);background:transparent;text-align:center;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink);outline:none;padding:0;transition:border-color .2s}
+.otp-box:focus{border-color:transparent}
+.otp-wrap.ok .otp-box{border-color:var(--teal);color:var(--teal)}
+.otp-wrap.err .otp-box{border-color:var(--pink);color:var(--pink)}
+.otp-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.otp-btn{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}
+.otp-btn:hover{background:var(--stage-v)}
+.otp-msg{font-size:13px;color:var(--muted);min-height:1.4em;margin:0}
+
+/* ---------- notification bell ---------- */
+.bell-stage{background:var(--stage-p);display:block;place-items:normal;padding:24px;min-height:360px}
+.bell-bar{display:flex;align-items:center;justify-content:space-between;max-width:340px;margin:0 auto;background:var(--surface);border-radius:20px;padding:10px 14px;box-shadow:0 0 0 1px var(--line)}
+.bell-add{border:0;background:var(--violet);color:#fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.bell-anchor{position:relative}
+.bell-btn{position:relative;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--bg);display:grid;place-items:center;cursor:pointer}
+.bell-icon{transform-origin:50% 15%;display:block}
+.bell-badge{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--pink);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;pointer-events:none}
+.bell-badge[hidden]{display:none}
+.bell-pop{position:absolute;right:0;top:54px;width:44px;height:44px;border-radius:22px;background:var(--surface);box-shadow:0 0 0 1px var(--line),0 22px 38px -16px rgba(20,10,60,.45);overflow:hidden;opacity:0;pointer-events:none;z-index:4;transition:opacity .18s}
+.bell-pop.open{opacity:1;pointer-events:auto}
+.bell-pop-in{width:296px;padding:14px;display:flex;flex-direction:column;gap:8px;opacity:0;transform:translateY(-6px);transition:opacity .16s,transform .22s}
+.bell-pop.open .bell-pop-in{opacity:1;transform:none;transition:opacity .2s .1s,transform .26s .08s}
+.bell-head{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700}
+.bell-clear{border:0;background:none;color:var(--violet);font-size:12px;font-weight:600;cursor:pointer;padding:2px 6px}
+.bell-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:176px;overflow:auto}
+.bell-list li{background:var(--bg);border-radius:12px;padding:8px 10px;font-size:13px;line-height:1.45;display:flex;justify-content:space-between;gap:8px}
+.bell-list li span{color:var(--muted);font-size:11px;flex:none}
+.bell-empty{font-size:13px;color:var(--muted);text-align:center;padding:18px 0;margin:0}
+
+/* ---------- view switcher ---------- */
+.vs-stage{background:var(--stage-t);flex-direction:column;gap:14px;min-height:420px;align-items:center;justify-content:flex-start;padding-top:26px}
+.vs-shell{width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px}
+.vs-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.vs-top b{font-size:15px}
+.vs-seg{position:relative;display:inline-flex;background:var(--surface);padding:4px;border-radius:999px;isolation:isolate;box-shadow:0 0 0 1px var(--line)}
+.vs-seg .seg-ind{position:absolute;top:4px;bottom:4px;left:0;border-radius:999px;background:var(--violet);z-index:-1;pointer-events:none}
+.vs-seg button{border:0;background:none;padding:6px 13px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:6px;transition:color .15s}
+.vs-seg button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.vs-seg button.on{color:#fff}
+.vs-cards{position:relative;width:100%;height:282px}
+.vs-card{position:absolute;left:0;top:0;background:var(--surface);border-radius:20px;box-shadow:0 0 0 1px var(--line),0 8px 20px -12px rgba(20,10,60,.25);overflow:hidden;will-change:transform,width,height}
+.vs-thumb{position:absolute;left:10px;top:10px;border-radius:14px;display:grid;place-items:center;color:#fff;will-change:width,height,border-radius}
+.vs-thumb svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vs-meta{position:absolute;left:12px;top:0;right:12px;display:flex;flex-direction:column;gap:2px;will-change:transform}
+.vs-meta b{font-size:14px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vs-meta span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vs-pill{position:absolute;right:12px;top:50%;transform:translateY(-50%) scale(.88);background:var(--bg);color:var(--violet);font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .22s,transform .28s}
+.vs-cards.list .vs-pill{opacity:1;transform:translateY(-50%) scale(1);transition:opacity .24s .1s,transform .3s .08s}
+
+/* ---------- theme toggle ---------- */
+.tt-stage{background:var(--stage-v);flex-direction:column;gap:16px}
+.tt-preview{width:100%;max-width:340px;border-radius:24px;padding:20px 22px;background:#FFFFFF;color:#1C1840;box-shadow:0 0 0 1px rgba(28,24,64,.10);display:flex;flex-direction:column;gap:14px;transition:background .35s,color .35s,box-shadow .35s}
+.tt-preview.dark{background:#181433;color:#F2EFFF;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
+.tt-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tt-title{font-size:16px;font-weight:700;margin:0}
+.tt-sub{font-size:13px;opacity:.72;margin:0}
+.tt-btn{position:relative;width:82px;height:42px;border-radius:999px;border:0;padding:0;cursor:pointer;background:#E3DCFF;transition:background .35s;flex:none}
+.tt-preview.dark .tt-btn{background:#342B6B}
+.tt-knob{position:absolute;top:5px;left:5px;width:32px;height:32px;border-radius:999px;background:#FFC23C;display:grid;place-items:center;pointer-events:none;box-shadow:0 4px 12px rgba(20,10,60,.25);transition:background .3s}
+.tt-preview.dark .tt-knob{background:#8470FF}
+.tt-knob svg{width:18px;height:18px;stroke:#1C1840;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s}
+.tt-preview.dark .tt-knob svg{stroke:#fff}
+.tt-bars{display:flex;gap:8px}
+.tt-bars span{height:10px;border-radius:999px;background:rgba(107,78,255,.18);flex:1;transition:background .35s}
+.tt-preview.dark .tt-bars span{background:rgba(132,112,255,.28)}
+
+/* ---------- swipe to delete ---------- */
+.sw-stage{background:var(--stage-p);flex-direction:column;gap:12px;min-height:420px;align-items:center;justify-content:center}
+.sw-shell{width:100%;max-width:372px;display:flex;flex-direction:column;gap:10px}
+.sw-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px}
+.sw-head-btns{display:flex;gap:6px}
+.sw-chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .18s}
+.sw-chip:hover{background:var(--bg)}
+.sw-list{display:flex;flex-direction:column}
+.sw-slot{position:relative;margin-bottom:8px;border-radius:20px;will-change:height,margin-bottom,opacity}
+.sw-slot:last-child{margin-bottom:0}
+.sw-slot.collapsing{overflow:hidden}
+.sw-pill{position:absolute;right:0;top:0;bottom:0;width:54px;border-radius:20px;background:var(--pink);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;overflow:hidden;pointer-events:none;opacity:0;transform-origin:100% 50%;will-change:width,transform,opacity;transition:background .2s}
+.sw-pill.armed{background:#E11D48}
+.sw-pill svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;flex:none;overflow:visible}
+.sw-lid{transform-origin:19px 6px}
+.sw-pill-txt{font-size:12px;font-weight:700;white-space:nowrap;opacity:0;transform:translateX(6px);transition:opacity .16s,transform .2s}
+.sw-pill.show-txt .sw-pill-txt{opacity:1;transform:none}
+.sw-row{position:relative;z-index:1;background:var(--surface);border-radius:20px;padding:11px 12px;display:flex;align-items:center;gap:11px;box-shadow:0 0 0 1px var(--line),0 6px 16px -12px rgba(20,10,60,.25);touch-action:pan-y;cursor:grab;user-select:none;will-change:transform}
+.sw-row:active{cursor:grabbing}
+.sw-av{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:15px;font-weight:800;flex:none}
+.sw-body{flex:1;min-width:0}
+.sw-body b{display:block;font-size:14px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sw-body span{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sw-right{display:flex;align-items:center;gap:6px;flex:none}
+.sw-time{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sw-del-btn{border:0;background:var(--bg);color:var(--muted);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;cursor:pointer;font-size:14px;line-height:1;transition:background .18s,color .18s}
+.sw-del-btn:hover{background:var(--stage-p);color:var(--pink)}
+.sw-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:30px;padding:0 2px}
+.sw-msg{font-size:12px;color:var(--muted);margin:0}
+.sw-undo{border:0;background:var(--ink);color:var(--bg);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;transform-origin:100% 50%;will-change:transform}
+.sw-undo[hidden]{display:none}
+
+/* ---------- context menu ---------- */
+.cm-stage{background:var(--stage-v);display:block;place-items:normal;padding:24px;min-height:380px}
+.cm-pad{position:relative;height:332px;border-radius:24px;background:var(--surface);box-shadow:0 0 0 1px var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;cursor:context-menu;overflow:hidden}
+.cm-hint{font-size:14px;color:var(--muted);max-width:28ch;margin:0}
+.cm-status{font-size:13px;font-weight:600;color:var(--violet);background:var(--stage-v);padding:5px 14px;border-radius:999px;min-height:1.6em}
+.cm-menu{position:absolute;left:0;top:0;width:40px;height:40px;border-radius:20px;background:var(--surface);box-shadow:0 0 0 1px var(--line),0 22px 44px -14px rgba(20,10,60,.45);overflow:hidden;opacity:0;pointer-events:none;z-index:5;transition:opacity .15s}
+.cm-menu.open{opacity:1;pointer-events:auto}
+.cm-in{position:relative;width:196px;padding:6px;display:flex;flex-direction:column;gap:2px;isolation:isolate;opacity:0;transition:opacity .14s}
+.cm-menu.open .cm-in{opacity:1;transition:opacity .18s .07s}
+.cm-hi{position:absolute;left:6px;right:6px;top:0;height:36px;border-radius:11px;background:var(--violet);z-index:-1;pointer-events:none;opacity:0;transition:opacity .14s}
+.cm-in.hovering .cm-hi{opacity:1}
+.cm-item{border:0;background:none;text-align:left;padding:8px 12px;border-radius:11px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:space-between;color:var(--ink);transition:color .12s}
+.cm-item.on{color:#fff}
+.cm-item.danger{color:var(--pink)}
+.cm-item.danger.on{color:#fff}
+.cm-item kbd{font-family:inherit;font-size:11px;opacity:.65}
+
+/* ---------- upload progress ---------- */
+.up-stage{background:var(--stage-t);flex-direction:column;gap:14px;min-height:360px}
+.up-box{position:relative;width:300px;height:142px;border-radius:24px;background:var(--surface);box-shadow:0 0 0 1.5px var(--line),0 14px 28px -18px rgba(20,10,60,.35);overflow:hidden;display:grid;place-items:center;cursor:pointer;will-change:width,height,border-radius,transform}
+.up-box.dragging{box-shadow:0 0 0 2.5px var(--violet),0 18px 34px -16px rgba(107,78,255,.45)}
+.up-layer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px;text-align:center;transition:opacity .18s,transform .24s;pointer-events:none}
+.up-idle{opacity:1;transform:none}
+.up-box[data-state="busy"] .up-idle,.up-box[data-state="done"] .up-idle{opacity:0;transform:scale(.92)}
+.up-idle b{font-size:15px}
+.up-idle span{font-size:12px;color:var(--muted)}
+.up-ring-wrap{opacity:0;transform:scale(.85)}
+.up-box[data-state="busy"] .up-ring-wrap{opacity:1;transform:none;transition:opacity .2s .12s,transform .28s .1s}
+.up-ring{width:84px;height:84px;transform:rotate(-90deg)}
+.up-ring circle{fill:none;stroke-width:7;stroke-linecap:round}
+.up-track{stroke:var(--line)}
+.up-arc{stroke:var(--violet);stroke-dasharray:213.6;stroke-dashoffset:213.6}
+.up-pct{position:absolute;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--violet)}
+.up-done{opacity:0;transform:scale(.88);flex-direction:row;gap:10px;color:#fff;background:var(--teal)}
+.up-box[data-state="done"] .up-done{opacity:1;transform:none;transition:opacity .22s .1s,transform .3s .08s}
+.up-done svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.up-done b{font-size:15px;white-space:nowrap}
+.up-file-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.up-actions{display:flex;gap:8px}
+.up-btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.up-status{font-size:13px;color:var(--muted);margin:0;min-height:1.4em}
+
 footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
 
 @media (max-width:860px){
@@ -1198,6 +1346,211 @@ footer{padding:110px 0 56px;color:var(--muted);max-width:60ch;font-size:15px}
         <p>ความสูงพุ่งเลยเป้าแล้วดีดกลับ ข้อความข้างในหน่วงตามเหมือนของในกล่องที่ถูกเขย่า การ์ดที่เปิดแยกตัวจากเพื่อน ใบที่ถูกดันแบนลงนิดหนึ่ง สร้างจาก &lt;details&gt; ธรรมดา ไม่มี JavaScript ก็ยังเปิดได้</p>
       </article>
 <!-- /component: accordion -->
+    </div>
+  </section>
+
+  <!-- ===================== MORE INTERACTIONS ===================== -->
+  <section class="sec" id="more">
+    <div class="sec-h"><h2>ปฏิสัมพันธ์เพิ่มเติม</h2><span>7 ชิ้น</span></div>
+    <div class="grid">
+<!-- component: otp input -->
+      <article class="card">
+        <div class="stage otp-stage">
+          <div class="otp-card">
+            <div class="otp-wrap" id="otpWrap" role="group" aria-label="รหัสยืนยัน 6 หลัก">
+              <span class="otp-ind" id="otpInd" aria-hidden="true"></span>
+              <input class="otp-box" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="หลักที่ 1">
+              <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="หลักที่ 2">
+              <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="หลักที่ 3">
+              <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="หลักที่ 4">
+              <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="หลักที่ 5">
+              <input class="otp-box" inputmode="numeric" maxlength="1" aria-label="หลักที่ 6">
+            </div>
+            <div class="otp-actions">
+              <button class="otp-btn" type="button" id="otpFill">กรอก 482910</button>
+              <button class="otp-btn" type="button" id="otpWrong">ทดสอบรหัสผิด</button>
+              <button class="otp-btn" type="button" id="otpClear">ล้าง</button>
+            </div>
+            <p class="otp-msg" id="otpMsg" aria-live="polite">พิมพ์ตัวเลขหรือกดปุ่มตัวอย่าง</p>
+          </div>
+        </div>
+        <h3>ช่องกรอกรหัส OTP แบบหนอนนำโฟกัส</h3>
+        <p>กรอบโฟกัสยืดแบบคู่ขอบตามช่องที่กำลังพิมพ์ เลขแต่ละตัวเด้งรับแรงกดเมื่อกรอก และทั้งแถวสั่นแบบยางเมื่อรหัสไม่ถูกต้อง</p>
+      </article>
+<!-- /component: otp input -->
+
+<!-- component: notification bell -->
+      <article class="card">
+        <div class="stage bell-stage">
+          <div class="bell-bar">
+            <button class="bell-add" type="button" id="bellAdd">+ ส่งแจ้งเตือน</button>
+            <div class="bell-anchor">
+              <button class="bell-btn" type="button" id="bellBtn" aria-label="การแจ้งเตือน" aria-haspopup="true" aria-expanded="false" aria-controls="bellPop">
+                <svg class="i bell-icon" id="bellIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span class="bell-badge" id="bellBadge">2</span>
+              </button>
+              <div class="bell-pop" id="bellPop" role="region" aria-label="รายการแจ้งเตือน" inert>
+                <div class="bell-pop-in">
+                  <div class="bell-head">
+                    <span>แจ้งเตือน</span>
+                    <button class="bell-clear" type="button" id="bellClear">ล้างทั้งหมด</button>
+                  </div>
+                  <ul class="bell-list" id="bellList">
+                    <li>คอมเมนต์ใหม่ในงานออกแบบ <span>เมื่อสักครู่</span></li>
+                    <li>ส่งออกไฟล์โปรเจกต์สำเร็จ <span>5 นาทีที่แล้ว</span></li>
+                  </ul>
+                  <p class="bell-empty" id="bellEmpty" hidden>ไม่มีการแจ้งเตือนค้างอยู่</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3>กระดิ่งแจ้งเตือนพร้อมกล่องข้อความ</h3>
+        <p>กระดิ่งแกว่งด้วยแรงดีดเมื่อมีแจ้งเตือนใหม่ ป้ายตัวเลขเด้งพองออก และกล่องรายการเทตัวออกจากมุมกระดิ่งด้วยสปริงแยกแกน</p>
+      </article>
+<!-- /component: notification bell -->
+
+<!-- component: view switcher -->
+      <article class="card">
+        <div class="stage vs-stage">
+          <div class="vs-shell">
+            <div class="vs-top">
+              <b>คลังคอมโพเนนต์</b>
+              <div class="vs-seg" id="vsSeg" role="tablist" aria-label="รูปแบบการแสดงผล">
+                <span class="seg-ind" aria-hidden="true"></span>
+                <button type="button" role="tab" data-seg aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>กริด</button>
+                <button type="button" role="tab" data-seg aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>รายการ</button>
+              </div>
+            </div>
+            <div class="vs-cards" id="vsCards">
+              <div class="vs-card">
+                <div class="vs-thumb" style="background:linear-gradient(135deg,#6B4EFF,#9E8BFF)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
+                <div class="vs-meta"><b>สปริงแท็บ</b><span>Edge pair indicator</span></div>
+                <span class="vs-pill">k 420</span>
+              </div>
+              <div class="vs-card">
+                <div class="vs-thumb" style="background:linear-gradient(135deg,#FF4F7B,#FF8FA9)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+                <div class="vs-meta"><b>ปุ่มส่งงาน</b><span>Volume morph</span></div>
+                <span class="vs-pill">k 320</span>
+              </div>
+              <div class="vs-card">
+                <div class="vs-thumb" style="background:linear-gradient(135deg,#0FA597,#4FD6C7)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></div>
+                <div class="vs-meta"><b>แถบข้างยืด</b><span>Bulging SVG edge</span></div>
+                <span class="vs-pill">k 240</span>
+              </div>
+              <div class="vs-card">
+                <div class="vs-thumb" style="background:linear-gradient(135deg,#F59E0B,#FFD05B)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M9 12l2 2 4-4"/></svg></div>
+                <div class="vs-meta"><b>ชิปตัวเลือก</b><span>2-D liquid blob</span></div>
+                <span class="vs-pill">k 460</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3>สลับมุมมองกริดและรายการแบบ FLIP</h3>
+        <p>การ์ดแต่ละใบเปลี่ยนขนาดกล่องและรูปตัวอย่างด้วยสปริงแยกแกนโดยไม่บีบตัวอักษร ไหลสลับตำแหน่งแบบไล่จังหวะพร้อมเอียงรับความเร็ว</p>
+      </article>
+<!-- /component: view switcher -->
+
+<!-- component: theme toggle -->
+      <article class="card">
+        <div class="stage tt-stage">
+          <div class="tt-preview" id="ttPreview">
+            <div class="tt-row">
+              <div>
+                <p class="tt-title" id="ttTitle">โหมดสว่าง</p>
+                <p class="tt-sub" id="ttSub" aria-live="polite">เหมาะกับแสงกลางวัน</p>
+              </div>
+              <button class="tt-btn" type="button" id="ttBtn" role="switch" aria-checked="false" aria-label="สลับโหมดมืด">
+                <span class="tt-knob" id="ttKnob" aria-hidden="true">
+                  <svg id="ttSvg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                </span>
+              </button>
+            </div>
+            <div class="tt-bars"><span></span><span style="flex:1.6"></span><span style="flex:.7"></span></div>
+          </div>
+        </div>
+        <h3>ปุ่มสลับโหมดสว่างและมืดแบบยืดหยุ่น</h3>
+        <p>ปุ่มพระอาทิตย์ยืดเป็นแคปซูลและบางลงตามความเร็วขณะวิ่งข้ามราง ก่อนดีดสลับเป็นพระจันทร์พร้อมเปลี่ยนโทนสีของการ์ดตัวอย่าง</p>
+      </article>
+<!-- /component: theme toggle -->
+
+<!-- component: swipe to delete -->
+      <article class="card">
+        <div class="stage sw-stage">
+          <div class="sw-shell">
+            <div class="sw-head">
+              <b>กล่องข้อความ</b>
+              <div class="sw-head-btns">
+                <button class="sw-chip" type="button" id="swDemo">ลองปัด</button>
+                <button class="sw-chip" type="button" id="swReset">รีเซ็ต</button>
+              </div>
+            </div>
+            <div class="sw-list" id="swList"></div>
+            <div class="sw-foot">
+              <p class="sw-msg" id="swMsg" aria-live="polite">ลากการ์ดไปทางซ้ายเกินครึ่ง หรือกดลองปัด</p>
+              <button class="sw-undo" type="button" id="swUndo" hidden>ยกเลิก</button>
+            </div>
+          </div>
+        </div>
+        <h3>ปัดการ์ดเพื่อลบแบบยางยืด</h3>
+        <p>แคปซูลสีแดงยืดตามระยะลากจากขอบขวา พอเลยจุดลบฝาถังขยะจะเด้งเปิดพร้อมแรงดีด การ์ดพุ่งออกและแถวด้านล่างยุบขึ้นแบบไม่กระตุก พร้อมปุ่มยกเลิกที่เด้งการ์ดกลับมาได้</p>
+      </article>
+<!-- /component: swipe to delete -->
+
+<!-- component: context menu -->
+      <article class="card">
+        <div class="stage cm-stage">
+          <div class="cm-pad" id="cmPad" tabindex="0" aria-label="พื้นที่ทดสอบเมนูคลิกขวา">
+            <p class="cm-hint">คลิกขวา (หรือคลิกปกติ) ตรงไหนก็ได้ในกรอบนี้เพื่อเปิดเมนูจากปลายเมาส์</p>
+            <span class="cm-status" id="cmStatus" aria-live="polite">ยังไม่ได้เลือกคำสั่ง</span>
+            <div class="cm-menu" id="cmMenu" role="menu" aria-label="เมนูคำสั่ง" inert>
+              <div class="cm-in" id="cmIn">
+                <span class="cm-hi" id="cmHi" aria-hidden="true"></span>
+                <button class="cm-item" type="button" role="menuitem" data-act="คัดลอก">คัดลอก <kbd>⌘C</kbd></button>
+                <button class="cm-item" type="button" role="menuitem" data-act="ทำซ้ำ">ทำซ้ำ <kbd>⌘D</kbd></button>
+                <button class="cm-item" type="button" role="menuitem" data-act="ปักหมุด">ปักหมุด <kbd>P</kbd></button>
+                <button class="cm-item danger" type="button" role="menuitem" data-act="ลบรายการ">ลบรายการ <kbd>⌫</kbd></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3>เมนูคลิกขวาแตกตัวจากปลายเมาส์</h3>
+        <p>กล่องเมนูบานออกจากจุดที่คลิกด้วยสปริงแยกแกน และแถบไฮไลต์สีม่วงยืดแบบหนอนแนวตั้งตามรายการที่ชี้</p>
+      </article>
+<!-- /component: context menu -->
+
+<!-- component: upload progress -->
+      <article class="card">
+        <div class="stage up-stage">
+          <div class="up-box" id="upBox" data-state="idle" role="button" tabindex="0" aria-label="เลือกหรือวางไฟล์เพื่ออัปโหลด">
+            <input class="up-file-input" id="upInput" type="file">
+            <div class="up-layer up-idle">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <b>วางไฟล์หรือคลิกเพื่ออัปโหลด</b>
+              <span>รองรับ PNG, PDF หรือกดจำลองด้านล่าง</span>
+            </div>
+            <div class="up-layer up-ring-wrap">
+              <svg class="up-ring" viewBox="0 0 84 84" aria-hidden="true">
+                <circle class="up-track" cx="42" cy="42" r="34"/>
+                <circle class="up-arc" id="upArc" cx="42" cy="42" r="34"/>
+              </svg>
+              <span class="up-pct" id="upPct">0%</span>
+            </div>
+            <div class="up-layer up-done">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              <b id="upDoneTxt">อัปโหลดสำเร็จ</b>
+            </div>
+          </div>
+          <div class="up-actions">
+            <button class="up-btn" type="button" id="upDemo">จำลองอัปโหลด</button>
+            <button class="up-btn" type="button" id="upReset">เริ่มใหม่</button>
+          </div>
+          <p class="up-status" id="upStatus" aria-live="polite">พร้อมรับไฟล์</p>
+        </div>
+        <h3>อัปโหลดไฟล์แบบวงกลมความคืบหน้า</h3>
+        <p>กรอบวางไฟล์บีบตัวเป็นวงกลมหมุนความคืบหน้าตามลำดับขั้น ก่อนดีดขยายกลับเป็นแคปซูลสีเขียวเมื่ออัปโหลดเสร็จ</p>
+      </article>
+<!-- /component: upload progress -->
     </div>
   </section>
   </main>
@@ -2249,6 +2602,397 @@ onResync(()=>{if(fabIsOpen){const[w]=openSize();fPanel.style.width=w+'px';fw.set
 /* ---------- accordion ---------- */
 const faq=makeAccordion($('#acc'),{gap:6});
 makeSegmented($('#accMode'),{onChange:i=>{faq.single=i===0}});
+/* ---------- otp input ---------- */
+const otpWrap=$('#otpWrap'),otpInd=$('#otpInd'),otpBoxes=$$('.otp-box',otpWrap),otpMsg=$('#otpMsg');
+let otpIdx=0;
+const otpEp=edgePair((L,R)=>{otpInd.style.transform=`translateX(${L}px)`;otpInd.style.width=Math.max(0,R-L)+'px'},{fast:{k:480,c:30},slow:{k:160,c:18}});
+const otpShake=new Spring(0,{k:520,c:14,onUpdate:x=>{otpWrap.style.transform=`translateX(${x}px)`}});
+const otpPops=otpBoxes.map(b=>new Spring(0,{k:420,c:14,onUpdate:s=>{b.style.transform=`scale(${1+s*0.18},${1-s*0.12})`}}));
+function otpPlace(i,anim=true){
+  otpIdx=clamp(i,0,otpBoxes.length-1);
+  const b=otpBoxes[otpIdx],a=b.offsetLeft,z=a+b.offsetWidth;
+  anim?otpEp.to(a,z):otpEp.set(a,z);
+}
+function otpCheck(){
+  const code=otpBoxes.map(b=>b.value).join('');
+  otpWrap.classList.remove('ok','err');
+  if(code.length===otpBoxes.length){
+    if(code==='482910'){otpWrap.classList.add('ok');otpMsg.textContent='ยืนยันรหัส 482910 สำเร็จ'}
+    else{otpWrap.classList.add('err');otpShake.kick(380);otpMsg.textContent='รหัสไม่ถูกต้อง ลอง 482910'}
+  }
+}
+otpBoxes.forEach((b,i)=>{
+  b.addEventListener('focus',()=>{otpWrap.classList.add('active');otpPlace(i)});
+  b.addEventListener('blur',()=>setTimeout(()=>{if(!otpWrap.contains(document.activeElement))otpWrap.classList.remove('active')},0));
+  b.addEventListener('input',()=>{
+    const v=b.value.replace(/\D/g,'').slice(-1);b.value=v;
+    if(v){otpPops[i].kick(12);if(i<otpBoxes.length-1){otpBoxes[i+1].focus()}else otpCheck();}
+  });
+  b.addEventListener('keydown',e=>{
+    if(e.key==='Backspace'&&!b.value&&i>0){otpBoxes[i-1].focus();otpBoxes[i-1].value='';}
+    else if(e.key==='ArrowLeft'&&i>0){e.preventDefault();otpBoxes[i-1].focus();}
+    else if(e.key==='ArrowRight'&&i<otpBoxes.length-1){e.preventDefault();otpBoxes[i+1].focus();}
+  });
+  b.addEventListener('paste',e=>{
+    const txt=(e.clipboardData?.getData('text')||'').replace(/\D/g,'').slice(0,otpBoxes.length);
+    if(!txt)return;e.preventDefault();
+    [...txt].forEach((ch,j)=>{otpBoxes[j].value=ch;otpPops[j].kick(10)});
+    otpBoxes[Math.min(txt.length,otpBoxes.length-1)].focus();otpCheck();
+  });
+});
+$('#otpFill').addEventListener('click',()=>{
+  otpWrap.classList.add('active');
+  '482910'.split('').forEach((ch,j)=>setTimeout(()=>{otpBoxes[j].value=ch;otpPlace(j);otpPops[j].kick(12);if(j===5)otpCheck()},RM.matches?0:j*65));
+});
+$('#otpWrong').addEventListener('click',()=>{
+  otpWrap.classList.add('active');
+  '123456'.split('').forEach((ch,j)=>{otpBoxes[j].value=ch});
+  otpPlace(5);otpCheck();
+});
+$('#otpClear').addEventListener('click',()=>{
+  otpBoxes.forEach(b=>{b.value=''});otpWrap.classList.remove('ok','err');otpMsg.textContent='ล้างรหัสแล้ว';otpBoxes[0].focus();otpPlace(0);
+});
+otpPlace(0,false);
+onResync(()=>otpPlace(otpIdx,false));
+
+/* ---------- notification bell ---------- */
+const bellBtn=$('#bellBtn'),bellIcon=$('#bellIcon'),bellBadge=$('#bellBadge'),bellPop=$('#bellPop'),bellList=$('#bellList'),bellEmpty=$('#bellEmpty');
+let bellOpen=false,bellCount=2;
+const bellMsgs=['มีคนถูกใจงานต้นแบบของคุณ','อัปเดตเวอร์ชันใหม่พร้อมใช้งาน','ทีมออกแบบแสดงความคิดเห็นใหม่','สำรองข้อมูลล่าสุดเสร็จเรียบร้อย'];
+const bellSwing=new Spring(0,{k:380,c:10,onUpdate:a=>{bellIcon.style.transform=`rotate(${a}deg)`}});
+const bellPopBadge=new Spring(1,{k:420,c:14,onUpdate:s=>{bellBadge.style.transform=`scale(${clamp(s,0.5,1.6)})`}});
+const bw=new Spring(44,{eps:0.5,onUpdate:x=>{bellPop.style.width=Math.max(44,x)+'px'}});
+const bh=new Spring(44,{eps:0.5,onUpdate:x=>{bellPop.style.height=Math.max(44,x)+'px'}});
+function setBell(open,refocus=false){
+  bellOpen=open;bellPop.classList.toggle('open',open);bellPop.inert=!open;bellBtn.setAttribute('aria-expanded',String(open));
+  if(open){
+    const targetH=Math.min(246,Math.max(118,bellList.children.length*48+64));
+    bw.to(296,{k:320,c:24});bh.to(targetH,{k:160,c:16});
+  }else{
+    bw.to(44,{k:160,c:16});bh.to(44,{k:320,c:24});
+    if(refocus)bellBtn.focus({preventScroll:true});
+  }
+}
+bellBtn.addEventListener('click',()=>{bellSwing.kick(bellOpen?-180:220);setBell(!bellOpen)});
+$('#bellAdd').addEventListener('click',()=>{
+  bellCount++;bellBadge.hidden=false;bellBadge.textContent=String(bellCount);
+  bellEmpty.hidden=true;
+  const li=document.createElement('li');
+  li.innerHTML=`${bellMsgs[bellCount%bellMsgs.length]} <span>ตอนนี้</span>`;
+  bellList.prepend(li);
+  while(bellList.children.length>5)bellList.lastElementChild.remove();
+  bellSwing.kick(320);bellPopBadge.kick(9);
+  if(bellOpen)bh.to(Math.min(246,bellList.children.length*48+64),{k:220,c:18});
+});
+$('#bellClear').addEventListener('click',()=>{
+  bellList.innerHTML='';bellCount=0;bellBadge.hidden=true;bellEmpty.hidden=false;
+  if(bellOpen)bh.to(118,{k:220,c:18});
+});
+bellPop.addEventListener('keydown',e=>{if(e.key==='Escape'&&bellOpen)setBell(false,true)});
+
+/* ---------- view switcher ---------- */
+const vsCards=$('#vsCards'),vsItems=$$('.vs-card',vsCards);
+let vsMode=0;
+const vsWrapH=new Spring(282,{k:220,c:20,onUpdate:h=>{vsCards.style.height=Math.max(120,h)+'px'}});
+const vsNodes=vsItems.map(el=>{
+  const thumb=$('.vs-thumb',el),meta=$('.vs-meta',el);
+  const st={x:0,y:0,w:180,h:136,vx:0,tw:160,th:68,mx:0,my:84};
+  const drawCard=()=>{
+    const skew=clamp(-st.vx/340,-4.5,4.5);
+    el.style.transform=`translate3d(${st.x}px,${st.y}px,0) skewX(${skew}deg)`;
+    el.style.width=Math.max(60,st.w)+'px';
+    el.style.height=Math.max(48,st.h)+'px';
+  };
+  const drawInner=()=>{
+    thumb.style.width=Math.max(32,st.tw)+'px';
+    thumb.style.height=Math.max(32,st.th)+'px';
+    meta.style.transform=`translate3d(${st.mx}px,${st.my}px,0)`;
+  };
+  return{
+    x:new Spring(0,{k:290,c:23,onUpdate:(v,vel)=>{st.x=v;st.vx=vel;drawCard()}}),
+    y:new Spring(0,{k:290,c:23,onUpdate:v=>{st.y=v;drawCard()}}),
+    w:new Spring(180,{k:340,c:25,onUpdate:v=>{st.w=v;drawCard()}}),
+    h:new Spring(136,{k:210,c:19,onUpdate:v=>{st.h=v;drawCard()}}),
+    tw:new Spring(160,{k:310,c:24,onUpdate:v=>{st.tw=v;drawInner()}}),
+    th:new Spring(68,{k:240,c:21,onUpdate:v=>{st.th=v;drawInner()}}),
+    mx:new Spring(0,{k:290,c:23,onUpdate:v=>{st.mx=v;drawInner()}}),
+    my:new Spring(84,{k:260,c:22,onUpdate:v=>{st.my=v;drawInner()}}),
+  };
+});
+function vsLayout(mode,anim=true){
+  vsMode=mode;vsCards.classList.toggle('list',mode===1);
+  const W=vsCards.clientWidth||360,gap=10;
+  const totalH=mode===0?136*2+gap:68*4+gap*3;
+  anim?vsWrapH.to(totalH):vsWrapH.set(totalH);
+  vsNodes.forEach((n,i)=>{
+    let x,y,w,h,tw,th,mx,my;
+    if(mode===0){
+      const cw=(W-gap)/2;
+      x=(i%2)*(cw+gap);y=Math.floor(i/2)*(136+gap);
+      w=cw;h=136;tw=cw-20;th=64;mx=0;my=82;
+    }else{
+      x=0;y=i*(68+gap);
+      w=W;h=68;tw=48;th=48;mx=58;my=14;
+    }
+    const apply=()=>{
+      if(!anim){n.x.set(x);n.y.set(y);n.w.set(w);n.h.set(h);n.tw.set(tw);n.th.set(th);n.mx.set(mx);n.my.set(my);return}
+      const wFast={k:360,c:25},hSlow={k:200,c:19};
+      n.x.to(x);n.y.to(y);
+      if(mode===1){n.w.to(w,wFast);n.h.to(h,hSlow)}else{n.w.to(w,hSlow);n.h.to(h,wFast)}
+      n.tw.to(tw);n.th.to(th);n.mx.to(mx);n.my.to(my);
+    };
+    if(anim&&!RM.matches)setTimeout(apply,i*24);else apply();
+  });
+}
+makeSegmented($('#vsSeg'),{attr:'aria-selected',onChange:i=>vsLayout(i,true)});
+vsLayout(0,false);
+onResync(()=>vsLayout(vsMode,false));
+
+/* ---------- theme toggle ---------- */
+const ttPreview=$('#ttPreview'),ttBtn=$('#ttBtn'),ttKnob=$('#ttKnob'),ttSvg=$('#ttSvg'),ttTitle=$('#ttTitle'),ttSub=$('#ttSub');
+const SUN_SVG='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>';
+const MOON_SVG='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+let ttDark=false,ttPrevW=32;
+const ttEp=edgePair((L,R)=>{
+  const w=Math.max(32,R-L);
+  const stretch=clamp((w-32)/32,0,0.45);
+  const sy=1-stretch*0.28;
+  ttKnob.style.transform=`translateX(${L}px) scaleY(${sy})`;
+  ttKnob.style.width=w+'px';
+  ttPrevW=w;
+},{fast:{k:460,c:28},slow:{k:150,c:17}});
+const ttIconKick=new Spring(0,{k:360,c:14,onUpdate:r=>{ttSvg.style.transform=`rotate(${r}deg)`}});
+ttEp.set(0,32);
+ttBtn.addEventListener('click',()=>{
+  ttDark=!ttDark;
+  ttBtn.setAttribute('aria-checked',String(ttDark));
+  ttPreview.classList.toggle('dark',ttDark);
+  ttTitle.textContent=ttDark?'โหมดมืด':'โหมดสว่าง';
+  ttSub.textContent=ttDark?'สบายตาในที่แสงน้อย':'เหมาะกับแสงกลางวัน';
+  ttSvg.innerHTML=ttDark?MOON_SVG:SUN_SVG;
+  ttIconKick.kick(ttDark?-260:260);
+  if(ttDark)ttEp.to(40,72);else ttEp.to(0,32);
+});
+/* ---------- swipe to delete ---------- */
+const swList=$('#swList'),swMsg=$('#swMsg'),swUndo=$('#swUndo');
+const SW_SEED=[
+  {id:1,c:'#6B4EFF',ic:'ดี',t:'สรุปประชุมดีไซน์รอบเช้า',s:'แนบไฟล์ Figma เวอร์ชัน 3 แล้ว',tm:'09:40'},
+  {id:2,c:'#0FA597',ic:'บ',t:'แจ้งเตือนบิลคลาวด์รายเดือน',s:'ตัดบัตรอัตโนมัติวันที่ 1 นี้',tm:'08:15'},
+  {id:3,c:'#F59E0B',ic:'ค',t:'คอมเมนต์ใหม่ในหน้า Checkout',s:'ปุ่มส่งงานเด้งกำลังดีเลย',tm:'เมื่อวาน'},
+  {id:4,c:'#FF4F7B',ic:'ป',t:'อัปเดตแพ็กเกจความปลอดภัย',s:'แนะนำให้อัปเกรดสัปดาห์นี้',tm:'จ.'}
+];
+let swLastDeleted=null;
+const swUndoKick=new Spring(1,{k:440,c:14,onUpdate:s=>{swUndo.style.transform=`scale(${clamp(s,0.75,1.25)})`}});
+
+function swMakeSlot(item,animateIn=false){
+  const slot=document.createElement('div');slot.className='sw-slot';slot.dataset.id=String(item.id);
+  slot.innerHTML=`<div class="sw-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sw-lid"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/></g><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg><span class="sw-pill-txt">ปล่อยเพื่อลบ</span></div><div class="sw-row"><div class="sw-av" style="background:${item.c}">${item.ic}</div><div class="sw-body"><b>${item.t}</b><span>${item.s}</span></div><div class="sw-right"><span class="sw-time">${item.tm}</span><button class="sw-del-btn" type="button" aria-label="ลบ ${item.t}">×</button></div></div>`;
+  const row=$('.sw-row',slot),pill=$('.sw-pill',slot),lid=$('.sw-lid',slot),delBtn=$('.sw-del-btn',slot);
+  let dragging=false,startX=0,lastX=0,lastT=0,vel=0,gone=false,armed=false;
+
+  const pillW=new Spring(54,{k:340,c:24,onUpdate:w=>{pill.style.width=Math.max(44,w)+'px'}});
+  const pillS=new Spring(1,{k:440,c:15,onUpdate:s=>{pill.style.transform=`scale(${clamp(s,0.7,1.22)})`}});
+  const lidA=new Spring(0,{k:420,c:14,onUpdate:a=>{lid.style.transform=`rotate(${a}deg)`}});
+
+  const syncVisual=(x,v)=>{
+    const stretch=clamp(Math.abs(v)/3400,0,0.065);
+    const tilt=clamp(v/2400,-1.6,1.6);
+    row.style.transform=`translate3d(${x}px,0,0) scale(${1+stretch},${1-stretch*0.45}) rotate(${tilt}deg)`;
+    const pull=Math.max(0,-x);
+    pill.style.opacity=String(clamp((pull-8)/34,0,1));
+    const targetW=Math.max(52,pull-8);
+    if(dragging)pillW.drag(targetW,0);else pillW.to(targetW);
+    const nowArmed=pull>=112;
+    if(nowArmed!==armed){
+      armed=nowArmed;
+      pill.classList.toggle('armed',armed);
+      pill.classList.toggle('show-txt',armed);
+      pillS.kick(armed?2.6:-1.4);
+      lidA.to(armed?-28:0);
+    }
+  };
+  const spX=new Spring(0,{k:340,c:23,onUpdate:syncVisual});
+
+  const removeRow=()=>{
+    if(gone)return;gone=true;
+    const idx=[...swList.children].indexOf(slot);
+    swLastDeleted={item,idx};
+    swMsg.textContent=`ลบ "${item.t}" แล้ว`;
+    swUndo.hidden=false;swUndoKick.set(0.8);swUndoKick.to(1);
+    const h0=slot.offsetHeight;
+    slot.classList.add('collapsing');slot.style.height=h0+'px';
+    pill.style.opacity='1';pill.classList.add('armed','show-txt');lidA.to(-32);
+    pillW.to(slot.offsetWidth,{k:300,c:24});
+    spX.to(-slot.offsetWidth-48,{k:280,c:26});
+    const spH=new Spring(h0,{k:260,c:25,eps:1,onUpdate:h=>{
+      const r=clamp(h/Math.max(1,h0),0,1);
+      slot.style.height=Math.max(0,h)+'px';
+      slot.style.marginBottom=(8*r)+'px';
+      slot.style.opacity=String(r);
+    },onRest:()=>slot.remove()});
+    setTimeout(()=>spH.to(0),RM.matches?0:110);
+  };
+
+  slot._demoSwipe=()=>{
+    if(gone)return;
+    spX.to(-138,{k:180,c:19});
+    setTimeout(()=>{if(!gone)removeRow()},RM.matches?0:360);
+  };
+
+  delBtn.addEventListener('click',e=>{e.stopPropagation();removeRow()});
+  row.addEventListener('pointerdown',e=>{
+    if(gone||e.target===delBtn)return;
+    dragging=true;startX=lastX=e.clientX;lastT=performance.now();vel=0;
+    row.setPointerCapture(e.pointerId);
+  });
+  row.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    const now=performance.now(),dt=Math.max(0.008,(now-lastT)/1000);
+    vel=(e.clientX-lastX)/dt;lastX=e.clientX;lastT=now;
+    const raw=e.clientX-startX;
+    const dx=raw>0?raw/3.4:raw;
+    spX.drag(dx,vel);
+  });
+  const endDrag=()=>{
+    if(!dragging)return;dragging=false;
+    if(spX.x<=-112||vel<-720)removeRow();
+    else{armed=false;pill.classList.remove('armed','show-txt');lidA.to(0);spX.to(0,{k:360,c:22});pillW.to(52)}
+  };
+  row.addEventListener('pointerup',endDrag);row.addEventListener('pointercancel',endDrag);
+
+  if(animateIn&&!RM.matches){
+    slot.classList.add('collapsing');slot.style.height='0px';slot.style.marginBottom='0px';slot.style.opacity='0';
+    requestAnimationFrame(()=>{
+      const targetH=row.offsetHeight||62;
+      const spIn=new Spring(0,{k:250,c:21,eps:0.8,onUpdate:h=>{
+        const r=clamp(h/targetH,0,1);
+        slot.style.height=Math.max(0,h)+'px';
+        slot.style.marginBottom=(8*r)+'px';
+        slot.style.opacity=String(r);
+      },onRest:()=>{slot.classList.remove('collapsing');slot.style.height='';slot.style.marginBottom='';slot.style.opacity=''}});
+      spIn.to(targetH);
+    });
+  }
+  return slot;
+}
+
+function swRender(){
+  swList.innerHTML='';swLastDeleted=null;swUndo.hidden=true;
+  swMsg.textContent='ลากการ์ดไปทางซ้ายเกินครึ่ง หรือกดลองปัด';
+  SW_SEED.forEach(item=>swList.appendChild(swMakeSlot(item,false)));
+}
+swUndo.addEventListener('click',()=>{
+  if(!swLastDeleted)return;
+  const{item,idx}=swLastDeleted;swLastDeleted=null;swUndo.hidden=true;
+  const slot=swMakeSlot(item,true);
+  const ref=swList.children[idx]||null;
+  swList.insertBefore(slot,ref);
+  swMsg.textContent=`เรียกคืน "${item.t}" แล้ว`;
+});
+$('#swDemo').addEventListener('click',()=>{
+  const first=swList.firstElementChild;
+  if(first&&first._demoSwipe)first._demoSwipe();
+  else{swRender();setTimeout(()=>swList.firstElementChild?._demoSwipe?.(),120)}
+});
+$('#swReset').addEventListener('click',swRender);
+swRender();
+
+/* ---------- context menu ---------- */
+const cmPad=$('#cmPad'),cmMenu=$('#cmMenu'),cmIn=$('#cmIn'),cmHi=$('#cmHi'),cmStatus=$('#cmStatus'),cmItems=$$('.cm-item',cmMenu);
+let cmOpen=false,cmCur=-1,cmLit=-1,cmTgt=[0,36];
+const cmW=new Spring(40,{eps:0.5,onUpdate:x=>{cmMenu.style.width=Math.max(36,x)+'px'}});
+const cmH=new Spring(40,{eps:0.5,onUpdate:x=>{cmMenu.style.height=Math.max(36,x)+'px'}});
+const cmR=new Spring(20,{onUpdate:x=>{cmMenu.style.borderRadius=Math.max(10,x)+'px'}});
+const cmLight=i=>{cmLit=i;cmItems.forEach((b,j)=>b.classList.toggle('on',j===i))};
+const cmEp=edgePair((T,B)=>{
+  cmHi.style.transform=`translateY(${T}px)`;cmHi.style.height=Math.max(0,B-T)+'px';
+  if(cmLit!==cmCur&&cmCur>=0&&T<=cmTgt[0]+2&&B>=cmTgt[1]-2)cmLight(cmCur);
+},{fast:{k:480,c:30},slow:{k:180,c:19}});
+function cmHover(i,anim=true){
+  if(i===cmCur)return;cmCur=i;cmIn.classList.toggle('hovering',i>=0);
+  if(i<0){cmLight(-1);return}
+  cmLight(-1);const b=cmItems[i];cmTgt=[b.offsetTop,b.offsetTop+b.offsetHeight];
+  anim?cmEp.to(cmTgt[0],cmTgt[1]):cmEp.set(cmTgt[0],cmTgt[1]);
+}
+function cmClose(refocus=false){
+  if(!cmOpen)return;cmOpen=false;cmMenu.classList.remove('open');cmMenu.inert=true;cmHover(-1,false);
+  cmW.to(40,{k:180,c:18});cmH.to(40,{k:340,c:24});cmR.to(20,{k:260,c:22});
+  if(refocus)cmPad.focus({preventScroll:true});
+}
+function cmShowAt(clientX,clientY){
+  const r=cmPad.getBoundingClientRect(),mw=196,mh=164;
+  const x=clamp(clientX-r.left,10,Math.max(10,r.width-mw-10));
+  const y=clamp(clientY-r.top,10,Math.max(10,r.height-mh-10));
+  cmMenu.style.left=x+'px';cmMenu.style.top=y+'px';
+  cmOpen=true;cmMenu.classList.add('open');cmMenu.inert=false;
+  cmW.set(36);cmH.set(36);cmR.set(20);
+  cmW.to(mw,{k:360,c:24});cmH.to(mh,{k:180,c:17});cmR.to(16,{k:260,c:22});
+  cmHover(0,false);
+}
+cmPad.addEventListener('contextmenu',e=>{e.preventDefault();cmShowAt(e.clientX,e.clientY)});
+cmPad.addEventListener('click',e=>{
+  if(cmMenu.contains(e.target))return;
+  if(cmOpen)cmClose();else cmShowAt(e.clientX,e.clientY);
+});
+cmItems.forEach((b,i)=>{
+  b.addEventListener('pointerenter',()=>cmHover(i,true));
+  b.addEventListener('focus',()=>cmHover(i,true));
+  b.addEventListener('click',e=>{e.stopPropagation();cmStatus.textContent=`เลือก: ${b.dataset.act}`;cmClose(true)});
+});
+cmPad.addEventListener('keydown',e=>{
+  if(!cmOpen)return;
+  if(e.key==='Escape'){e.preventDefault();cmClose(true)}
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    e.preventDefault();const d=e.key==='ArrowDown'?1:-1;
+    const n=(cmCur+d+cmItems.length)%cmItems.length;cmHover(n,true);cmItems[n].focus();
+  }
+});
+
+/* ---------- upload progress ---------- */
+const upBox=$('#upBox'),upInput=$('#upInput'),upArc=$('#upArc'),upPct=$('#upPct'),upDoneTxt=$('#upDoneTxt'),upStatus=$('#upStatus');
+const UP_CIRC=2*Math.PI*34;
+let upState='idle',upTimer=0;
+const upW=new Spring(300,{k:280,c:22,onUpdate:x=>{upBox.style.width=Math.max(60,x)+'px'}});
+const upH=new Spring(142,{k:190,c:18,onUpdate:x=>{upBox.style.height=Math.max(52,x)+'px'}});
+const upR=new Spring(24,{k:240,c:20,onUpdate:x=>{upBox.style.borderRadius=Math.max(12,x)+'px'}});
+const upScale=new Spring(1,{k:380,c:14,onUpdate:s=>{upBox.style.transform=`scale(${clamp(s,0.85,1.18)})`}});
+const upProg=new Spring(0,{k:140,c:18,onUpdate:p=>{
+  const c=clamp(p,0,100);
+  upArc.style.strokeDashoffset=String(UP_CIRC*(1-c/100));
+  upPct.textContent=Math.round(c)+'%';
+}});
+function upReset(){
+  clearInterval(upTimer);upState='idle';upBox.dataset.state='idle';
+  upW.to(300,{k:240,c:20});upH.to(142,{k:200,c:18});upR.to(24);upProg.set(0);
+  upStatus.textContent='พร้อมรับไฟล์';
+}
+function upStart(fileName='design-assets.zip'){
+  if(upState==='busy')return;
+  clearInterval(upTimer);upState='busy';upBox.dataset.state='busy';
+  upStatus.textContent=`กำลังอัปโหลด ${fileName}…`;
+  upProg.set(0);upScale.kick(-1.4);
+  upW.to(116,{k:300,c:21});upH.to(116,{k:180,c:17});upR.to(58,{k:260,c:20});
+  let p=0;
+  const finish=()=>{
+    clearInterval(upTimer);upState='done';upBox.dataset.state='done';
+    upDoneTxt.textContent='อัปโหลดสำเร็จ';upStatus.textContent=`อัปโหลด ${fileName} เรียบร้อยแล้ว`;
+    upScale.kick(2.4);
+    upW.to(240,{k:300,c:20});upH.to(58,{k:190,c:17});upR.to(29,{k:260,c:20});
+  };
+  if(RM.matches){upProg.set(100);finish();return}
+  upTimer=setInterval(()=>{
+    p=Math.min(100,p+16+Math.random()*14);upProg.to(p);
+    if(p>=100){clearInterval(upTimer);setTimeout(finish,260)}
+  },180);
+}
+upBox.addEventListener('click',()=>{if(upState==='idle')upInput.click();else if(upState==='done')upReset()});
+upBox.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();upBox.click()}});
+upInput.addEventListener('change',()=>{const f=upInput.files?.[0];if(f)upStart(f.name);upInput.value=''});
+upBox.addEventListener('dragover',e=>{e.preventDefault();upBox.classList.add('dragging')});
+upBox.addEventListener('dragleave',()=>upBox.classList.remove('dragging'));
+upBox.addEventListener('drop',e=>{e.preventDefault();upBox.classList.remove('dragging');const f=e.dataTransfer?.files?.[0];upStart(f?f.name:'dropped-file.png')});
+$('#upDemo').addEventListener('click',()=>upStart('mockup-v2.fig'));
+$('#upReset').addEventListener('click',upReset);
 </script>
 </body>
 </html>

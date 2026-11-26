@@ -18,7 +18,7 @@ The look comes from one idea: **stretch is caused by something.** An element def
 
 ## Step 0: audit existing code, then confirm
 
-Only when the request is about the user's existing interface in general ("make my app feel alive", "what could stretch here", a repo or files in scope with no specific parts named). Read `references/audit.md` and follow it: find the code, scan it with `python scripts/audit_ui.py <paths>`, read every hit in context, prioritise, then send the numbered proposals in the user's language and ask which to build. **End the turn there; make no edits before the reply.** If there is no code anywhere, say what you looked for and offer two paths: share the code, or build something new from scratch.
+Only when the request is about the user's existing interface in general ("make my app feel alive", "what could stretch here", a repo, files, or live URL in scope with no specific parts named). Read `references/audit.md` and follow it: find the code or URL, scan it with `python scripts/audit_ui.py <paths-or-urls>` (add `--dom` for rendered-DOM inspection of local HTML, or `--stdin --ext .tsx` for pasted snippets), read every hit in context, prioritise, then send the numbered proposals in the user's language and ask which to build. **End the turn there; make no edits before the reply.** If there is no code or URL anywhere, say what you looked for and offer two paths: share the code/URL, or build something new from scratch.
 
 Skip the audit when the user asks for something new ("build a stretchy toggle") or already named the parts to change ("make my tabs stretchy"): go straight to the Workflow. For a named part in a codebase, read that part's file first, then only the matching recipe. If you noticed other good candidates along the way, mention them in one line at the end.
 
@@ -31,7 +31,7 @@ Paths are relative to this skill's folder (the folder containing this `SKILL.md`
 | `assets/starter.html` | Page skeleton: light/dark tokens, Thai-capable variable font, reduced-motion CSS, the core inline, one tabs example. Copy it to start a standalone page |
 | `assets/stretchy-core.js` | The spring engine and helpers. Copy it, or `python scripts/add_core.py --module <dest.js>` for an ES module. Read it only to change the engine |
 | `references/core-api.md` | Helper signatures, spring presets, runtime cost rules. Read before writing spring code |
-| `scripts/show_component.py` | `NAME` prints one of the 24 showcase components with its recipe from `references/components.md` (`--list` for the names; `--recipe`, `--css`, `--html`, `--js` for one part). Use when the request names or resembles a catalog component |
+| `scripts/show_component.py` | `NAME` prints one of the 31 showcase components with its recipe from `references/components.md` (`--list` for the names; `--recipe`, `--css`, `--html`, `--js` for one part). Use when the request names or resembles a catalog component |
 | `references/techniques.md` | The 11 stretch techniques with code and tuning numbers. Read the sections for techniques you have not built before |
 | `references/new-components.md` | The method for any component, plus 13 worked designs. Read when the request is outside the catalog |
 | `references/frameworks.md` | React, Vue, Svelte, component libraries, server-rendered sites. Read when the target is a codebase rather than a new page |
